@@ -63,6 +63,7 @@ docs/           Product, architecture, and data-model documentation
 - `docs/controlled-vocabularies.md` — how domain vocabularies are managed
 - `docs/development-roadmap.md` — phased build plan
 - `docs/decisions/` — architecture decision records (ADRs)
+- `docs/supabase-development.md` — local/hosted Supabase development setup
 
 ## Environment variables
 

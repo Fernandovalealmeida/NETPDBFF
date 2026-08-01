@@ -34,6 +34,14 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Supabase local development artifacts (created by `supabase start`/`supabase init`)
+# The CLI also writes its own supabase/.gitignore inside that folder once
+# `supabase init` has run locally; these root-level rules are a safety net
+# in case that file is ever missing or out of date.
+supabase/.branches
+supabase/.temp
+supabase/.env
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
