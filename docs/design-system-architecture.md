@@ -340,7 +340,7 @@ everything else is fully hand-built Tailwind, no dependency.
 | `EmptyState` | Required in M5 | Powers the dashboard's "not yet connected" state and `/member`'s existing explanatory copy |
 | `Skeleton` | Required in M5 | Establishes the loading-content pattern even though M5's own pages are simple enough to rarely need it |
 | `Spinner` | Required in M5 | Short in-flight-action pattern, distinct from `SubmitButton`'s built-in pending state |
-| `Toast` | Useful later | No M5 flow currently needs a transient notification outside a form's own inline messaging; defined for future async actions (e.g. a future save-outside-a-form action) |
+| `Toast` | Useful later — **formally deferred past M5.1, decision recorded below** | No M5 flow currently needs a transient notification outside a form's own inline messaging; defined for future async actions (e.g. a future save-outside-a-form action) |
 | `PageHeader` | Required in M5 | Formalizes the repeated `<h1>` + description pattern on every M4 page |
 | `SectionHeader` | Useful later | No M5 page is deep enough to need a sub-page section header yet |
 | `Breadcrumbs` | Useful later | Defined structurally in the IA doc; no M5 route is deep enough to need it |
@@ -350,7 +350,67 @@ everything else is fully hand-built Tailwind, no dependency.
 | `Sidebar` | Useful later | No M5 page has secondary/persistent navigation dense enough to need a sidebar; anticipated for a future member-area or admin shell |
 | `MobileNavigation` | Required in M5 | New; see `docs/application-information-architecture.md` |
 
-## Signature NetPDBFF interaction principles
+## Toast: formal deferral (recorded during M5.1)
+
+M5.1 built every other primitive in the table above, including all six
+Radix-backed components named in `docs/decisions/0003-...md`. `Toast` was
+deliberately not built. This is a decision, not an omission — recorded here
+per this document's own status as the source of truth for the component
+family.
+
+**Exact reason.** `Toast` is the one "useful later" primitive in this table
+whose API shape was never actually settled anywhere in this document or the
+M5 spec — every other deferred component (`Radio`, `Switch`, `Table`,
+`Pagination`, `SectionHeader`, `Breadcrumbs`, `Sidebar`) has an obvious,
+conventional shape implied by its own name and the one line of context
+given. `Toast` does not: unlike `Dialog`/`Drawer`/`Tabs`/`Tooltip`/`Dropdown`,
+it is not Radix-backed (ADR-0003 names exactly six Radix-backed components,
+and `Toast` is not one of them — building it on Radix without a documented
+tradeoff analysis would itself violate that ADR's stated boundary: "any
+future addition to it should be a deliberate, similarly-justified decision,
+not an assumption"). A hand-built `Toast` is also a materially different
+kind of primitive from everything else in this milestone: every other new
+component is either stateless/presentational or, at most, manages its own
+local open/closed state (`Switch`, or Radix's own state for
+`Dialog`/`Dropdown`/etc.). `Toast` additionally needs an imperative queue
+(toasts are triggered from arbitrary call sites, not declared inline where
+they render), a singleton portal-rendered viewport, and auto-dismiss timing
+— none of which has a settled design in this document.
+
+**Unresolved API/accessibility decisions**, listed so whoever builds this
+next doesn't have to rediscover them:
+
+- **Trigger API.** An imperative `toast.success("...")`-style function
+  needs a `Provider`/context or a module-level singleton — which, and where
+  is it mounted? No shell exists yet to mount it in (the same reason
+  `TooltipProvider` isn't wired in either — see `Tooltip.tsx`'s file
+  comment), so this can't even be prototyped against a real layout yet.
+- **Queueing.** One toast at a time, replacing the previous, or a stacked
+  list? If stacked, a cap on simultaneous toasts?
+- **Auto-dismiss timing and control.** Default duration; whether hover/focus
+  pauses the timer (WCAG 2.2.1 "Timing Adjustable" strongly favors this —
+  content that disappears on a fixed timer with no way to extend it is a
+  real accessibility risk, not a nice-to-have); whether `prefers-reduced-motion`
+  should also imply "don't auto-dismiss," which is a different question
+  from "don't animate."
+- **`aria-live` region strategy.** A single persistent `aria-live="polite"`
+  (or `"assertive"` for error-tone toasts) region that toast content is
+  injected into, vs. each toast being its own `role="status"`/`role="alert"`
+  element — these have different, well-known screen-reader announcement
+  behaviors and the wrong choice is a real regression, not a style
+  preference.
+- **Relationship to `Alert`/`FormMessage`.** `Toast` should very likely
+  reuse the same `--color-tone-*` token vocabulary `Alert`/`FormMessage`/
+  `Badge` already share (consistent with this document's existing
+  discipline) — but its dismissal/timing behavior is different enough from
+  a static banner that it isn't just "Alert, positioned differently."
+
+**Target future phase.** M5.2, at the earliest — specifically, whenever the
+first real async, outside-a-form action that needs a transient notification
+actually ships (the M5 spec's own reasoning for "useful later": "no M5 flow
+currently needs" one). Building it speculatively now, ahead of a real
+call site to validate the API against, is exactly the premature-generality
+risk `docs/decisions/0007-...md`'s guardrails warn about.
 
 These are **patterns and placeholders**, not features. Nothing described
 in this section is implemented in M5 — no map, timeline, network graph,
