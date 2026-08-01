@@ -13,6 +13,7 @@
     "supabase:stop": "supabase stop",
     "supabase:status": "supabase status",
     "supabase:reset": "supabase db reset",
+    "supabase:test": "supabase test db",
     "supabase:types": "supabase gen types --lang typescript --local > src/types/database.types.ts",
     "db:new": "supabase migration new",
     "db:reset": "supabase db reset"
