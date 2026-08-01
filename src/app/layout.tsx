@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-import { PublicHeader } from "@/components/layout/PublicHeader";
 import { ThemeScript } from "@/components/theme/ThemeScript";
 
 // The interface language is English at launch. The `lang` attribute is set
@@ -43,7 +42,13 @@ export default function RootLayout({
       <body className="antialiased">
         {/* Must render before any themed content — see ThemeScript.tsx. */}
         <ThemeScript />
-        <PublicHeader />
+        {/* No header here (M5.2): the true root layout is shared by every
+            route, including protected ones — rendering PublicHeader
+            unconditionally here was the pre-M5.2 bug where authenticated
+            pages showed PublicHeader's Log in/Register links stacked above
+            ProtectedNav. Header choice now belongs to the routing layer,
+            per ADR-0006 — see src/app/(public)/layout.tsx and
+            src/app/(protected)/layout.tsx. */}
         {children}
       </body>
     </html>

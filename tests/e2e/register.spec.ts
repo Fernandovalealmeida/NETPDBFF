@@ -52,12 +52,20 @@ test.describe("Registration", () => {
     await expect(page).toHaveURL(/\/member\?confirmed=1$/);
     // Explicit "confirmation success" state.
     await expect(page.getByText("Your email address has been confirmed.")).toBeVisible();
-    // Scoped to <main>: the confirmed member page renders this same email
-    // twice — once in the page body (src/app/(protected)/member/page.tsx)
-    // and once in ProtectedNav's header (src/components/layout/ProtectedNav.tsx,
-    // sm:inline). An unscoped getByText(email) matches both and violates
-    // Playwright's strict mode. <main> contains only the page-body copy.
-    await expect(page.locator("main").getByText(email)).toBeVisible();
+    // The page body (src/app/(protected)/member/page.tsx) shows this email
+    // as visible text in two places by design: the "You're signed in as
+    // {email}" welcome line, and the "Your account" summary card's Email
+    // row (same real fact, surfaced in both places per
+    // docs/application-information-architecture.md's dashboard hierarchy).
+    // An unscoped getByText(email) therefore has two legitimate matches.
+    // Rather than loosen the assertion with .first() (which would keep
+    // passing even if unrelated/unintended extra email copies appeared
+    // elsewhere on the page later), scope to the specific <p> that renders
+    // the welcome sentence — identified by its own fixed, unrelated text
+    // "You're signed in as", not by DOM position — and assert the email
+    // appears inside *that* element specifically.
+    const welcomeSentence = page.locator("main p", { hasText: "You're signed in as" });
+    await expect(welcomeSentence.getByText(email)).toBeVisible();
     await expect(page.getByText(/connected to a NetPDBFF person record/)).toBeVisible();
   });
 

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import Link from "next/link";
 
+import { Container } from "@/components/ui/Container";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { RECOVERY_FLOW_HINT_COOKIE } from "@/lib/auth/recovery-flow-hint";
 
 import { UpdatePasswordForm } from "./UpdatePasswordForm";
@@ -36,49 +38,51 @@ export default async function UpdatePasswordPage() {
 
   if (!hasRecoveryFlowHint) {
     return (
-      <main className="mx-auto max-w-md px-6 py-16">
-        <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100">
-          Reset link required
-        </h1>
-        <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-400">
-          This page completes a password reset started from an email link. Request a new link
-          below if you want to reset your password.
-        </p>
-        <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-400">
-          Looking to change your password while signed in? That will be available soon under
-          Account → Security.
-        </p>
+      <main id="main-content" tabIndex={-1} className="py-16">
+        <Container width="form">
+          {/* Title-only PageHeader: this branch has two paragraphs, not one
+              `description` string, so they're rendered below with the same
+              `text-muted-foreground` treatment PageHeader's own description
+              uses internally — visually identical, just not forced through a
+              single-string prop. */}
+          <PageHeader title="Reset link required" />
+          <p className="mt-2 text-sm text-muted-foreground">
+            This page completes a password reset started from an email link. Request a new link
+            below if you want to reset your password.
+          </p>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Looking to change your password while signed in? That will be available soon under
+            Account → Security.
+          </p>
 
-        <div className="mt-8 flex flex-col gap-2 text-sm">
-          <Link
-            href="/forgot-password"
-            className="font-medium text-neutral-900 underline underline-offset-2 dark:text-neutral-100"
-          >
-            Request a password-reset link
-          </Link>
-          <Link
-            href="/account"
-            className="font-medium text-neutral-900 underline underline-offset-2 dark:text-neutral-100"
-          >
-            Back to account
-          </Link>
-        </div>
+          <div className="mt-8 flex flex-col gap-2 text-sm">
+            <Link
+              href="/forgot-password"
+              className="font-medium text-foreground underline underline-offset-2"
+            >
+              Request a password-reset link
+            </Link>
+            <Link href="/account" className="font-medium text-foreground underline underline-offset-2">
+              Back to account
+            </Link>
+          </div>
+        </Container>
       </main>
     );
   }
 
   return (
-    <main className="mx-auto max-w-md px-6 py-16">
-      <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100">
-        Reset your password
-      </h1>
-      <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-        Your reset link has been verified. Choose a new password below.
-      </p>
+    <main id="main-content" tabIndex={-1} className="py-16">
+      <Container width="form">
+        <PageHeader
+          title="Reset your password"
+          description="Your reset link has been verified. Choose a new password below."
+        />
 
-      <div className="mt-8">
-        <UpdatePasswordForm />
-      </div>
+        <div className="mt-8">
+          <UpdatePasswordForm />
+        </div>
+      </Container>
     </main>
   );
 }

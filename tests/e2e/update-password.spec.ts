@@ -44,7 +44,15 @@ test.describe("/update-password scope", () => {
 
     await page.goto("/account");
     await expect(page.getByRole("link", { name: "Change password" })).toHaveCount(0);
-    await expect(page.getByText(/Account → Security/)).toBeVisible();
+    // /account's EmptyState now says "Account → Security" in *two* places
+    // by design: its own descriptive sentence ("This will live under
+    // Account → Security in a later milestone.") and the FutureAction
+    // placeholder's label — so an unscoped getByText(/Account → Security/)
+    // is ambiguous. What this test actually cares about is that the future
+    // destination is represented, not the surrounding prose — that's the
+    // FutureAction element specifically, identifiable by its `aria-disabled`
+    // marker (see src/components/ui/FutureAction.tsx), not by text alone.
+    await expect(page.locator('[aria-disabled="true"]', { hasText: "Account → Security" })).toBeVisible();
   });
 
   test("the recovery link grants one-time access to the password form", async ({ page }) => {
@@ -179,10 +187,23 @@ test.describe("Password-update authorization", () => {
     // form at all (confirmed via trace: the page snapshot at the timeout
     // was /member, not /login), and the "log in again" step below wasn't
     // actually re-verifying anything even when it appeared to pass.
+    //
+    // Log out lives in ProtectedHeader's account menu (M5.2) — open it
+    // first, same as login.spec.ts's logout test.
+    await page.getByRole("button", { name: /Account menu for/ }).click();
     await page.getByRole("button", { name: "Log out" }).click();
     await expect(page).toHaveURL(/\/login$/);
 
-    await page.getByLabel("Email").fill(email);
+    // #email, not getByLabel("Email"): /login now also renders the
+    // "Didn't get a confirmation email?" ResendConfirmationForm's own
+    // "Email" field (id="resend-email", present in the DOM though
+    // collapsed — see ResendConfirmationForm.tsx). Both are correctly
+    // labeled "Email", so an unscoped getByLabel is a strict-mode
+    // violation; the login form's field has the stable id="email"
+    // (src/app/(public)/login/LoginForm.tsx's FormField derives it from
+    // name="email"). "Password" is unambiguous — the resend form has no
+    // password field — so it's left as-is.
+    await page.locator("#email").fill(email);
     await page.getByLabel("Password").fill(newPassword);
     await page.getByRole("button", { name: "Log in" }).click();
     await expect(page).toHaveURL(/\/member/);

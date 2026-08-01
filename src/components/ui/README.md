@@ -7,13 +7,14 @@ architecture and `docs/decisions/0007-...md` for why every component here
 is named and scoped as domain-neutral platform infrastructure, not after
 PDBFF-specific concepts.
 
-**Status: M5.1 (Design Foundations) only.** This milestone built the design
-token system, the theming mechanism, and the complete primitive component
-library below, including the Radix-backed interactive primitives. It did
-**not** build `AppShell`/`PublicHeader`/`ProtectedHeader`/`MobileNavigation`
-(see `src/components/layout/README.md`) or redesign any page — those are
-M5.2 scope, deliberately excluded per the M5.1/M5.2 scope split. `Toast` was
-also not built (see "Not built in M5.1" below).
+**Status: M5.1 (Design Foundations) + one M5.2 addition.** M5.1 built the
+design token system, the theming mechanism, and the complete primitive
+component library below, including the Radix-backed interactive primitives.
+M5.2 (shells, navigation, and page redesigns — see
+`src/components/layout/README.md`) added exactly one new primitive here,
+`FutureAction` (see the presentational-primitives table below); every other
+component in this file is unchanged M5.1 work, just now wired into real
+pages. `Toast` was not built (see "Not built in M5.1" below).
 
 All components are Server Components unless noted "Client Component" —
 per `docs/design-system-architecture.md`'s "Component-composition
@@ -35,8 +36,10 @@ possible.
   `data-theme` attribute on `<html>`, set by a blocking inline script before
   first paint, with `localStorage`+cookie persistence and a
   `prefers-color-scheme` fallback for visitors with no explicit preference.
-  No theme-toggle control is wired into any page yet (no header exists to
-  put one in — that's M5.2); `applyTheme`/`Switch` are ready for that wiring.
+  The real theme-toggle control is `src/components/theme/ThemeToggle.tsx`
+  (M5.2) — a `Switch` wired to `applyTheme`, rendered in both `PublicHeader`
+  and `ProtectedHeader`. `src/app/dev/design-system/ThemeToggleDemo.tsx`
+  wraps the same component rather than duplicating its logic.
 
 ## Layout primitives
 
@@ -74,6 +77,7 @@ import { Surface } from "@/components/ui/Surface";
 | `Spinner` | Short in-flight-action indicator. **`label` is required** — never a spinner with no text equivalent. | `size`, `label`, `showLabel` |
 | `EmptyState` | Honest "not yet available" state — never a fabricated zero or fake-loading skeleton. | `title`, `description`, `action` |
 | `PageHeader` | The repeated `<h1>` + description + optional action pattern from every M4 page. | `title`, `description`, `action` |
+| `FutureAction` | **M5.2.** A labeled destination/action that's real in the product's planned structure but not built yet — inert text + a "Soon" `Badge`, never a disabled-looking button or a link to nowhere. No `role`/`href`/`onClick`: unambiguously non-interactive, not just visually muted. Shared by `NavLink` (planned nav entries) and the `/member`/`/account` empty states, so navigation and page content use one "coming later" vocabulary instead of two. | `label`, `reason` |
 
 ```tsx
 import { Button } from "@/components/ui/Button";

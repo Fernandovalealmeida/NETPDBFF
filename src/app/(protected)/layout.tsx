@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
-import { ProtectedNav } from "@/components/layout/ProtectedNav";
+import { AppShell } from "@/components/layout/AppShell";
+import { ProtectedHeader } from "@/components/layout/ProtectedHeader";
 import { createClient } from "@/lib/supabase/server";
 
 // Wraps /member, /account, /update-password (this is a route group — the
@@ -15,8 +16,15 @@ import { createClient } from "@/lib/supabase/server";
 // `getClaims()` verifies the JWT signature rather than trusting whatever is
 // in the session cookie — see src/lib/supabase/proxy.ts for the same
 // principle applied in the proxy. The claims fetched here are also handed
-// to ProtectedNav, so displaying the signed-in email in the nav doesn't
-// cost a second Supabase call.
+// to ProtectedHeader (via AppShell), so displaying the signed-in email in
+// the nav doesn't cost a second Supabase call.
+//
+// AppShell + ProtectedHeader own the `<header>`; this layout no longer
+// renders ProtectedNav directly (superseded — see
+// src/components/layout/ProtectedHeader.tsx) or PublicHeader (the M4-era
+// root layout rendered it unconditionally, which meant every page here
+// showed both headers stacked — fixed in M5.2 by moving header choice to
+// the routing layer; see src/app/layout.tsx and src/app/(public)/layout.tsx).
 export const dynamic = "force-dynamic";
 
 export default async function ProtectedLayout({
@@ -33,10 +41,5 @@ export default async function ProtectedLayout({
 
   const email = typeof data.claims.email === "string" ? data.claims.email : "your account";
 
-  return (
-    <>
-      <ProtectedNav email={email} />
-      {children}
-    </>
-  );
+  return <AppShell header={<ProtectedHeader email={email} />}>{children}</AppShell>;
 }

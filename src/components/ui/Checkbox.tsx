@@ -23,6 +23,15 @@ export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement
 // `forwardRef` per docs/design-system-architecture.md's accessibility
 // requirements, forwarded to the underlying `<input>` in both the
 // bare-control and wrapped-in-label branches.
+//
+// `shrink-0` (M5.2 fix, found during the auth-page static audit): the
+// control sits in a `flex items-start` row next to its label text
+// (`label`'s wrapping `<label>` below). Without `shrink-0`, a long label —
+// e.g. /register's terms-acceptance text, which wraps onto several lines on
+// a narrow viewport — can compress this fixed `size-4` control below its
+// intended size under the flexbox layout algorithm. The hand-rolled
+// checkbox this component replaced had `shrink-0` explicitly; this restores
+// that safeguard at the primitive level so every consumer gets it.
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
   { label, className, id, ...rest },
   ref
@@ -33,7 +42,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
       type="checkbox"
       id={id}
       className={cn(
-        "size-4 rounded-sm border-border-default text-accent accent-accent",
+        "size-4 shrink-0 rounded-sm border-border-default text-accent accent-accent",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-border-focus",
         "disabled:cursor-not-allowed disabled:opacity-(--opacity-disabled)",
         className

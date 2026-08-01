@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { Card } from "@/components/ui/Card";
+import { Container } from "@/components/ui/Container";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { FutureAction } from "@/components/ui/FutureAction";
+import { PageHeader } from "@/components/ui/PageHeader";
+
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -12,12 +18,18 @@ function formatDate(value: string | null | undefined): string {
   return new Date(value).toLocaleString();
 }
 
-// Shows only minimal Auth-account information — never a historical person
-// profile (see docs/decisions/0001-separate-people-from-user-accounts.md).
-// Uses getUser() rather than getClaims() specifically because this page
-// needs fields (created_at, email_confirmed_at) that live on the full user
-// record, not the JWT claims — see Supabase's getClaims/getUser/getSession
-// guidance in docs/authentication-implementation.md.
+// M5.2 redesign — restyled onto tokens/primitives only. Every fact shown,
+// the Supabase call that fetches them, and the two real links are
+// unchanged from M4/M5.1: still `getUser()` (not `getClaims()`), for the
+// same reason as before — `created_at`/`email_confirmed_at` live on the
+// full user record, not the JWT claims (see
+// docs/authentication-implementation.md's getClaims/getUser/getSession
+// guidance). Still shows only minimal Auth-account information — never a
+// historical person profile (see
+// docs/decisions/0001-separate-people-from-user-accounts.md). No profile
+// editing, identity claiming, account deletion, email change, notification
+// preferences, or new Server Action were added — none of that is this
+// page's job yet.
 export default async function AccountPage() {
   const supabase = await createClient();
   const {
@@ -25,42 +37,48 @@ export default async function AccountPage() {
   } = await supabase.auth.getUser();
 
   return (
-    <main className="mx-auto max-w-md px-6 py-16">
-      <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100">Account</h1>
-      <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-        Minimal information about your NetPDBFF sign-in account. This is not a person profile.
-      </p>
+    <main id="main-content" tabIndex={-1} className="py-16">
+      <Container width="content">
+        <PageHeader
+          title="Account"
+          description="Minimal information about your NetPDBFF sign-in account. This is not a person profile."
+        />
 
-      <dl className="mt-8 divide-y divide-neutral-200 text-sm dark:divide-neutral-800">
-        <div className="flex items-center justify-between gap-4 py-3">
-          <dt className="text-neutral-500 dark:text-neutral-400">Email</dt>
-          <dd className="text-neutral-900 dark:text-neutral-100">{user?.email ?? "Unknown"}</dd>
-        </div>
-        <div className="flex items-center justify-between gap-4 py-3">
-          <dt className="text-neutral-500 dark:text-neutral-400">Email confirmed</dt>
-          <dd className="text-neutral-900 dark:text-neutral-100">
-            {user?.email_confirmed_at ? "Yes" : "No"}
-          </dd>
-        </div>
-        <div className="flex items-center justify-between gap-4 py-3">
-          <dt className="text-neutral-500 dark:text-neutral-400">Account created</dt>
-          <dd className="text-neutral-900 dark:text-neutral-100">
-            {formatDate(user?.created_at)}
-          </dd>
-        </div>
-      </dl>
+        {/* Authentication/account information — real, currently-true facts. */}
+        <Card className="mt-8">
+          <dl className="divide-y divide-border-default text-sm">
+            <div className="flex items-center justify-between gap-4 py-3">
+              <dt className="text-muted-foreground">Email</dt>
+              <dd className="text-foreground">{user?.email ?? "Unknown"}</dd>
+            </div>
+            <div className="flex items-center justify-between gap-4 py-3">
+              <dt className="text-muted-foreground">Email confirmed</dt>
+              <dd className="text-foreground">{user?.email_confirmed_at ? "Yes" : "No"}</dd>
+            </div>
+            <div className="flex items-center justify-between gap-4 py-3">
+              <dt className="text-muted-foreground">Account created</dt>
+              <dd className="text-foreground">{formatDate(user?.created_at)}</dd>
+            </div>
+          </dl>
+        </Card>
 
-      <div className="mt-8 rounded-md border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400">
-        Changing your password while signed in will be available soon under Account → Security.
-        To reset a forgotten password now, use{" "}
-        <Link
-          href="/forgot-password"
-          className="font-medium text-neutral-900 underline underline-offset-2 dark:text-neutral-100"
-        >
-          Forgot password
-        </Link>{" "}
-        from the login page.
-      </div>
+        {/* Future person-record/profile functionality — clearly separated
+            from the real account facts above, never implied to exist yet. */}
+        <EmptyState
+          className="mt-6"
+          title="Changing your password while signed in isn't available yet"
+          description="This will live under Account → Security in a later milestone."
+          action={<FutureAction label="Account → Security" />}
+        />
+
+        <p className="mt-4 text-sm text-muted-foreground">
+          To reset a forgotten password now, use{" "}
+          <Link href="/forgot-password" className="font-medium text-foreground underline underline-offset-2">
+            Forgot password
+          </Link>{" "}
+          from the login page.
+        </p>
+      </Container>
     </main>
   );
 }

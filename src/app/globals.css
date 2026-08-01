@@ -522,6 +522,9 @@
   --z-dialog: 60;
   --z-toast: 70;
   --z-tooltip: 80;
+  --z-skip-link: 90; /* Highest layer — must sit above everything, but only
+    ever visible as the very first Tab stop on initial page load, before any
+    dropdown/drawer/dialog/toast/tooltip could plausibly be open. */
 
   /* Container widths — named by purpose, not a single global max-width,
      matching M4's existing per-purpose sizing

@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 
+import { buttonVariants } from "@/components/ui/Button";
 import { FormField } from "@/components/ui/FormField";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { resendConfirmationAction } from "@/features/auth/actions/resend-confirmation";
@@ -37,9 +38,19 @@ export function ResendConfirmationForm({ email }: ResendConfirmationFormProps) {
       {email ? (
         <input type="hidden" name="email" value={email} />
       ) : (
+        // Explicit `id`: /login renders this form (no `email` prop, so this
+        // branch renders) inside a <details>, alongside LoginForm's own
+        // "Email" field — both use `name="email"`, which is fine (each
+        // <form>'s FormData is scoped independently), but FormField derives
+        // its `id` from `name` when none is given, which would otherwise
+        // produce a second `id="email"` in the same document. Duplicate ids
+        // aren't just invalid HTML: a <label for="email"> resolves to the
+        // *first* matching id, so without this, clicking this form's own
+        // "Email" label would have focused LoginForm's email field instead.
         <FormField
           label="Email"
           name="email"
+          id="resend-email"
           type="email"
           autoComplete="email"
           required
@@ -48,7 +59,7 @@ export function ResendConfirmationForm({ email }: ResendConfirmationFormProps) {
       )}
 
       {state.status === "success" ? (
-        <p role="status" className="text-sm text-neutral-600 dark:text-neutral-400">
+        <p role="status" className="text-sm text-muted-foreground">
           If that address is registered and not yet confirmed, we&apos;ve sent another link.
         </p>
       ) : null}
@@ -97,7 +108,7 @@ function CooldownButton({ seconds }: CooldownButtonProps) {
       type="button"
       disabled
       aria-disabled="true"
-      className="inline-flex w-full cursor-not-allowed items-center justify-center rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white opacity-60 shadow-sm dark:bg-neutral-100 dark:text-neutral-900"
+      className={buttonVariants({ emphasis: "primary", size: "md", fullWidth: true })}
     >
       Resend available in {remaining}s
     </button>

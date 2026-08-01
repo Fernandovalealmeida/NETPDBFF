@@ -97,6 +97,13 @@ test.describe("Login", () => {
     // than requiring/excluding confirmed=1 specifically.
     await expect(page).toHaveURL(/\/member(?:\?.*)?$/);
 
+    // Log out lives in ProtectedHeader's account menu (M5.2 — see
+    // docs/application-information-architecture.md's "User menu"), not
+    // inline in the header as ProtectedNav had it. Open the menu first;
+    // matched by a name *pattern* rather than the exact
+    // "Account menu for {email}" string so this doesn't need to know the
+    // trigger's exact label format, only that it exists.
+    await page.getByRole("button", { name: /Account menu for/ }).click();
     await page.getByRole("button", { name: "Log out" }).click();
     await expect(page).toHaveURL(/\/login$/);
 

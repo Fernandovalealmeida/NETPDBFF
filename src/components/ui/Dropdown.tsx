@@ -7,11 +7,11 @@ import { forwardRef } from "react";
 import { cn } from "@/lib/ui/cn";
 
 // Headless-backed (ADR-0003) — Radix supplies arrow-key item navigation,
-// type-ahead, and correct ARIA `menu`/`menuitem` roles. Powers the future
-// user menu (docs/application-information-architecture.md's "User menu" —
-// replacing `ProtectedNav`'s current inline "email · Log out" text) — not
-// wired into any real header yet, since shells are M5.2 scope. Client
-// Component throughout.
+// type-ahead, and correct ARIA `menu`/`menuitem` roles. Powers the user
+// menu in ProtectedHeader (M5.2 — see src/components/layout/ProtectedHeader.tsx),
+// replacing the old ProtectedNav's inline "email · Log out" text, per
+// docs/application-information-architecture.md's "User menu" section.
+// Client Component throughout.
 
 export const Dropdown = DropdownMenuPrimitive.Root;
 export const DropdownTrigger = DropdownMenuPrimitive.Trigger;

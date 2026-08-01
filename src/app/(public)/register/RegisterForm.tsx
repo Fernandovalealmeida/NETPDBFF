@@ -3,6 +3,9 @@
 import { useActionState } from "react";
 
 import { ResendConfirmationForm } from "@/components/auth/ResendConfirmationForm";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { Divider } from "@/components/ui/Divider";
+import { FieldError } from "@/components/ui/FieldError";
 import { FormField } from "@/components/ui/FormField";
 import { FormMessage } from "@/components/ui/FormMessage";
 import { SubmitButton } from "@/components/ui/SubmitButton";
@@ -23,10 +26,9 @@ export function RegisterForm() {
           <strong>Mailpit</strong> to view it — see docs/authentication-implementation.md.)
         </FormMessage>
 
-        <div className="border-t border-neutral-200 pt-4 dark:border-neutral-800">
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            Didn&apos;t get it?
-          </p>
+        <div>
+          <Divider className="mb-4" />
+          <p className="text-sm text-muted-foreground">Didn&apos;t get it?</p>
           <div className="mt-3">
             <ResendConfirmationForm email={state.email} />
           </div>
@@ -70,22 +72,18 @@ export function RegisterForm() {
       />
 
       <div className="flex flex-col gap-1.5">
-        <label className="flex items-start gap-2 text-sm text-neutral-700 dark:text-neutral-300">
-          <input
-            type="checkbox"
-            name="termsAccepted"
-            className="mt-0.5 h-4 w-4 shrink-0 rounded border-neutral-300 dark:border-neutral-700"
-            aria-describedby={state.fieldErrors?.termsAccepted ? "termsAccepted-error" : undefined}
-          />
-          <span>
-            I agree to the Terms of Service and Privacy Notice. (Placeholder — NetPDBFF&apos;s
-            final policies have not been published yet.)
-          </span>
-        </label>
+        <Checkbox
+          name="termsAccepted"
+          aria-describedby={state.fieldErrors?.termsAccepted ? "termsAccepted-error" : undefined}
+          label={
+            <>
+              I agree to the Terms of Service and Privacy Notice. (Placeholder — NetPDBFF&apos;s
+              final policies have not been published yet.)
+            </>
+          }
+        />
         {state.fieldErrors?.termsAccepted ? (
-          <p id="termsAccepted-error" role="alert" className="text-sm text-red-600 dark:text-red-400">
-            {state.fieldErrors.termsAccepted}
-          </p>
+          <FieldError id="termsAccepted-error">{state.fieldErrors.termsAccepted}</FieldError>
         ) : null}
       </div>
 
