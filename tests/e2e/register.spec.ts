@@ -1,0 +1,87 @@
+import { expect, test } from "@playwright/test";
+
+import { waitForConfirmationLink } from "./helpers/mailpit";
+
+test.describe("Registration", () => {
+  test("shows field errors for invalid input and does not submit", async ({ page }) => {
+    await page.goto("/register");
+    await page.getByLabel("Email").fill("not-an-email");
+    await page.getByLabel("Password", { exact: true }).fill("short");
+    await page.getByLabel("Confirm password").fill("different");
+    await page.getByRole("button", { name: "Create account" }).click();
+
+    await expect(page.getByText("Enter a valid email address.")).toBeVisible();
+    await expect(page.getByText(/at least 8 characters/)).toBeVisible();
+    await expect(page.getByText("Passwords do not match.")).toBeVisible();
+    // Still on the registration form, not the neutral success state.
+    await expect(page.getByRole("button", { name: "Create account" })).toBeVisible();
+  });
+
+  test("requires explicit terms acceptance", async ({ page }) => {
+    const email = `e2e-${Date.now()}@example.com`;
+
+    await page.goto("/register");
+    await page.getByLabel("Email").fill(email);
+    await page.getByLabel("Password", { exact: true }).fill("correcthorse1");
+    await page.getByLabel("Confirm password").fill("correcthorse1");
+    await page.getByRole("button", { name: "Create account" }).click();
+
+    await expect(page.getByText(/accept the Terms/)).toBeVisible();
+  });
+
+  test("registers, confirms via the Mailpit email, and reaches the member area", async ({
+    page,
+  }) => {
+    const email = `e2e-${Date.now()}@example.com`;
+
+    await page.goto("/register");
+    await page.getByLabel("Email").fill(email);
+    await page.getByLabel("Password", { exact: true }).fill("correcthorse1");
+    await page.getByLabel("Confirm password").fill("correcthorse1");
+    await page.getByRole("checkbox").check();
+    await page.getByRole("button", { name: "Create account" }).click();
+
+    // Explicit "confirmation email sent" state — neutral wording, same
+    // regardless of whether the address was already registered.
+    await expect(page.getByText(/Check your email/)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Resend confirmation email" })).toBeVisible();
+
+    const confirmLink = await waitForConfirmationLink(email);
+    await page.goto(confirmLink);
+
+    await expect(page).toHaveURL(/\/member\?confirmed=1$/);
+    // Explicit "confirmation success" state.
+    await expect(page.getByText("Your email address has been confirmed.")).toBeVisible();
+    // Scoped to <main>: the confirmed member page renders this same email
+    // twice — once in the page body (src/app/(protected)/member/page.tsx)
+    // and once in ProtectedNav's header (src/components/layout/ProtectedNav.tsx,
+    // sm:inline). An unscoped getByText(email) matches both and violates
+    // Playwright's strict mode. <main> contains only the page-body copy.
+    await expect(page.locator("main").getByText(email)).toBeVisible();
+    await expect(page.getByText(/connected to a NetPDBFF person record/)).toBeVisible();
+  });
+
+  test("resend confirmation sends another email and enforces a cooldown", async ({ page }) => {
+    const email = `e2e-${Date.now()}@example.com`;
+
+    await page.goto("/register");
+    await page.getByLabel("Email").fill(email);
+    await page.getByLabel("Password", { exact: true }).fill("correcthorse1");
+    await page.getByLabel("Confirm password").fill("correcthorse1");
+    await page.getByRole("checkbox").check();
+    await page.getByRole("button", { name: "Create account" }).click();
+    await expect(page.getByText(/Check your email/)).toBeVisible();
+
+    // First email from registration itself.
+    await waitForConfirmationLink(email);
+
+    const resendButton = page.getByRole("button", { name: "Resend confirmation email" });
+    await resendButton.click();
+
+    await expect(
+      page.getByText(/we've sent another link|If that address is registered/),
+    ).toBeVisible();
+    // Cooldown disables the button and relabels it.
+    await expect(page.getByRole("button", { name: /Resend available in \d+s/ })).toBeVisible();
+  });
+});

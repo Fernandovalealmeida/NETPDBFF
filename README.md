@@ -5,9 +5,11 @@ Biological Dynamics of Forest Fragments Project (PDBFF) across its
 history — researchers, field assistants, students, staff, and
 collaborators, past and present.
 
-This repository currently contains only the **project foundation**:
-tooling, structure, and documentation. No authentication, profiles,
-database, or search functionality is implemented yet. See
+This repository currently contains the project foundation (tooling,
+structure, documentation), the M3.1 identity-foundation database schema, and
+an M4 email/password authentication vertical slice (see
+`docs/authentication-implementation.md`). Profiles, person claiming,
+institutions, and search are not implemented yet. See
 `docs/development-roadmap.md` for what comes next.
 
 ## Stack
@@ -36,6 +38,8 @@ Open http://localhost:3000.
 | `npm run start`       | Run the production build             |
 | `npm run lint`        | Run ESLint                           |
 | `npm run typecheck`   | Run the TypeScript compiler (no emit) |
+| `npm run test`         | Run unit tests (Vitest)              |
+| `npm run test:e2e`     | Run end-to-end tests (Playwright; requires local Supabase — see below) |
 
 ## Project structure
 
@@ -64,6 +68,9 @@ docs/           Product, architecture, and data-model documentation
 - `docs/development-roadmap.md` — phased build plan
 - `docs/decisions/` — architecture decision records (ADRs)
 - `docs/supabase-development.md` — local/hosted Supabase development setup
+- `docs/database-implementation.md` — M3.1 identity-foundation schema
+- `docs/authentication-implementation.md` — M4 email/password authentication
+  (route map, Supabase clients, local Mailpit testing, security decisions)
 
 ## Environment variables
 

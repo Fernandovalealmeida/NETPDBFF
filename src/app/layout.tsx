@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+import { PublicHeader } from "@/components/layout/PublicHeader";
+
 // The interface language is English at launch. The `lang` attribute is set
 // statically here for now; when Portuguese support is introduced this will
 // become dynamic (e.g. driven by a locale segment/middleware), per
@@ -20,7 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang={LOCALE}>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <PublicHeader />
+        {children}
+      </body>
     </html>
   );
 }

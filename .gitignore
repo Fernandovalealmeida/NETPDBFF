@@ -46,6 +46,12 @@ supabase/.env
 *.tsbuildinfo
 next-env.d.ts
 
+# Playwright (see tests/e2e — docs/authentication-implementation.md)
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
 # editors / OS
 .idea
 .vscode/*
