@@ -9,6 +9,14 @@ it rests on is
 `docs/decisions/0010-platform-vision-nodes-of-knowledge.md`, which in turn
 extends `docs/decisions/0007-netpdbff-first-vertical-general-research-infrastructure.md`.
 
+Its philosophical foundation — why the platform exists, what a Scientific
+Biography is, and the design principles that should guide every implementation
+milestone — is developed at book length in
+`docs/nodes-of-knowledge-design-bible-volume-1.md` (The Nodes of Knowledge
+Design Bible, Volume I: Scientific Identities & Institutional Memory). That
+book is product philosophy, not an implementation specification; this document
+remains the operative, current-state picture of the platform.
+
 This document describes intent and architecture. It is **not** a
 description of what is built. Today, exactly one Node exists (Node PDBFF),
 and the platform is deliberately a single-Node application. Everything here

@@ -62,6 +62,11 @@ docs/           Product, architecture, and data-model documentation
 - `docs/master-vision.md` — the platform vision (Nodes of Knowledge) and how
   NetPDBFF is its first Node (Node PDBFF); see also
   `docs/decisions/0010-platform-vision-nodes-of-knowledge.md`
+- `docs/nodes-of-knowledge-design-bible-volume-1.md` — The Nodes of Knowledge
+  Design Bible, Volume I (Scientific Identities & Institutional Memory): the
+  product-philosophy foundation the vision rests on — why the platform exists,
+  what a Scientific Biography is, and the design principles that guide every
+  milestone (product philosophy, not implementation spec)
 - `docs/product-specification.md` — product scope and goals
 - `docs/architecture.md` — modular-monolith architecture and planned modules
 - `docs/database-model.md` — preliminary conceptual data model
