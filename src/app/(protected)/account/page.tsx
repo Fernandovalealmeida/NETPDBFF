@@ -6,13 +6,14 @@ import { Container } from "@/components/ui/Container";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FutureAction } from "@/components/ui/FutureAction";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageTitle } from "@/config/site";
 
 import { getIdentityStatus } from "@/features/identity/status";
 import { getIdentityStatusCopy } from "@/features/identity/copy";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Account — NetPDBFF",
+  title: pageTitle("Account"),
 };
 
 function formatDate(value: string | null | undefined): string {

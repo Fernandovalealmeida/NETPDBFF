@@ -35,10 +35,21 @@ What was decided.
 What this makes easier or harder going forward.
 ```
 
-## Existing records
-
-None yet. The initial stack and conventions for this project (Next.js App
-Router, TypeScript strict mode, Tailwind CSS, ESLint, Supabase/PostgreSQL,
+The initial stack and conventions for this project (Next.js App Router,
+TypeScript strict mode, Tailwind CSS, ESLint, Supabase/PostgreSQL,
 modular-monolith architecture) were established directly in `CLAUDE.md`
 and `docs/architecture.md` rather than as a standalone ADR; future changes
 to those choices should be recorded here.
+
+## Existing records
+
+- [0001](0001-separate-people-from-user-accounts.md) — Separate people from user accounts
+- [0002](0002-theming-and-server-client-theme-handling.md) — Theming and server/client theme handling
+- [0003](0003-component-primitives-headless-for-complex-interactions.md) — Headless component primitives for complex interactions
+- [0004](0004-icon-library-lucide.md) — Icon library: Lucide
+- [0005](0005-no-animation-library-for-m5.md) — No animation library for M5
+- [0006](0006-public-static-shell-vs-authenticated-dynamic-shell.md) — Public static shell vs. authenticated dynamic shell
+- [0007](0007-netpdbff-first-vertical-general-research-infrastructure.md) — NetPDBFF as the first vertical of a general research-infrastructure platform (Accepted)
+- [0008](0008-claim-discovery-security-definer-function.md) — Claim discovery via `SECURITY DEFINER` function
+- [0009](0009-reviewer-authorization-table.md) — Reviewer authorization table
+- [0010](0010-platform-vision-nodes-of-knowledge.md) — Platform Vision: Nodes of Knowledge

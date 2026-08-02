@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import { ThemeScript } from "@/components/theme/ThemeScript";
+import { SITE_DESCRIPTION, SITE_NAME } from "@/config/site";
 
 // The interface language is English at launch. The `lang` attribute is set
 // statically here for now; when Portuguese support is introduced this will
@@ -10,9 +11,8 @@ import { ThemeScript } from "@/components/theme/ThemeScript";
 const LOCALE = "en";
 
 export const metadata: Metadata = {
-  title: "NetPDBFF",
-  description:
-    "The living human network of the Biological Dynamics of Forest Fragments Project",
+  title: SITE_NAME,
+  description: SITE_DESCRIPTION,
 };
 
 export default function RootLayout({

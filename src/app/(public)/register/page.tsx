@@ -3,11 +3,12 @@ import Link from "next/link";
 
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageTitle } from "@/config/site";
 
 import { RegisterForm } from "./RegisterForm";
 
 export const metadata: Metadata = {
-  title: "Register — NetPDBFF",
+  title: pageTitle("Register"),
 };
 
 // Registration creates only a Supabase Auth account — see

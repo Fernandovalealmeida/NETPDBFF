@@ -1,5 +1,6 @@
-import { expect, test, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
 
+import { expect, test } from "./fixtures";
 import { registerAndConfirm } from "./helpers/auth";
 import { attachConsoleWatcher, getDuplicateIds, hasHorizontalOverflow, setStoredTheme } from "./helpers/page-quality";
 import { getUserIdByEmail, grantReviewerStatus, revokeReviewerStatus } from "./helpers/reviewer";
@@ -7,24 +8,25 @@ import { getUserIdByEmail, grantReviewerStatus, revokeReviewerStatus } from "./h
 // Browser coverage for the M5.4 claim-review workflow (/review/claims,
 // /review/claims/[claimId], plus its effect on /member and /account).
 //
-// Like claim-workflow.spec.ts, this relies on the two fixture `people`
-// rows in supabase/seed.sql ("Ada Lovelace", "Grace Hopper"). Unlike that
-// file's tests (which only search, or claim-then-withdraw — both fully
-// reversible), the approve-flow test below actually approves a claim,
-// which permanently consumes one of these two shared fixtures for the
-// rest of the local database's life (there is no client-reachable way to
-// "unclaim" a person once approved — that's an explicit, documented M5.4
-// deferral; see docs/decisions/0009-reviewer-authorization-table.md's
-// "next governance dependency" note). Run `npm run supabase:reset` before
-// a full e2e run if you need both fixtures available again, and prefer
-// running this file in the same pass as claim-workflow.spec.ts rather
-// than interleaving repeated partial runs.
+// Person fixtures: every test that needs a claimable person gets its own
+// unique, disposable one from the `claimablePerson` fixture (see
+// fixtures.ts / helpers/people.ts) — no shared seed rows. This is what makes
+// the file deterministic under Playwright's default parallel (per-file)
+// workers: the approve test below approves a claim, which permanently
+// consumes *its own* fixture person (an approved claim creates an
+// irreversible, one-per-person user_person_links row — there is no
+// client-reachable "unclaim"; see
+// docs/decisions/0009-reviewer-authorization-table.md). Because that person
+// is private to that test, the consumption is invisible to every other test
+// and every other worker. The fixture teardown deliberately retains an
+// approved-linked person until the next `supabase db reset` rather than
+// force-deleting the link (see helpers/people.ts's deleteClaimablePerson).
 //
 // Requires SUPABASE_SERVICE_ROLE_KEY in the environment (see
-// helpers/reviewer.ts) for every test that needs an authorized-reviewer
-// session — there is no client-facing way to become one, by design.
-// Tests that only need an authenticated-but-ordinary session (access
-// denial, self-review) do not require it.
+// helpers/service-role.ts) for every test that needs an authorized-reviewer
+// session or a disposable person — there is no client-facing way to
+// construct either, by design. The two access-denial tests need neither and
+// so require no service-role key.
 
 function uniqueEmailPrefix(tag: string): string {
   return `e2e-review-${tag}`;
@@ -45,13 +47,11 @@ async function submitClaim(page: Page, personSearchTerm: string, evidence?: stri
 /**
  * Locates one specific claimant's row in the review queue, scoped by both
  * the claimed person's name and the claimant's email. The queue is shared,
- * non-isolated state across every test in this file — the same seed person
- * ("Ada Lovelace"/"Grace Hopper") can legitimately be claimed by more than
- * one test's claimant before any of them is decided, so matching on name
- * alone risks a Playwright strict-mode violation (multiple rows) or,
- * worse, silently clicking the wrong claimant's row. Scoping by email too
- * makes each lookup deterministic regardless of what earlier tests (or a
- * previous partial run) left behind.
+ * non-isolated state across every test in this file — even with per-test
+ * unique people, scoping the row lookup by claimant email too keeps each
+ * lookup deterministic regardless of what other tests (or a previous partial
+ * run) left in the queue, and guards against a Playwright strict-mode
+ * violation if any name ever recurs.
  */
 function queueRow(page: Page, personName: string, claimantEmail: string) {
   return page.locator("main ul li", { hasText: personName }).filter({ hasText: claimantEmail });
@@ -88,13 +88,14 @@ test.describe("Authorized reviewer — queue, detail, and evidence scoping", () 
   test("an active reviewer sees the nav link, the queue, and full claim detail including evidence", async ({
     page,
     browser,
+    claimablePerson,
   }) => {
     // A separate claimant account and browser context submits a claim
     // first, so the reviewer account below has something real to review.
     const claimantContext = await browser.newContext();
     const claimantPage = await claimantContext.newPage();
     const claimantEmail = await registerAndConfirm(claimantPage, uniqueEmailPrefix("claimant-queue"));
-    await submitClaim(claimantPage, "Lovelace", "I corresponded with the PDBFF working group in the 1990s.");
+    await submitClaim(claimantPage, claimablePerson.searchTerm, "I corresponded with the PDBFF working group in the 1990s.");
     await claimantContext.close();
 
     const reviewerEmail = await registerAndConfirm(page, uniqueEmailPrefix("reviewer-queue"));
@@ -107,12 +108,12 @@ test.describe("Authorized reviewer — queue, detail, and evidence scoping", () 
     await page.goto("/review/claims");
     await expect(page.getByRole("heading", { name: "Claim review" })).toBeVisible();
 
-    const row = queueRow(page, "Ada Lovelace", claimantEmail);
+    const row = queueRow(page, claimablePerson.displayName, claimantEmail);
     await expect(row).toBeVisible();
     await expect(row.getByText("Submitted", { exact: true })).toBeVisible();
 
     await row.getByRole("link").click();
-    await expect(page.getByRole("heading", { name: "Review: Ada Lovelace" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: `Review: ${claimablePerson.displayName}` })).toBeVisible();
 
     // The four clearly-separated sections the milestone requires, each its
     // own card — never blended into one fact list.
@@ -132,15 +133,15 @@ test.describe("Authorized reviewer — queue, detail, and evidence scoping", () 
 });
 
 test.describe("Self-review denial", () => {
-  test("an active reviewer cannot begin review on their own claim", async ({ page }) => {
+  test("an active reviewer cannot begin review on their own claim", async ({ page, claimablePerson }) => {
     const email = await registerAndConfirm(page, uniqueEmailPrefix("self"));
-    await submitClaim(page, "Hopper");
+    await submitClaim(page, claimablePerson.searchTerm);
 
     const userId = await getUserIdByEmail(email);
     await grantReviewerStatus(userId);
 
     await page.goto("/review/claims");
-    await queueRow(page, "Grace Hopper", email).getByRole("link").click();
+    await queueRow(page, claimablePerson.displayName, email).getByRole("link").click();
     await page.getByRole("button", { name: "Begin review" }).click();
 
     await expect(page.getByText("You cannot review your own claim.")).toBeVisible();
@@ -179,18 +180,19 @@ test.describe("Approve workflow — claimant-visible outcome", () => {
   test("approving a claim links the account, and the claimant sees a real, non-fabricated linked state on /member and /account", async ({
     page,
     browser,
+    claimablePerson,
   }) => {
     const claimantContext = await browser.newContext();
     const claimantPage = await claimantContext.newPage();
     const claimantEmail = await registerAndConfirm(claimantPage, uniqueEmailPrefix("claimant-approve"));
-    await submitClaim(claimantPage, "Lovelace");
+    await submitClaim(claimantPage, claimablePerson.searchTerm);
 
     const reviewerEmail = await registerAndConfirm(page, uniqueEmailPrefix("reviewer-approve"));
     const reviewerId = await getUserIdByEmail(reviewerEmail);
     await grantReviewerStatus(reviewerId);
 
     await page.goto("/review/claims");
-    await queueRow(page, "Ada Lovelace", claimantEmail).getByRole("link").click();
+    await queueRow(page, claimablePerson.displayName, claimantEmail).getByRole("link").click();
     await page.getByRole("button", { name: "Begin review" }).click();
     await expect(page.getByRole("button", { name: "Approve claim" })).toBeVisible();
 
@@ -200,7 +202,7 @@ test.describe("Approve workflow — claimant-visible outcome", () => {
     await expect(dialog.getByText("Approve this claim?")).toBeVisible();
     await dialog.getByRole("button", { name: "Cancel" }).click();
     await expect(dialog).toHaveCount(0);
-    await expect(page.getByRole("heading", { name: "Review: Ada Lovelace" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: `Review: ${claimablePerson.displayName}` })).toBeVisible();
 
     // Now actually confirm.
     await page.getByRole("button", { name: "Approve claim" }).click();
@@ -223,14 +225,14 @@ test.describe("Approve workflow — claimant-visible outcome", () => {
     await expect(page.getByText(/Resulting link:\s*Active/)).toBeVisible();
 
     await claimantPage.goto("/member");
-    await expect(claimantPage.getByText("Your account is linked to Ada Lovelace")).toBeVisible();
+    await expect(claimantPage.getByText(`Your account is linked to ${claimablePerson.displayName}`)).toBeVisible();
     // No fabricated participation/network/publication content.
     const fabricatedMetricPattern =
       /\b\d[\d,]*\+?\s*(participations?|publications?|institutions?|projects?|relationships?|collaborators?|connections?|records?)\b/i;
     await expect(claimantPage.getByText(fabricatedMetricPattern)).toHaveCount(0);
 
     await claimantPage.goto("/account");
-    await expect(claimantPage.getByText("Your account is linked to Ada Lovelace")).toBeVisible();
+    await expect(claimantPage.getByText(`Your account is linked to ${claimablePerson.displayName}`)).toBeVisible();
     // The claimant never sees who reviewed their claim.
     await expect(claimantPage.getByText(reviewerEmail)).toHaveCount(0);
 
@@ -242,18 +244,19 @@ test.describe("Reject workflow — claimant-visible outcome", () => {
   test("rejecting a claim with a note shows the claimant a calm, neutral outcome and the note, never the reviewer's identity", async ({
     page,
     browser,
+    claimablePerson,
   }) => {
     const claimantContext = await browser.newContext();
     const claimantPage = await claimantContext.newPage();
     const claimantEmail = await registerAndConfirm(claimantPage, uniqueEmailPrefix("claimant-reject"));
-    await submitClaim(claimantPage, "Hopper");
+    await submitClaim(claimantPage, claimablePerson.searchTerm);
 
     const reviewerEmail = await registerAndConfirm(page, uniqueEmailPrefix("reviewer-reject"));
     const reviewerId = await getUserIdByEmail(reviewerEmail);
     await grantReviewerStatus(reviewerId);
 
     await page.goto("/review/claims");
-    await queueRow(page, "Grace Hopper", claimantEmail).getByRole("link").click();
+    await queueRow(page, claimablePerson.displayName, claimantEmail).getByRole("link").click();
     await page.getByRole("button", { name: "Begin review" }).click();
     await expect(page.getByRole("button", { name: "Reject claim" })).toBeVisible();
 
@@ -273,7 +276,7 @@ test.describe("Reject workflow — claimant-visible outcome", () => {
     await expect(page.getByRole("button", { name: "Reject claim" })).toHaveCount(0);
 
     await claimantPage.goto("/member");
-    await expect(claimantPage.getByText("Your claim on Grace Hopper was not approved")).toBeVisible();
+    await expect(claimantPage.getByText(`Your claim on ${claimablePerson.displayName} was not approved`)).toBeVisible();
     await expect(claimantPage.getByText(/Reviewer note: Name does not match the historical record\./)).toBeVisible();
     // Calm and neutral: no reviewer email or internal-only detail reaches
     // the claimant.

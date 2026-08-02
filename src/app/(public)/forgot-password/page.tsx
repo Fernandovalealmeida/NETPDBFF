@@ -3,11 +3,12 @@ import Link from "next/link";
 
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageTitle } from "@/config/site";
 
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
 
 export const metadata: Metadata = {
-  title: "Forgot password — NetPDBFF",
+  title: pageTitle("Forgot password"),
 };
 
 export default function ForgotPasswordPage() {

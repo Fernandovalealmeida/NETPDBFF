@@ -59,6 +59,9 @@ docs/           Product, architecture, and data-model documentation
 ## Documentation
 
 - `CLAUDE.md` — permanent project rules
+- `docs/master-vision.md` — the platform vision (Nodes of Knowledge) and how
+  NetPDBFF is its first Node (Node PDBFF); see also
+  `docs/decisions/0010-platform-vision-nodes-of-knowledge.md`
 - `docs/product-specification.md` — product scope and goals
 - `docs/architecture.md` — modular-monolith architecture and planned modules
 - `docs/database-model.md` — preliminary conceptual data model

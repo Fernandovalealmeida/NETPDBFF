@@ -5,12 +5,13 @@ import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import { Container } from "@/components/ui/Container";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageTitle } from "@/config/site";
 import { getReviewStatusLabel, REVIEW_QUEUE_EMPTY_COPY, REVIEW_QUEUE_INTRO } from "@/features/review/copy";
 import { getReviewQueue } from "@/features/review/queue";
 import type { ClaimStatus } from "@/features/review/types";
 
 export const metadata: Metadata = {
-  title: "Claim review queue — NetPDBFF",
+  title: pageTitle("Claim review queue"),
 };
 
 const STATUS_TONE: Record<ClaimStatus, BadgeTone> = {

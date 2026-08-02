@@ -1,5 +1,6 @@
-import { expect, test, type Page } from "@playwright/test";
+import { type Page } from "@playwright/test";
 
+import { expect, test } from "./fixtures";
 import { registerAndConfirm } from "./helpers/auth";
 import { assertNoSeriousOrCriticalViolations, runAccessibilityScan } from "./helpers/accessibility";
 import { setStoredTheme } from "./helpers/page-quality";
@@ -104,27 +105,22 @@ test.describe("Accessibility: /update-password (gated state)", () => {
 
 test.describe("Accessibility: /review/claims (reviewer, queue with content)", () => {
   for (const theme of THEMES) {
-    test(`no critical/serious axe violations (${theme} theme)`, async ({ page, browser }) => {
+    test(`no critical/serious axe violations (${theme} theme)`, async ({ page, browser, claimablePerson }) => {
       // A separate claimant/context submits a claim first so the queue
       // scanned below has real list content, not just the empty state --
       // both are legitimate, but the list markup (Badge, per-row link) is
       // the richer surface worth scanning.
       //
-      // "Hopper", not "Lovelace": supabase/seed.sql seeds exactly two
-      // `people` rows for the whole suite, and claim-review.spec.ts's
-      // "Approve workflow" test permanently removes Lovelace from
-      // search_claimable_people's results the moment it runs (an approved
-      // claim creates a real, non-reversible user_person_links row -- see
-      // that file's own comment). Nothing in this suite ever approves a
-      // claim on Hopper (only rejects, which doesn't affect claimability),
-      // so she's the one search term every test in this file can rely on
-      // regardless of Playwright's worker-scheduling order relative to
-      // claim-review.spec.ts. Matches the /review/claims/[claimId] test
-      // below, which already uses "Hopper" for the same reason.
+      // Uses this test's own disposable `claimablePerson` (see fixtures.ts),
+      // not a shared seed row: the claim submitted here is only ever
+      // reviewed/scanned, never approved, so the person is cleaned up after
+      // the test. Per-test isolation means this scan can't be perturbed by
+      // claim-review.spec.ts's approve test consuming a shared fixture in a
+      // parallel worker.
       const claimantContext = await browser.newContext();
       const claimantPage = await claimantContext.newPage();
       await registerAndConfirm(claimantPage, uniqueEmailPrefix(`queue-claimant-${theme}`));
-      await submitClaim(claimantPage, "Hopper");
+      await submitClaim(claimantPage, claimablePerson.searchTerm);
       await claimantContext.close();
 
       const reviewerEmail = await registerAndConfirm(page, uniqueEmailPrefix(`queue-reviewer-${theme}`));
@@ -141,11 +137,11 @@ test.describe("Accessibility: /review/claims (reviewer, queue with content)", ()
 
 test.describe("Accessibility: /review/claims/[claimId] (reviewer, submitted-claim detail)", () => {
   for (const theme of THEMES) {
-    test(`no critical/serious axe violations (${theme} theme)`, async ({ page, browser }) => {
+    test(`no critical/serious axe violations (${theme} theme)`, async ({ page, browser, claimablePerson }) => {
       const claimantContext = await browser.newContext();
       const claimantPage = await claimantContext.newPage();
       const claimantEmail = await registerAndConfirm(claimantPage, uniqueEmailPrefix(`detail-claimant-${theme}`));
-      await submitClaim(claimantPage, "Hopper");
+      await submitClaim(claimantPage, claimablePerson.searchTerm);
       await claimantContext.close();
 
       const reviewerEmail = await registerAndConfirm(page, uniqueEmailPrefix(`detail-reviewer-${theme}`));
@@ -155,11 +151,11 @@ test.describe("Accessibility: /review/claims/[claimId] (reviewer, submitted-clai
       await setStoredTheme(page, theme);
       await page.goto("/review/claims");
       await page
-        .locator("main ul li", { hasText: "Grace Hopper" })
+        .locator("main ul li", { hasText: claimablePerson.displayName })
         .filter({ hasText: claimantEmail })
         .getByRole("link")
         .click();
-      await expect(page.getByRole("heading", { name: "Review: Grace Hopper" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: `Review: ${claimablePerson.displayName}` })).toBeVisible();
       await scanCurrentPage(page);
     });
   }
@@ -182,16 +178,16 @@ test.describe("Accessibility: reviewer confirmation dialogs", () => {
   test("Approve and Reject confirmation dialogs have no critical/serious axe violations", async ({
     page,
     browser,
+    claimablePerson,
   }) => {
-    // "Hopper", not "Lovelace" -- see the identical reasoning in the
-    // "/review/claims (reviewer, queue with content)" test above. This
-    // test in particular must never approve/reject for real (it only
-    // opens each dialog and cancels), so it doesn't consume Hopper's
-    // claimability either -- she remains available to every later test.
+    // Uses this test's own disposable `claimablePerson` (see fixtures.ts).
+    // This test only opens each dialog and cancels -- it never approves or
+    // rejects for real -- so the person is never linked and is cleaned up
+    // after the test. Isolation makes it independent of every other worker.
     const claimantContext = await browser.newContext();
     const claimantPage = await claimantContext.newPage();
     const claimantEmail = await registerAndConfirm(claimantPage, uniqueEmailPrefix("dialog-claimant"));
-    await submitClaim(claimantPage, "Hopper");
+    await submitClaim(claimantPage, claimablePerson.searchTerm);
     await claimantContext.close();
 
     const reviewerEmail = await registerAndConfirm(page, uniqueEmailPrefix("dialog-reviewer"));
@@ -200,7 +196,7 @@ test.describe("Accessibility: reviewer confirmation dialogs", () => {
 
     await page.goto("/review/claims");
     await page
-      .locator("main ul li", { hasText: "Grace Hopper" })
+      .locator("main ul li", { hasText: claimablePerson.displayName })
       .filter({ hasText: claimantEmail })
       .getByRole("link")
       .click();

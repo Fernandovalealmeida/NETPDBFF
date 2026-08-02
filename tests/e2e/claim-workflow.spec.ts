@@ -1,35 +1,44 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 import { registerAndConfirm } from "./helpers/auth";
 
 // Browser coverage for the M5.3 identity-claiming workflow
-// (/member/claim, plus its effect on /member and /account). Relies on the
-// two fixture `people` rows in supabase/seed.sql ("Ada Lovelace", "Grace
-// Hopper") — there is no client-reachable, app-level way to create a
-// `people` row in this milestone, so a local Supabase instance must have
-// been started/reset with that seed applied (`supabase start` /
-// `supabase db reset`) for the tests below that search for a match to
-// pass. Redirect-only coverage (unauthenticated access) lives in
+// (/member/claim, plus its effect on /member and /account).
+//
+// Person fixtures: every test that needs a claimable person gets its own
+// unique, disposable one from the `claimablePerson` fixture (see
+// fixtures.ts / helpers/people.ts) rather than a shared seed row. There is
+// no client-reachable, app-level way to create a `people` row in this
+// milestone, so the fixture mints one via the same trusted service-role
+// setup path reviewer status already uses. Per-test isolation is what keeps
+// this file deterministic under Playwright's default parallel (per-file)
+// workers alongside claim-review.spec.ts, whose approve test irreversibly
+// consumes its own person.
+//
+// Redirect-only coverage (unauthenticated access) lives in
 // protected-routes.spec.ts, not repeated here. Duplicate-id/overflow/
 // console/theme coverage for /member/claim itself lives in
 // workspace-pages-quality.spec.ts's existing per-path loop, not repeated
 // here either — this file is scoped to the workflow's own behavior.
 //
-// registerAndConfirm now lives in helpers/auth.ts (shared with
-// claim-review.spec.ts, M5.4) — this file no longer defines its own copy.
+// registerAndConfirm lives in helpers/auth.ts (shared with
+// claim-review.spec.ts, M5.4).
 
 test.describe("Claim discovery", () => {
-  test("an authenticated user can search and find an eligible person record", async ({ page }) => {
+  test("an authenticated user can search and find an eligible person record", async ({
+    page,
+    claimablePerson,
+  }) => {
     await registerAndConfirm(page, "e2e-claim");
     await page.goto("/member/claim");
 
-    await page.getByLabel("Search by name").fill("Lovelace");
+    await page.getByLabel("Search by name").fill(claimablePerson.searchTerm);
     await page.getByRole("button", { name: "Search" }).click();
 
     // Uncertainty framing is explicit, not implied — this is a possible
     // match, never asserted to be a confirmed identity.
     await expect(page.getByText(/possible match/i)).toBeVisible();
-    await expect(page.getByText("Ada Lovelace")).toBeVisible();
+    await expect(page.getByText(claimablePerson.displayName)).toBeVisible();
     await expect(page.getByRole("button", { name: "Select" }).first()).toBeVisible();
   });
 
@@ -45,11 +54,14 @@ test.describe("Claim discovery", () => {
     await expect(page.getByText("No matching person records found")).toBeVisible();
   });
 
-  test("selecting a result moves keyboard focus to the confirmation step", async ({ page }) => {
+  test("selecting a result moves keyboard focus to the confirmation step", async ({
+    page,
+    claimablePerson,
+  }) => {
     await registerAndConfirm(page, "e2e-claim");
     await page.goto("/member/claim");
 
-    await page.getByLabel("Search by name").fill("Hopper");
+    await page.getByLabel("Search by name").fill(claimablePerson.searchTerm);
     await page.getByRole("button", { name: "Search" }).click();
     await page.getByRole("button", { name: "Select" }).first().click();
 
@@ -60,11 +72,12 @@ test.describe("Claim discovery", () => {
 test.describe("Claim submission, status, and duplicate prevention", () => {
   test("submitting a claim shows pending status on both /member and /account, blocks a second claim, and withdrawal reopens discovery", async ({
     page,
+    claimablePerson,
   }) => {
     await registerAndConfirm(page, "e2e-claim");
     await page.goto("/member/claim");
 
-    await page.getByLabel("Search by name").fill("Lovelace");
+    await page.getByLabel("Search by name").fill(claimablePerson.searchTerm);
     await page.getByRole("button", { name: "Search" }).click();
     await page.getByRole("button", { name: "Select" }).first().click();
     await page.getByRole("button", { name: "Submit claim" }).click();
@@ -74,7 +87,7 @@ test.describe("Claim submission, status, and duplicate prevention", () => {
     // Pending status on /member: names the person, explains what's
     // happening, offers withdrawal — never a fabricated profile/dashboard.
     await page.goto("/member");
-    await expect(page.getByText(/Ada Lovelace is being reviewed/)).toBeVisible();
+    await expect(page.getByText(`${claimablePerson.displayName} is being reviewed`)).toBeVisible();
     const withdrawButton = page.getByRole("button", { name: "Withdraw claim" });
     await expect(withdrawButton).toBeVisible();
 
@@ -83,7 +96,7 @@ test.describe("Claim submission, status, and duplicate prevention", () => {
     // own (see workspace-pages-quality.spec.ts for the "no such controls"
     // assertion in the no-claim case).
     await page.goto("/account");
-    await expect(page.getByText(/Ada Lovelace is being reviewed/)).toBeVisible();
+    await expect(page.getByText(`${claimablePerson.displayName} is being reviewed`)).toBeVisible();
     await expect(page.getByRole("button", { name: "Withdraw claim" })).toHaveCount(0);
 
     // Duplicate prevention: visiting /member/claim directly while a claim
@@ -102,7 +115,9 @@ test.describe("Claim submission, status, and duplicate prevention", () => {
     // a blocking state.
     await page.goto("/member");
     await page.getByRole("button", { name: "Withdraw claim" }).click();
-    await expect(page.getByText(/You withdrew your claim on Ada Lovelace/)).toBeVisible();
+    await expect(
+      page.getByText(`You withdrew your claim on ${claimablePerson.displayName}`),
+    ).toBeVisible();
     await expect(page.getByRole("link", { name: "Search again" })).toHaveAttribute(
       "href",
       "/member/claim",

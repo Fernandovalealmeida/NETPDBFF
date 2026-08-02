@@ -6,6 +6,19 @@ This document describes the planned architecture for NetPDBFF. Only the
 project foundation (this repository's current state) has been built. The
 modules below are planned, not implemented.
 
+## Platform context
+
+NetPDBFF is the first Node of the **Nodes of Knowledge** platform (see
+`docs/master-vision.md` and
+`docs/decisions/0010-platform-vision-nodes-of-knowledge.md`, which extends
+`docs/decisions/0007-netpdbff-first-vertical-general-research-infrastructure.md`).
+In practice this means one standing discipline for everything below: keep
+the generic core (`src/lib`, `src/types`, the design system, the generic
+schema tables) discipline-independent, and keep PDBFF-specific vocabulary,
+branding, and copy in the per-Node "skin" layer. It does **not** add
+multi-tenancy, Node/institution tables, or any platform machinery — those
+remain unbuilt until a real second Node makes their requirements concrete.
+
 ## Approach: modular monolith
 
 NetPDBFF will be built as a single Next.js application (a monolith for

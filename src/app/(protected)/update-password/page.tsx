@@ -4,12 +4,13 @@ import Link from "next/link";
 
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageTitle } from "@/config/site";
 import { RECOVERY_FLOW_HINT_COOKIE } from "@/lib/auth/recovery-flow-hint";
 
 import { UpdatePasswordForm } from "./UpdatePasswordForm";
 
 export const metadata: Metadata = {
-  title: "Reset password — NetPDBFF",
+  title: pageTitle("Reset password"),
 };
 
 // Scope note (milestone quality review): this page is for *completing a

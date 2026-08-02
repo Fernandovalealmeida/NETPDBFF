@@ -1,5 +1,6 @@
 import { Alert } from "@/components/ui/Alert";
 import { Container } from "@/components/ui/Container";
+import { SITE_DESCRIPTION, SITE_NAME } from "@/config/site";
 
 // M5.2 landing-page redesign (M5 spec item 6): same three pieces of content
 // as the M1–M4 version — project name, temporary subtitle, development
@@ -30,11 +31,11 @@ export default function HomePage() {
     <main id="main-content" tabIndex={-1} className="flex flex-1 flex-col items-center justify-center px-6 py-24">
       <Container width="content" padded={false} className="text-center">
         <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-          NetPDBFF
+          {SITE_NAME}
         </h1>
 
         <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-          The living human network of the Biological Dynamics of Forest Fragments Project
+          {SITE_DESCRIPTION}
         </p>
 
         <Alert tone="neutral" className="mt-10 text-left">

@@ -5,12 +5,13 @@ import { ResendConfirmationForm } from "@/components/auth/ResendConfirmationForm
 import { Container } from "@/components/ui/Container";
 import { FormMessage } from "@/components/ui/FormMessage";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageTitle } from "@/config/site";
 import { sanitizeReturnTo } from "@/lib/auth/validation";
 
 import { LoginForm } from "./LoginForm";
 
 export const metadata: Metadata = {
-  title: "Log in — NetPDBFF",
+  title: pageTitle("Log in"),
 };
 
 interface LoginPageProps {

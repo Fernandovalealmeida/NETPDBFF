@@ -3,9 +3,10 @@ import Link from "next/link";
 
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageTitle } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: "Link problem — NetPDBFF",
+  title: pageTitle("Link problem"),
 };
 
 export default function AuthErrorPage() {

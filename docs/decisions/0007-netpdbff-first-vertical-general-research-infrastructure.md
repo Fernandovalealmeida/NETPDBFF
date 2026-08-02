@@ -1,7 +1,15 @@
 # 0007. NetPDBFF as the first vertical of a general research-infrastructure platform
 
 Date: 2026-08-01
-Status: Proposed
+Status: Accepted
+
+> Extended and named by
+> [ADR-0010 — Platform Vision: Nodes of Knowledge](0010-platform-vision-nodes-of-knowledge.md).
+> ADR-0010 gives the "general research-infrastructure platform" described
+> here its name (**Nodes of Knowledge**), calls each institution a **Node**,
+> frames this application as the first Node (**Node PDBFF**), and adds the
+> living `docs/master-vision.md`. This ADR's three-layer model and
+> guardrails remain in force unchanged.
 
 ## Context
 

@@ -3,10 +3,11 @@ import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageTitle } from "@/config/site";
 import { isCurrentUserReviewer } from "@/features/review/authorization";
 
 export const metadata: Metadata = {
-  title: "Claim review — NetPDBFF",
+  title: pageTitle("Claim review"),
 };
 
 // Nested layout, not a new top-level route group: everything under

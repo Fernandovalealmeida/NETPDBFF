@@ -5,6 +5,7 @@ import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageTitle } from "@/config/site";
 import { getReviewStatusLabel } from "@/features/review/copy";
 import { getReviewClaimDetail } from "@/features/review/detail";
 import { isReviewActionAvailable, type ClaimStatus } from "@/features/review/types";
@@ -13,7 +14,7 @@ import { BeginReviewButton } from "./BeginReviewButton";
 import { ReviewDecisionActions } from "./ReviewDecisionActions";
 
 export const metadata: Metadata = {
-  title: "Review claim — NetPDBFF",
+  title: pageTitle("Review claim"),
 };
 
 const STATUS_TONE: Record<ClaimStatus, BadgeTone> = {

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { MobileNavigation } from "@/components/layout/MobileNavigation";
 import { NavLink } from "@/components/layout/NavLink";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { SITE_NAME } from "@/config/site";
 import { getNavItemsByGroup } from "@/lib/navigation/select";
 
 // Fully static — no cookies()/Supabase call of any kind. This is what keeps
@@ -31,7 +32,7 @@ export function PublicHeader() {
     <header className="border-b border-border-default">
       <div className="mx-auto flex max-w-(--container-shell) items-center justify-between gap-3 px-6 py-4">
         <Link href="/" className="text-sm font-semibold tracking-tight text-foreground">
-          NetPDBFF
+          {SITE_NAME}
         </Link>
 
         <div className="flex items-center gap-4">

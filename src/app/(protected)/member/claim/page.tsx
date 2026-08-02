@@ -4,13 +4,14 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { FormMessage } from "@/components/ui/FormMessage";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { pageTitle } from "@/config/site";
 import { getIdentityStatus } from "@/features/identity/status";
 import { getIdentityStatusCopy } from "@/features/identity/copy";
 
 import { ClaimDiscoveryFlow } from "./ClaimDiscoveryFlow";
 
 export const metadata: Metadata = {
-  title: "Claim a person record — NetPDBFF",
+  title: pageTitle("Claim a person record"),
 };
 
 // New route for M5.3 — the real workflow entry point /member's "Claim a

@@ -9,6 +9,7 @@ import { FutureAction } from "@/components/ui/FutureAction";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Section } from "@/components/ui/Section";
 import { buttonVariants } from "@/components/ui/Button";
+import { pageTitle } from "@/config/site";
 import { getIdentityStatus } from "@/features/identity/status";
 import { getIdentityStatusCopy } from "@/features/identity/copy";
 import { createClient } from "@/lib/supabase/server";
@@ -16,7 +17,7 @@ import { createClient } from "@/lib/supabase/server";
 import { WithdrawClaimButton } from "./WithdrawClaimButton";
 
 export const metadata: Metadata = {
-  title: "Member area — NetPDBFF",
+  title: pageTitle("Member area"),
 };
 
 interface MemberPageProps {
