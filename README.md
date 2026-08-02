@@ -67,6 +67,12 @@ docs/           Product, architecture, and data-model documentation
   product-philosophy foundation the vision rests on — why the platform exists,
   what a Scientific Biography is, and the design principles that guide every
   milestone (product philosophy, not implementation spec)
+- `docs/nodes-of-knowledge-product-blueprint.md` — The Nodes of Knowledge
+  Product Blueprint (First Constitutional Edition): the bridge from the Design
+  Bible to the built platform — the product primitives, the conceptual engines
+  (Scientific Biography, Timeline, Participation, Relationships, Institution),
+  and the capability roadmap from which M6 implementation milestones emerge
+  (Product Architecture, not implementation spec)
 - `docs/product-specification.md` — product scope and goals
 - `docs/architecture.md` — modular-monolith architecture and planned modules
 - `docs/database-model.md` — preliminary conceptual data model

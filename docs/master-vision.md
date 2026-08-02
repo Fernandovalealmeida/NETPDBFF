@@ -17,6 +17,14 @@ Design Bible, Volume I: Scientific Identities & Institutional Memory). That
 book is product philosophy, not an implementation specification; this document
 remains the operative, current-state picture of the platform.
 
+That philosophy is translated into Product Architecture — the product
+primitives, the conceptual engines, and the capability roadmap from which the
+M6 implementation milestones emerge — in
+`docs/nodes-of-knowledge-product-blueprint.md` (The Nodes of Knowledge Product
+Blueprint, First Constitutional Edition). Like the Design Bible, it defines no
+schema, API, or route; it is the bridge between the vision and implementation,
+not implementation itself.
+
 This document describes intent and architecture. It is **not** a
 description of what is built. Today, exactly one Node exists (Node PDBFF),
 and the platform is deliberately a single-Node application. Everything here
