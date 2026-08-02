@@ -127,7 +127,18 @@
   /* Text */
   --color-foreground: var(--neutral-900);
   --color-muted-foreground: var(--neutral-600);
-  --color-subtle-foreground: var(--neutral-500);
+  /* M5.5: was var(--neutral-500) (#7e796f on #ffffff = 4.33:1) — measured
+     just under the WCAG AA 4.5:1 floor item 1's own acceptance criterion
+     requires for every token. The only current consumer is
+     placeholder:text-subtle-foreground (field-control-classes.ts), which
+     axe-core's automated color-contrast rule doesn't reliably evaluate
+     (::placeholder is a pseudo-element, not a text node it crawls), so
+     this was found by direct contrast-ratio calculation, not the axe
+     scan itself. Given a real, confirmed gap against the written
+     criterion, decoupled from --neutral-500 (kept exactly as-is for
+     --color-border-strong, a non-text use with its own 3:1 floor) rather
+     than darkening the shared primitive scale. #777269 = 4.78:1. */
+  --color-subtle-foreground: #777269;
   --color-disabled-foreground: var(--neutral-400);
 
   /* Borders */
@@ -264,7 +275,10 @@
 
   --color-foreground: var(--neutral-900);
   --color-muted-foreground: var(--neutral-600);
-  --color-subtle-foreground: var(--neutral-500);
+  /* M5.5: was var(--neutral-500) (#7f7a71 on #100f0f = 4.49:1) — measured
+     just under the WCAG AA 4.5:1 floor. See the identical fix's comment in
+     the light-theme block above for the full reasoning; #868178 = 4.94:1. */
+  --color-subtle-foreground: #868178;
   --color-disabled-foreground: var(--neutral-400);
 
   --color-border-default: var(--neutral-200);
@@ -392,7 +406,10 @@
 
     --color-foreground: var(--neutral-900);
     --color-muted-foreground: var(--neutral-600);
-    --color-subtle-foreground: var(--neutral-500);
+    /* M5.5: same fix as the [data-theme="dark"] block above -- this is the
+       prefers-color-scheme fallback path (no explicit choice stored yet),
+       which must stay value-identical to it per ADR-0002. */
+    --color-subtle-foreground: #868178;
     --color-disabled-foreground: var(--neutral-400);
 
     --color-border-default: var(--neutral-200);

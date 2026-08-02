@@ -258,6 +258,72 @@ every redesigned page in both themes; CI (once CI exists — none is
 documented as configured yet) or local `npm run test:e2e` catches
 unintended visual regressions on subsequent changes.
 
+**Decision (M5.5): explicitly deferred, not adopted.** Per this item's own
+instruction to either adopt or explicitly decline with reasoning before M5
+closes — resolved now, in M5.5, rather than left open.
+
+Not adopted because, inspected as of M5.5's baseline (`8e40e43`):
+
+- **No CI exists.** Repo-wide search confirms zero CI configuration (no
+  `.github/workflows`, no other CI YAML) — exactly the "once CI exists"
+  condition this item's own acceptance criteria already flagged as
+  unresolved. Without CI, `toHaveScreenshot()` baselines could only ever be
+  compared locally, on whichever contributor's machine happens to run
+  `npm run test:e2e` next.
+- **Screenshot baselines are not portable across machines/operating
+  systems.** Playwright's own documented guidance is that pixel-level
+  screenshot comparison is sensitive to OS-level font rendering, subpixel
+  antialiasing, and GPU/software rendering differences — stable use
+  normally requires a single pinned environment (typically a Docker image)
+  generating and comparing every baseline. This repository has no such
+  pinned environment for the *browser* side of Playwright today (unlike
+  Supabase, which does run in Docker locally) — `playwright.config.ts`
+  runs Chromium directly on the host, and contributors are on different
+  host operating systems.
+- **Every candidate page has genuinely dynamic, per-run content.** `/member`,
+  `/account`, `/review/claims`, and `/review/claims/[claimId]` all render
+  live data that changes on every test run by construction: a freshly
+  generated email address (`registerAndConfirm`'s `Date.now()`-suffixed
+  address), real submission/decision timestamps, and (on the reviewer
+  queue) a variable number of rows depending on what earlier tests left
+  behind. Stable screenshots would require a new content-masking/mocking
+  layer this milestone would have to design and maintain — real, ongoing
+  work, not a one-time setup cost — for pages that are exactly the ones
+  most worth screenshotting.
+- **Doubling every baseline for two themes and two viewports, on top of
+  the above, multiplies an already-unstable foundation** rather than
+  giving proportionate value — the repository's own "zero new
+  infrastructure dependency" posture (recorded when this item was
+  originally written) argues against taking on that maintenance burden
+  before the portability and dynamic-content problems above are actually
+  solved.
+
+**What currently protects visual quality instead**, and continues to:
+`auth-pages-quality.spec.ts` and `workspace-pages-quality.spec.ts`
+(console/hydration errors, duplicate ids, horizontal overflow at 375px,
+keyboard focus visibility, per-theme structural assertions) plus, as of
+M5.5, `accessibility.spec.ts`'s automated axe-core scan (item 10, above),
+which catches the color-contrast and semantic-structure regressions a
+screenshot diff would otherwise be the tool reached for. Between the two,
+the highest-value share of what visual regression testing would catch —
+broken layout, inaccessible contrast, structural drift — is already
+covered by tests that don't have the portability problem.
+
+**Conditions that should trigger revisiting this decision:** CI is
+introduced (a pinned, reproducible environment removes the portability
+objection); a future milestone adds a page with materially more complex
+visual layout than this project's current restrained, mostly-text
+component set (e.g. a network graph, a timeline, a map — see
+`docs/design-system-architecture.md`'s "Signature NetPDBFF interaction
+principles"), where a screenshot diff would catch classes of regression
+axe/structural tests structurally cannot; or maintenance data shows a real
+visual regression reached production that the current test suite missed
+and a screenshot diff would have caught.
+
+This is a deliberate decision, not an overlooked requirement — no new ADR
+is written for it, matching this item's own original judgment that the
+choice is "too small and low-risk to warrant its own ADR."
+
 ## What M5 must not implement
 
 Restated explicitly, matching the milestone brief:
@@ -370,3 +436,44 @@ keyboard and screen-reader spot checks completed; no item from "What M5
 must not implement" present anywhere in the diff; every new dependency
 traceable to a written ADR or this document's own justification; working
 tree otherwise clean, nothing committed until reviewed and approved.
+
+## M5.5 closeout
+
+M5 was implemented across four sub-milestones (M5.1 design foundations,
+M5.2 shells/navigation/page redesigns, M5.3 identity claiming, M5.4 claim
+review governance) plus this one, M5.5, a verification-and-closeout pass
+with no new product scope. As of M5.5, all 15 scope items above are
+closed:
+
+- **Item 10 (Accessibility baseline).** Completed in M5.5:
+  `@axe-core/playwright` (proposed above, in "Proposed new dependencies")
+  is installed, `tests/e2e/helpers/accessibility.ts` provides the reusable
+  scan/assertion helpers, and `tests/e2e/accessibility.spec.ts` (23 cases)
+  scans every public, authenticated, and reviewer route named in the M5.5
+  brief, in both themes, against WCAG 2.1 A/AA, failing on critical/serious
+  violations. One real, confirmed defect was found by direct contrast-
+  ratio calculation during this pass (`--color-subtle-foreground`, used
+  for form-field placeholder text, measured 4.33:1 light / 4.49:1 dark
+  against the 4.5:1 AA floor) and fixed in `src/app/globals.css` across
+  all three theme-value locations (`:root`, `[data-theme="dark"]`, and the
+  `prefers-color-scheme` fallback) without touching the shared
+  `--neutral-500` primitive any other token still depends on. See the
+  M5.5 completion report for the full violation-scan results, since axe
+  itself could not be executed inside the sandbox this pass was authored
+  in (no Docker, no npm-registry access — the same category of limitation
+  `docs/authentication-implementation.md` has documented since M4) and
+  needs one local `npm run test:e2e` run to fully confirm.
+- **Item 15 (Visual-regression strategy).** Resolved in M5.5: explicitly
+  **deferred**, not adopted — see the full reasoning recorded in place,
+  above, under item 15's own "Decision (M5.5)."
+- **Items 1–9, 11–14.** Unchanged from their M5.1–M5.4 completion; nothing
+  in M5.5 modified any already-completed page, shell, component, token,
+  or Server Action. `docs/authentication-implementation.md`'s "Automated
+  tests" section was also rewritten in M5.5 to replace stale M4-era
+  "never executed" language with the real, current suite composition and
+  counts — a documentation-only change, not a functional one.
+
+**M5 is complete as of M5.5**, pending the local execution of
+`accessibility.spec.ts` (the one piece of this closeout that could not run
+inside the authoring sandbox) and the rest of the standard validation
+suite. See the M5.5 completion report for the full accounting.

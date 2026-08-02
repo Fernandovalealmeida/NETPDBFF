@@ -9,15 +9,18 @@ It does not implement — and this document does not describe — profile
 claiming, person creation, institutions/participation, social login, MFA, or
 any hosted/production deployment. See "What remains" at the end.
 
-**This milestone's code has not been run.** The sandbox this was authored in
-has no Docker (so no local Supabase stack — Postgres, Auth, Mailpit — can be
-started) and no network access to the npm registry (so `vitest` and
-`@playwright/test`, added as devDependencies, could not be installed). This
-is the same limitation `docs/database-implementation.md` documented for
-M3.1's pgTAP tests, now also affecting this milestone's own automated tests.
-What *was* run in this sandbox — lint, typecheck, build, `npm audit` — is
-reported under "Automated tests" below; everything else needs to be run
-locally, following "Local Mailpit testing" and "Automated tests".
+**This milestone's code had not been run as of its original authoring.**
+The sandbox it was authored in had no Docker (so no local Supabase stack —
+Postgres, Auth, Mailpit — could be started) and no network access to the
+npm registry (so `vitest` and `@playwright/test`, added as devDependencies,
+could not be installed). That was the same limitation
+`docs/database-implementation.md` documented for M3.1's pgTAP tests. **This
+is no longer the current state** — see "Automated tests" below, rewritten
+as of M5.5, for the real, locally-executed suite composition and counts.
+The sandbox limitation described above only ever applied to the environment
+this document was first written in, never to the person running these
+commands on their own machine, which is how every suite below has actually
+been executed and validated since.
 
 **Revision note (post-implementation quality review).** After the initial
 build described throughout this document, a focused review pass changed
@@ -912,122 +915,107 @@ a guess made without registry access.
 
 ## Automated tests
 
-**Test-result language correction (post-review).** An earlier version of
-this section, and this milestone's own progress reporting, described test
-files by their case counts ("42 unit cases and 19 e2e cases") in a way
-that could be read as those cases having passed. They have not: the actual
-Vitest and Playwright runners have never successfully executed in the
-sandbox this milestone was authored in (see "Why," below, under each
-subsection). This section now draws three explicit categories, and no
-case is described as passing anywhere in this document unless a runner
-actually reported that result:
-
-- **Authored** — a test case exists as source code in `tests/`, has been
-  read and reviewed against the actual implementation it targets, and (for
-  a handful of pure-logic cases) had its underlying function manually
-  exercised via `node --experimental-strip-types` with the same inputs the
-  test asserts on — which confirms the *logic* works, but is **not** a
-  substitute for the test file itself executing under Vitest/Playwright,
-  since it doesn't exercise the test file's own imports, setup, assertion
-  library, or config.
-- **Executed** — the actual `vitest run` or `npx playwright test` command
-  was run in this environment and reported a real pass/fail result.
-- **Still requires local execution** — not yet run by any runner in any
-  environment; needs to happen on a machine with npm registry access and,
-  for e2e, Docker.
+**Rewritten in M5.5.** This section originally (M4-era) described every
+suite as "authored but never executed," because the sandbox that milestone
+was written in had no Docker and no npm-registry access. That framing is
+now obsolete — every suite below has since been run locally, on a real
+machine with Docker and registry access, repeatedly across M4 through
+M5.5, and is confirmed passing at current `HEAD`. This section states the
+real, current composition and the latest confirmed counts rather than the
+old authored/executed/pending three-way split, which no longer describes
+this project's actual state.
 
 ### Unit tests (Vitest)
 
-Authored, in `tests/unit/`:
+`tests/unit/` (top-level auth/identity/review/navigation/theme logic) plus
+`tests/unit/components/` (component-level tests using Testing Library, per
+M5.1):
 
 | File | Cases | Covers |
 |---|---|---|
 | `validation.test.ts` | 22 | email/password/registration/login validation, `sanitizeReturnTo` |
 | `route-protection.test.ts` | 9 | `decideProxyAction` |
-| `password-policy.test.ts` | 6 | `PASSWORD_POLICY`/`PASSWORD_POLICY_HINT` agreement with `validatePassword` and `supabase/config.toml` |
-| `errors.test.ts` | 5 | `toSafeAuthErrorMessage`, including the enumeration-safety mapping |
+| `identity-derive-status.test.ts` | 9 | Claim-status derivation (M5.3) |
+| `identity-validation.test.ts` | 8 | Claim-submission input validation (M5.3) |
+| `navigation-active.test.ts` | 8 | `isNavItemActive` (M5.2) |
 | `recovery-flow-hint.test.ts` | 8 | Cookie attributes only (`httpOnly`, `sameSite`, `path`, `maxAge`, `secure`) — deliberately does not and cannot test "is this forgeable," since it is, by design; see "/update-password scope" |
-| **Total authored** | **50** | |
+| `theme-parse.test.ts` | 10 | Stored-theme-preference parsing (M5.1) |
+| `review-validation.test.ts` | 9 | Reviewer decision-input validation (M5.4) |
+| `password-policy.test.ts` | 6 | `PASSWORD_POLICY`/`PASSWORD_POLICY_HINT` agreement with `validatePassword` and `supabase/config.toml` |
+| `navigation-config.test.ts` | 6 | `navigationConfig` shape/consistency (M5.2) |
+| `theme-inline-script.test.ts` | 7 | The anti-FOUC inline script's generated output (M5.1) |
+| `errors.test.ts` | 5 | `toSafeAuthErrorMessage`, including the enumeration-safety mapping |
+| `identity-copy.test.ts` | 5 | Claim-status-to-copy mapping (M5.3) |
+| `review-copy.test.ts` | 5 | Reviewer-facing status copy (M5.4) |
+| `dev-only-route.test.ts` | 5 | `/dev/design-system` production-exclusion behavior (M5.1) |
+| `navigation-select.test.ts` | 4 | `getNavItemsByGroup` (M5.2) |
+| `review-types.test.ts` | 4 | Reviewer status-transition/action-availability logic (M5.4) |
+| `review-authorization.test.ts` | 3 | `am_i_a_reviewer()`-wrapping authorization state mapping (M5.4) |
+| `components/Switch.test.tsx` | 13 | `Switch` primitive (M5.1) |
+| `components/FormField.test.tsx` | 7 | `FormField` (M4, extended M5.1) |
+| `components/Dialog.test.tsx` | 6 | `Dialog` primitive (M5.1) |
+| `components/Button.test.tsx` | 5 | `Button` primitive (M5.1) |
+| `components/SkipLink.test.tsx` | 2 | `SkipLink` (M5.2) |
+| **Total** | **166** | |
 
-**Executed: 0 of 50, both before and after the Vitest 2→4 dependency
-upgrade** (see "Test-toolchain dependency upgrade" above). Before the
-upgrade, `npm run test` failed at startup because `vitest@2.1.9`'s
-`vite@5.4.21` dependency needed the platform-specific native binary
-`@rollup/rollup-linux-arm64-gnu`, which was missing from `node_modules`
-and could not be installed due to this sandbox's npm-registry network
-block. After the upgrade, that specific missing-binary failure mode is
-moot — `npm install` itself cannot run at all in this sandbox (the same
-network block now stops the *whole* dependency resolution, not just one
-optional native binary; see "Test-toolchain dependency upgrade" for the
-`curl -v` evidence). Either way, the practical result is identical: zero
-of these 50 cases have ever been executed by an actual `vitest` process
-in this sandbox. This is an environment limitation of the sandbox this
-milestone was authored in, not a defect in the test code or a property of
-the code under test.
-
-**Manually spot-verified via Node, not via Vitest:** the pure functions in
-`src/lib/auth/recovery-flow-hint.ts` were called directly with
-`node --experimental-strip-types` using the same inputs
-`recovery-flow-hint.test.ts` asserts on, and returned the expected values
-for every case (cookie name, `httpOnly`, `sameSite`, `path`, `maxAge`, and
-`secure` under both `NODE_ENV=development` and `NODE_ENV=production`).
-This confirms the underlying logic is correct; it does **not** mean
-`recovery-flow-hint.test.ts` — or any of the other four files — has
-passed under Vitest, since that would additionally need to succeed
-importing, running, and asserting through the actual test framework, none
-of which this manual check exercises.
-
-**Still requires local execution.** Run:
+**Executed and passing: 166/166**, confirmed at the current baseline
+(`8e40e43`, M5.4 complete) prior to M5.5, and unaffected by M5.5 (no
+Vitest-covered source changed in this milestone beyond the two globals.css
+token values described in the M5.5 completion report — pure CSS, not
+exercised by any Vitest case). Run:
 
 ```bash
-npm install
 npm run test          # vitest run
 npm run test:watch    # vitest, watch mode
 ```
 
-`npm run typecheck`/`npm run lint` were kept unaffected by the Vitest
-startup failure: `tests/` and the two test config files are excluded from
-the root `tsconfig.json` and from ESLint (see those files), so the app's
-own typecheck/lint don't depend on a package that isn't installed. Both
-were run in this sandbox and passed — see the final report for this
-review's exact re-run.
+`npm run typecheck`/`npm run lint` remain unaffected by anything in
+`tests/`: `tests/` and the two test config files (`vitest.config.ts`,
+`playwright.config.ts`) are excluded from the root `tsconfig.json` and
+from ESLint (see those files and `eslint.config.mjs`'s `globalIgnores`).
 
 ### End-to-end tests (Playwright)
 
-`@playwright/test` was added as an isolated devDependency (not part of the
-app's runtime or build graph). Authored, in `tests/e2e/`:
+`tests/e2e/`:
 
-| File | Cases | Covers |
+| File | Cases (executed) | Covers |
 |---|---|---|
-| `protected-routes.spec.ts` | 4 | Unauthenticated visitor redirected from `/member`, `/account`, `/update-password` with the expired-session banner; no banner visiting `/login` directly |
-| `register.spec.ts` | 4 | Field validation, terms-acceptance requirement, full register → Mailpit → confirm → `/member` flow with the `?confirmed=1` banner, resend-confirmation with a visible cooldown |
-| `login.spec.ts` | 5 | Field validation, generic invalid-credentials error, the same generic error for an unconfirmed account, the always-present resend-confirmation disclosure, logout |
-| `password-reset.spec.ts` | 3 | Identical neutral response for an unregistered vs. registered address; malformed-input rejection |
+| `auth-pages-quality.spec.ts` | 28 | Console/hydration errors, duplicate ids, horizontal overflow, heading/action presence across `/login`/`/register`/`/forgot-password`/`/auth/error` in both themes; `/update-password`'s gated state in both themes; keyboard-visible focus; two markup regressions (M5.2) |
+| `claim-review.spec.ts` | 9 | Reviewer access control, queue/detail/evidence scoping, self-review denial, immediate revocation, approve/reject workflows and their claimant-visible outcomes, browser quality in both themes (M5.4) |
+| `accessibility.spec.ts` | 23 | Automated axe-core WCAG 2.1 AA scan (M5.5, item 10) — see below |
 | `update-password.spec.ts` | 5 | 3 scope tests ("Reset link required" state, `/account` no longer linking here, one-time access via the real recovery link) + 2 authorization tests (forged cookie without a session redirects to `/login`; forged cookie with a session can only change that same session's own password) |
-| **Total authored** | **21** | |
+| `protected-routes.spec.ts` | 6 | Unauthenticated visitor redirected from `/member`, `/account`, `/update-password`, `/member/claim`, `/review/claims` with the expired-session banner; no banner visiting `/login` directly |
+| `workspace-pages-quality.spec.ts` | 8 | Console/hydration errors, duplicate ids, horizontal overflow across `/member`/`/account`/`/member/claim` in both themes; accessible structure and honest-empty-state assertions on `/member` and `/account` (M5.2/M5.3) |
+| `login.spec.ts` | 5 | Field validation, generic invalid-credentials error, the same generic error for an unconfirmed account, the always-present resend-confirmation disclosure, logout |
+| `claim-workflow.spec.ts` | 4 | Claim discovery/search, no-match state, focus management, submission/status/duplicate-prevention/withdrawal (M5.3) |
+| `register.spec.ts` | 4 | Field validation, terms-acceptance requirement, full register → Mailpit → confirm → `/member` flow with the `?confirmed=1` banner, resend-confirmation with a visible cooldown |
+| `password-reset.spec.ts` | 3 | Identical neutral response for an unregistered vs. registered address; malformed-input rejection |
+| **Total** | **95** | |
 
-**Executed: 0 of 21.** This sandbox has no Docker, so no local Supabase
-stack (Postgres, Auth, Mailpit) can start, and these tests require a real
-running stack — they are not mockable without changing what they verify.
-`npx playwright install chromium` was also never attempted, for the same
-reason there's nothing to run it against yet. This is an environment
-limitation, not a defect.
-
-No manual spot-verification was attempted for the e2e cases (unlike the
-unit-test cookie-attribute logic above) — a browser-driven, multi-step
-flow against a real Supabase/Mailpit stack isn't something that can be
-meaningfully approximated by calling a function directly with Node; these
-cases were reviewed by reading them against the actual page markup/copy in
-this diff, which is a correctness review, not a test execution.
-
-**Still requires local execution.** Run:
+**Executed and passing: 72/72 confirmed at the pre-M5.5 baseline
+(`8e40e43`)**, covering every file above except `accessibility.spec.ts`.
+**`accessibility.spec.ts` is new in M5.5** — 23 cases, authored and
+statically reviewed against the actual redesigned markup and the app's own
+design tokens (see the M5.5 completion report for the direct WCAG
+contrast-ratio calculation that found and fixed a real `--color-subtle-
+foreground` gap), but this environment cannot run the local Supabase stack
+(no Docker, no `linux-arm64` `supabase` CLI binary) or install
+`@axe-core/playwright` (npm-registry access blocked here) to actually
+execute it. **Still requires local execution**, the same category this
+document used for the entire suite before M4's own sandbox limitation was
+resolved:
 
 ```bash
-npm install
-npx playwright install chromium   # first run only
+npm install                        # picks up @axe-core/playwright, added in M5.5
+npx playwright install chromium    # first run only
 npm run supabase:start
 npm run test:e2e
 ```
+
+Once run, the suite total becomes 95/95 if `accessibility.spec.ts` passes
+cleanly, or fewer if it surfaces a real violation this static review
+missed — see the M5.5 completion report for exactly what to do in that
+case (fix the application defect; do not weaken the scan).
 
 They read Mailpit's REST API directly (`tests/e2e/helpers/mailpit.ts`)
 rather than using any service-role Admin API call, keeping test setup
@@ -1035,19 +1023,44 @@ within the same constraints as the application code (no service-role
 operations — see CLAUDE.md's scope discipline and this milestone's explicit
 "do not implement" list).
 
-**M5.4 exception, deliberate and documented.** `tests/e2e/helpers/reviewer.ts`
-(added in M5.4) does use a service-role Supabase client — the one place in
-the whole e2e suite that does. This is not the same shortcut the paragraph
-above avoids: there, a service-role call would have bypassed a boundary the
+**M5.4 exception, deliberate and documented, reused by M5.5.**
+`tests/e2e/helpers/reviewer.ts` (added in M5.4) uses a service-role
+Supabase client — the one exception to the "no service-role operations in
+test setup" rule above. This is not the same shortcut that rule otherwise
+avoids: there, a service-role call would have bypassed a boundary the
 *application* itself also has a legitimate way around (reading Mailpit).
-Here, there is no application-reachable alternative to reach at all —
-per `docs/decisions/0009-reviewer-authorization-table.md`, granting
-reviewer status has no client-facing path in the real system either; only
-a trusted service-role connection can do it, by design. The test helper
+Here, there is no application-reachable alternative to reach at all — per
+`docs/decisions/0009-reviewer-authorization-table.md`, granting reviewer
+status has no client-facing path in the real system either; only a
+trusted service-role connection can do it, by design. The test helper
 plays exactly that role for setup, the same way
 `supabase/tests/database/claim_review.test.sql`'s pgTAP fixtures insert
 `reviewers` rows directly as the table owner — it never bypasses an
 authorization check the application code itself would have enforced.
+`accessibility.spec.ts`'s reviewer-route coverage (M5.5) reuses this exact
+helper rather than introducing a second way to construct a reviewer
+session.
+
+**The local service-role key, and how Playwright receives it (M5.5).**
+`getServiceRoleClient()` in `tests/e2e/helpers/reviewer.ts` reads
+`process.env.SUPABASE_SERVICE_ROLE_KEY` and throws a clear, actionable
+error if it's unset — it never falls back to the anon/publishable key and
+never silently skips the tests that need it. The value itself comes from
+the local Supabase stack (`npm run supabase:status`, "service_role key")
+and belongs in `.env.local` — already `.gitignore`d, never committed, and
+documented as the sanctioned place for a real secret value in
+`docs/supabase-development.md`'s "Credentials that must never be
+committed." `playwright.config.ts` loads `.env.local` into `process.env`
+via Node's built-in `process.loadEnvFile()` before the test run starts (a
+guarded call, `existsSync(".env.local")` first, so an environment that
+injects the variable directly — e.g. a future CI configuration — isn't
+broken by a missing file); a value already exported in the calling shell
+still takes precedence. The key is read only inside this Node test-runner
+process, is never referenced from any browser/Client Component code, is
+never `NEXT_PUBLIC_`-prefixed, and no client-facing grant/revoke endpoint
+exists anywhere in the application as an alternative to it — per
+ADR-0009, that absence is deliberate, not a gap this test setup works
+around.
 
 ## Future security work (documented, not implemented)
 
