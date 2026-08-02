@@ -58,8 +58,10 @@ left-aligned, action-slot shape doesn't fit a centered hero.
 
 ## Workspace pages and empty-state architecture (M5.2, item 8–9)
 
-`/member` and `/account` are the only two authenticated-workspace pages in
-M5.2. Both share one generic pattern rather than each inventing its own:
+`/member` and `/account` were the only two authenticated-workspace pages in
+M5.2; M5.3 added a third, `/member/claim` (see "Identity claiming (M5.3)"
+below). All three share one generic pattern rather than each inventing its
+own:
 `PageHeader` (status/identity) → a `Card` of real, currently-true facts
 (never fabricated) → an `EmptyState` for whatever isn't built yet, with a
 `FutureAction` in its `action` slot when there's a named next step → plain
@@ -69,18 +71,35 @@ structurally ready for a future two-column workspace layout — composing
 that later is a page-level change, not a new primitive.
 
 - **`/member`** is the authenticated landing/workspace page. It reports
-  authentication status and account identity, and is explicit that the
-  account is not yet linked to a person record (claiming is a later
-  milestone — `docs/decisions/0001-separate-people-from-user-accounts.md`).
-  It never queries or implies `people`/participation/publication/network
-  data; every such future section is one honest `EmptyState`, never a zero,
+  authentication status and account identity, and — as of M5.3 — the
+  account's real identity-claim status (see below), sourced from
+  `src/features/identity/status.ts`. It never queries or implies
+  `people`/participation/publication/network data beyond that one status;
+  every other future section is one honest `EmptyState`, never a zero,
   skeleton, or fabricated example.
 - **`/account`** shows only the minimal Auth-account facts it always has
-  (email, confirmation status, created-at) — no profile editing, identity
-  claiming, account deletion, email changes, notification preferences, or
-  new Server Action. `EmptyState` + `FutureAction` mark "Account → Security"
-  as a real future destination that doesn't exist yet, distinct from the
-  still-real, still-functional `/forgot-password` link kept alongside it.
+  (email, confirmation status, created-at), plus (M5.3) a read-only
+  identity-link status section — no profile editing, claim controls,
+  account deletion, email changes, notification preferences, or new
+  Server Action beyond `withdraw_profile_claim`'s existing RPC, which is
+  only ever called from `/member`, never from this page. `EmptyState` +
+  `FutureAction` mark "Account → Security" as a real future destination
+  that doesn't exist yet, distinct from the still-real, still-functional
+  `/forgot-password` link kept alongside it.
 
-Nothing past these two pages (dashboard widgets, sidebar, search, command
-palette, data visualizations) is in scope; that's M5.3+.
+Nothing past these three pages (dashboard widgets, sidebar, general search,
+command palette, data visualizations) is in scope; that's M5.4+.
+
+## Identity claiming (M5.3)
+
+`/member/claim` is the real claim-discovery/submission workflow that
+`/member`'s "Claim a person record" link now points to (previously an
+inert `FutureAction`). It follows the same primitive-composition pattern
+as `/member`/`/account` — `PageHeader`, `FormField`/`Textarea` for the
+search and evidence inputs, `EmptyState` for the honest no-matches state,
+`SubmitButton` for both the search and claim-submission forms — rather
+than a bespoke search UI. See `src/features/identity/` for the
+Server Actions and pure status-derivation logic behind all three pages,
+and `docs/decisions/0008-claim-discovery-security-definer-function.md` for
+why `people` search required a new, narrow database access path rather
+than a page-level change alone.

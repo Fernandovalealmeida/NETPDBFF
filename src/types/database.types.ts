@@ -227,6 +227,35 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_claimed_person_display_name: {
+        Args: { p_person_id: string }
+        Returns: string | null
+      }
+      is_person_claimable: {
+        Args: { p_person_id: string }
+        Returns: boolean
+      }
+      search_claimable_people: {
+        Args: { p_query?: string | null }
+        Returns: {
+          id: string
+          display_name: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "people"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      submit_profile_claim: {
+        Args: { p_person_id: string; p_supporting_evidence?: string | null }
+        Returns: {
+          id: string
+          status: string
+          submitted_at: string
+        }[]
+      }
       withdraw_profile_claim: {
         Args: { p_claim_id: string }
         Returns: {

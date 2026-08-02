@@ -7,6 +7,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { FutureAction } from "@/components/ui/FutureAction";
 import { PageHeader } from "@/components/ui/PageHeader";
 
+import { getIdentityStatus } from "@/features/identity/status";
+import { getIdentityStatusCopy } from "@/features/identity/copy";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -18,23 +20,27 @@ function formatDate(value: string | null | undefined): string {
   return new Date(value).toLocaleString();
 }
 
-// M5.2 redesign — restyled onto tokens/primitives only. Every fact shown,
-// the Supabase call that fetches them, and the two real links are
-// unchanged from M4/M5.1: still `getUser()` (not `getClaims()`), for the
-// same reason as before — `created_at`/`email_confirmed_at` live on the
-// full user record, not the JWT claims (see
-// docs/authentication-implementation.md's getClaims/getUser/getSession
-// guidance). Still shows only minimal Auth-account information — never a
-// historical person profile (see
-// docs/decisions/0001-separate-people-from-user-accounts.md). No profile
-// editing, identity claiming, account deletion, email change, notification
-// preferences, or new Server Action were added — none of that is this
-// page's job yet.
+// M5.2 redesign, extended in M5.3 with a read-only identity-link status
+// section. Every fact in the account-facts Card, the Supabase call that
+// fetches them, and the two real links are unchanged from M4/M5.1: still
+// `getUser()` (not `getClaims()`), for the same reason as before —
+// `created_at`/`email_confirmed_at` live on the full user record, not the
+// JWT claims (see docs/authentication-implementation.md's
+// getClaims/getUser/getSession guidance).
+//
+// Per the M5.3 brief, this page shows only the account's own identity-link
+// *state* — no profile editing, no claim submission/withdrawal controls
+// (those belong to /member and /member/claim), no moderation controls, and
+// the identity-link section stays visually and structurally separate from
+// the account-security Card above it, never blended into the same `dl`.
 export default async function AccountPage() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const identityStatus = await getIdentityStatus();
+  const statusCopy = getIdentityStatusCopy(identityStatus);
 
   return (
     <main id="main-content" tabIndex={-1} className="py-16">
@@ -60,6 +66,22 @@ export default async function AccountPage() {
               <dd className="text-foreground">{formatDate(user?.created_at)}</dd>
             </div>
           </dl>
+        </Card>
+
+        {/* Identity-link status — read-only display only. Deliberately a
+            separate Card from the account-security facts above: this is
+            person-record linkage information, not authentication data.
+            No claim/search/withdraw controls live here — see Member area
+            for those. */}
+        <Card className="mt-6">
+          <h2 className="text-sm font-medium text-foreground">Person-record link</h2>
+          <p className="mt-2 text-sm text-foreground">{statusCopy.title}.</p>
+          <p className="mt-1 text-sm text-muted-foreground">{statusCopy.description}</p>
+          <p className="mt-3 text-sm">
+            <Link href="/member" className="font-medium text-foreground underline underline-offset-2">
+              Manage in the Member area
+            </Link>
+          </p>
         </Card>
 
         {/* Future person-record/profile functionality — clearly separated

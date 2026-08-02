@@ -31,13 +31,13 @@ function uniqueCredentials(tag: string): { email: string; password: string } {
   return { email: `e2e-quality-${tag}-${Date.now()}@example.com`, password: "correcthorse1" };
 }
 
-for (const path of ["/member", "/account"] as const) {
+for (const path of ["/member", "/account", "/member/claim"] as const) {
   test.describe(`${path} — browser quality`, () => {
     for (const theme of ["light", "dark"] as const) {
       test(`loads with no console errors, hydration warnings, duplicate ids, or horizontal overflow at 375px (${theme} theme)`, async ({
         page,
       }) => {
-        const { email, password } = uniqueCredentials(`${path.slice(1)}-${theme}`);
+        const { email, password } = uniqueCredentials(`${path.slice(1).replace(/\//g, "-")}-${theme}`);
         const issues = attachConsoleWatcher(page);
         await setStoredTheme(page, theme);
         await page.setViewportSize({ width: 375, height: 812 });
@@ -71,12 +71,17 @@ test.describe("/member — accessible structure and honest empty state", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Member area" })).toBeVisible();
     await expect(page.getByRole("heading", { level: 2, name: "Your account" })).toBeVisible();
 
-    // The empty state and its future action are honest, not fabricated
-    // functionality: no link or button named "Claim a person record" exists
-    // (FutureAction renders an inert <span>), only the inert label + badge.
+    // As of M5.3, the claim workflow is real — "Claim a person record" is
+    // now a genuine link to /member/claim, not the M5.2-era inert
+    // FutureAction placeholder. A real, working destination is exactly
+    // what "no dead links, no fabricated functionality" requires once the
+    // destination actually exists; asserting it's absent would now be
+    // asserting the *wrong* thing.
     await expect(page.getByText("Not yet connected to a NetPDBFF person record")).toBeVisible();
-    await expect(page.getByRole("link", { name: "Claim a person record" })).toHaveCount(0);
-    await expect(page.getByRole("button", { name: "Claim a person record" })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Claim a person record" })).toHaveAttribute(
+      "href",
+      "/member/claim",
+    );
 
     // Core constraint is "no fabricated domain data," not "never mention
     // future functionality" — the EmptyState's own description legitimately
@@ -111,6 +116,15 @@ test.describe("/account — accessible structure and honest empty state", () => 
     await expect(page.getByText(email)).toBeVisible();
     await expect(page.getByText("Email confirmed")).toBeVisible();
     await expect(page.getByText("Account created")).toBeVisible();
+
+    // M5.3: the identity-link status section is a genuine h2, structurally
+    // separate from the account-security facts above it — heading
+    // hierarchy stays h1 -> h2, no skip, and no editing/claim controls
+    // live in this section (see the assertions below).
+    await expect(page.getByRole("heading", { level: 2, name: "Person-record link" })).toBeVisible();
+    await expect(page.getByText("Not yet connected to a NetPDBFF person record")).toBeVisible();
+    await expect(page.getByRole("button", { name: /withdraw claim/i })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /search|claim a person/i })).toHaveCount(0);
 
     // "Account → Security" is an honest placeholder, not a real destination
     // or a "Change password" affordance. The phrase now appears twice by

@@ -447,6 +447,16 @@ Two things worth double-checking when you do:
 - Design `profile_visibility_settings` and decide what (if anything)
   about `people` becomes readable by `anon`/`authenticated` — this
   unblocks giving `people` any GRANT/policy at all.
+  **Partially addressed in M5.3**, narrowly and without building this
+  general system: three `SECURITY DEFINER` functions
+  (`search_claimable_people`, `get_claimed_person_display_name`,
+  `is_person_claimable` — see
+  `supabase/migrations/20260802110300_add_claim_discovery_search_function.sql`
+  and `docs/decisions/0008-claim-discovery-security-definer-function.md`)
+  let `authenticated` read `display_name` for claim-discovery purposes
+  only. `people`'s table-level `GRANT`/RLS lockdown described above is
+  otherwise completely unchanged — this item is not fully resolved, only
+  narrowly unblocked for the one field and one purpose M5.3 needed.
 - Decide whether `middle_names` and `merged_into_person_id` should be
   added to `people`, and if so, under what visibility/workflow rules.
 - Build the account-deletion flow referenced in "Unresolved questions"

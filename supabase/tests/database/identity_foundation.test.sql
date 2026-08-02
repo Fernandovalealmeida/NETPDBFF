@@ -102,21 +102,57 @@ select is(
 );
 
 -- ---------------------------------------------------------------------
--- 2. A claim can be submitted by its own authenticated user.
+-- 2. Claim submission.
+--
+-- SECURITY CORRECTION (M5.3 review): a raw client-issued INSERT on
+-- profile_claims is no longer permitted at all, even a well-formed,
+-- correctly-owned one. The original version of this test asserted the
+-- opposite (lives_ok) because this M3.1 design granted `authenticated`
+-- INSERT and relied on RLS's WITH CHECK (claimant_user_id = auth.uid())
+-- alone — which constrains *ownership*, not *content*: nothing stopped a
+-- caller from also setting status='approved' plus any other real user's
+-- id as reviewer_admin_id in the same statement, satisfying every CHECK
+-- constraint and the RLS policy, and fabricating a self-approved claim
+-- with no real review ever having happened. See "Revoke the
+-- now-unnecessary direct INSERT grant" in supabase/migrations/
+-- 20260802110300_add_claim_discovery_search_function.sql for the fix and
+-- full reasoning; public.submit_profile_claim() (same migration) is now
+-- the only sanctioned way to create a claim — see
+-- supabase/tests/database/claim_discovery.test.sql for that function's
+-- own coverage, including a regression test for the fabricated-approval
+-- attempt specifically.
+--
+-- The fixture claim row this section used to create via the (now
+-- inverted) assertion below is instead created directly, via the
+-- unrestricted owner role — the same role this file's own connection
+-- already runs as by default (see the file header), and exactly how
+-- section 3 below already creates its own second fixture claim, and how
+-- later sections already reset/approve claim rows. Every downstream
+-- section (3 onward) exercises the exact same fixture data as before;
+-- only *how* the claimant's own INSERT attempt is exercised changes.
 -- ---------------------------------------------------------------------
+
+insert into public.profile_claims (claimant_user_id, claimed_person_id, status, supporting_evidence)
+values (:'user_a', :'person_x', 'submitted', 'This is me, see attached CV.');
 
 set local role authenticated;
 set local request.jwt.claim.sub to :'user_a';
 
-select lives_ok(
+select throws_ok(
   format($sql$
     insert into public.profile_claims (claimant_user_id, claimed_person_id, status, supporting_evidence)
     values ('%s', '%s', 'submitted', 'This is me, see attached CV.')
   $sql$, :'user_a', :'person_x'),
-  'an authenticated user can submit a claim for themselves'
+  '42501',
+  null,
+  'an authenticated user cannot insert a claim directly at all, even a correctly-owned, well-formed one -- submit_profile_claim() is the only sanctioned path'
 );
 
--- A user cannot submit a claim on behalf of somebody else.
+-- Even less privileged than the above: inserting with someone else's
+-- claimant_user_id is (still) rejected -- now for the same "no grant at
+-- all" reason as any other insert attempt, rather than a distinct
+-- RLS-content check, since there is no INSERT grant left for RLS
+-- evaluation to even apply to.
 select throws_ok(
   format($sql$
     insert into public.profile_claims (claimant_user_id, claimed_person_id, status)
@@ -124,7 +160,7 @@ select throws_ok(
   $sql$, :'user_b', :'person_y'),
   '42501',
   null,
-  'an authenticated user cannot insert a claim with someone else''s claimant_user_id'
+  'an authenticated user cannot insert a claim with someone else''s claimant_user_id either'
 );
 
 reset role;
@@ -402,35 +438,67 @@ select throws_ok(
 --     directly on profile_claims, independent of user_person_links.
 -- ---------------------------------------------------------------------
 
--- user_a already has an approved claim on person_x (from step 9). A
--- second claim by user_a on a different person (person_z) cannot also
--- become approved.
-insert into public.profile_claims (claimant_user_id, claimed_person_id, status)
-values (:'user_a', :'person_z', 'submitted');
-
+-- user_a already has an approved claim on person_x (from step 9).
+--
+-- SECURITY CORRECTION (M5.3 review) fixture note: before
+-- profile_claims_one_active_or_approved_per_claimant_idx existed
+-- (supabase/migrations/20260802110300_add_claim_discovery_search_function.sql),
+-- this test proved "one claimant cannot hold two simultaneously approved
+-- claims" in two steps: first successfully inserting a second, merely
+-- *submitted* claim for user_a on a different person (person_z), then
+-- showing that second claim could never itself be flipped to approved
+-- (the older profile_claims_one_approved_per_claimant_idx, 23505 at the
+-- UPDATE step). That two-step fixture no longer works, because the new,
+-- stronger index rejects the second claim at INSERT time -- there is no
+-- longer any reachable state in which a second submitted claim for
+-- user_a co-exists with the first, already-approved one, so there is
+-- nothing left to later attempt approving. This is not a weaker proof of
+-- the same requirement; it is the same product invariant ("one
+-- claimant, at most one active-or-approved claim at a time -- which
+-- necessarily includes at most one *approved* one") now caught one step
+-- earlier in the pipeline. The assertion moves with it: the INSERT
+-- itself is the operation now expected to fail.
 select throws_ok(
   format($sql$
-    update public.profile_claims
-    set status = 'approved', reviewer_admin_id = '%s', decided_at = now()
-    where claimant_user_id = '%s' and claimed_person_id = '%s'
-  $sql$, :'user_b', :'user_a', :'person_z'),
+    insert into public.profile_claims (claimant_user_id, claimed_person_id, status)
+    values ('%s', '%s', 'submitted')
+  $sql$, :'user_a', :'person_z'),
   '23505',
   null,
-  'one claimant cannot hold two simultaneously approved claims'
+  'one claimant cannot hold a second simultaneously active-or-approved claim while already holding an approved one -- rejected at insert time by profile_claims_one_active_or_approved_per_claimant_idx'
 );
 
 -- person_x already has an approved claim (by user_a, from step 9). A
 -- different claimant's claim on the same person_x cannot also become
--- approved.
+-- approved -- this half of the test is about the *person*-level
+-- constraint (profile_claims_one_approved_per_person_idx), not the
+-- claimant-level one exercised immediately above.
+--
+-- Fixture note: this needs a claimant who does not already hold a
+-- conflicting active/approved claim of their own, purely so the setup
+-- insert below succeeds and the person-level constraint is the only
+-- thing left to test. user_b is no longer usable here: user_b already
+-- holds an active submitted claim (on person_y, from section 3), so
+-- reusing user_b would now trip
+-- profile_claims_one_active_or_approved_per_claimant_idx instead --
+-- correctly, but for the wrong reason, masking the person-level
+-- assertion this test exists to prove. A fresh, otherwise-claim-free
+-- claimant (user_c) isolates the person-level constraint, per "use a
+-- distinct claimant when the test needs a separate active claim."
+\set user_c '66666666-6666-6666-6666-666666666666'
+
+insert into auth.users (id, aud, role, email, encrypted_password, email_confirmed_at, created_at, updated_at)
+values (:'user_c', 'authenticated', 'authenticated', 'user-c@example.test', 'not-a-real-hash', now(), now(), now());
+
 insert into public.profile_claims (claimant_user_id, claimed_person_id, status)
-values (:'user_b', :'person_x', 'submitted');
+values (:'user_c', :'person_x', 'submitted');
 
 select throws_ok(
   format($sql$
     update public.profile_claims
     set status = 'approved', reviewer_admin_id = '%s', decided_at = now()
     where claimant_user_id = '%s' and claimed_person_id = '%s'
-  $sql$, :'user_a', :'user_b', :'person_x'),
+  $sql$, :'user_a', :'user_c', :'person_x'),
   '23505',
   null,
   'one person cannot be the subject of two simultaneously approved claims'

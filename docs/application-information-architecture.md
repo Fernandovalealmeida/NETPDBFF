@@ -51,25 +51,37 @@ parts of the structure below are placeholder-only.
 
 | Route | Status | Purpose |
 |---|---|---|
-| `/member` | Built (M4); redesigned visually in M5 | Authenticated home; explicitly explains account-vs-person-record status |
-| `/account` | Built (M4); redesigned visually in M5 | Minimal Auth-account info |
+| `/member` | Built (M4); redesigned visually in M5; identity-claim status added in M5.3 | Authenticated home; explicitly explains account-vs-person-record status, and — as of M5.3 — real claim status (no claim / pending / approved / rejected / withdrawn) |
+| `/member/claim` | **Built in M5.3.** | Search/browse eligible `people` records and submit a claim — the real workflow `/member`'s claim entry point now links to |
+| `/account` | Built (M4); redesigned visually in M5; identity-link status (read-only) added in M5.3 | Minimal Auth-account info, plus a read-only identity-link status section — no claim controls live here |
 | `/update-password` | Built (M4); redesigned visually in M5 | Complete a password reset started by email |
 | `/account/security` | **Not built.** Named as "coming soon" by both `/account` and `/update-password` today | Voluntary password/email changes while signed in — explicitly deferred past M5 too; M5 may reserve the navigational slot, not the page |
 
 ## Future member structure (placeholder only)
 
-None of the following exist. They are listed so M5's shells, navigation,
-and dashboard reserve structurally sensible space for them rather than
-requiring a later restructure:
+None of the following exist yet. They are listed so M5's shells,
+navigation, and dashboard reserve structurally sensible space for them
+rather than requiring a later restructure. One item that used to be listed
+here — the profile-claim flow — is no longer a placeholder: it was built
+in M5.3 as `/member/claim`, per
+`docs/decisions/0008-claim-discovery-security-definer-function.md` and
+`docs/database-implementation.md`'s "What remains for M3.2" note on
+person-record discovery, which this milestone directly resolves (narrowly,
+via `SECURITY DEFINER` functions — not the full `profile_visibility_settings`
+system that note also anticipated, which remains unbuilt).
 
-- A person-record view (`people`, per `docs/database-schema.md`) — what
-  "Member" eventually becomes once claiming exists.
-- A profile-claim flow (`profile_claims`) — the mechanism that turns an
-  authenticated account into a linked member.
+Still entirely unbuilt:
+
+- A person-record *view* (`people`, per `docs/database-schema.md`) — the
+  future `/[person]` route (see "Route hierarchy" below). Claiming lets a
+  claimant assert "this record is me"; it does not yet give anyone a page
+  to look at that record on.
 - Participation history (`pdbff_participations`, `participation_roles`),
   career/education history, institutional affiliations.
 - Relationships/network view (`person_relationships`).
 - Publications (`person_publications`).
+- Claim *review* (moderator-side) — see "Future administration structure"
+  below; M5.3 built only the claimant-facing submission/status side.
 
 ## Future administration structure (placeholder only)
 
@@ -164,6 +176,7 @@ an unlabeled icon-only hamburger with no accessible name.
 /about                         public, PLANNED (M5 may reserve nav slot only)
 
 /member                        authenticated, built
+  /member/claim                 authenticated, built (M5.3)
 /account                       authenticated, built
   /account/security            authenticated, PLANNED (post-M5)
 /update-password               authenticated, built
@@ -206,15 +219,17 @@ fabricate data that doesn't exist yet. Structure:
 2. **"Your account" summary card** — the same minimal facts `/account`
    shows (email, confirmation status), surfaced here too as a real,
    currently-true summary — not a placeholder.
-3. **"Not yet connected" state** — today's explanatory message about
-   account-vs-person-record status, restyled using `EmptyState`, not
-   invented dashboard widgets standing in for participation history,
-   network connections, or publications that don't exist. This is the
-   single most important constraint on this page: every future section
-   (participation summary, network preview, publication count) is
-   represented, if at all, as a clearly labeled "not available yet" empty
-   state — never a zero, a skeleton pretending to load real data, or a
-   fabricated example.
+3. **Identity-claim status** — as of M5.3, a real state (see
+   `src/features/identity/derive-status.ts`), not just explanatory text:
+   no claim (the original "not yet connected" `EmptyState`, now with a
+   real link to `/member/claim`), pending, approved, rejected, or
+   withdrawn — the exact `profile_claims.status` vocabulary, never
+   invented terms. Regardless of which state is shown, this remains the
+   single most important constraint on this page: no participation
+   summary, network preview, or publication count is ever shown, at any
+   claim status — that's still a later milestone, represented, if at all,
+   as a clearly labeled "not available yet" empty state, never a zero, a
+   skeleton pretending to load real data, or a fabricated example.
 4. **Quick links** — to Account and (once it exists) Account → Security.
 
 ## Empty, loading, error, and permission-denied states

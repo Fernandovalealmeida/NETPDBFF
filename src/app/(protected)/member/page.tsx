@@ -8,7 +8,12 @@ import { FormMessage } from "@/components/ui/FormMessage";
 import { FutureAction } from "@/components/ui/FutureAction";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Section } from "@/components/ui/Section";
+import { buttonVariants } from "@/components/ui/Button";
+import { getIdentityStatus } from "@/features/identity/status";
+import { getIdentityStatusCopy } from "@/features/identity/copy";
 import { createClient } from "@/lib/supabase/server";
+
+import { WithdrawClaimButton } from "./WithdrawClaimButton";
 
 export const metadata: Metadata = {
   title: "Member area — NetPDBFF",
@@ -18,17 +23,17 @@ interface MemberPageProps {
   searchParams: Promise<{ confirmed?: string }>;
 }
 
-// M5.2 redesign. Structure follows
+// M5.2 redesign, extended in M5.3 with the real identity-claim status
+// (section 3 below). Structure still follows
 // docs/application-information-architecture.md's "Dashboard hierarchy"
 // exactly: (1) welcome/status header, (2) a real "Your account" summary
-// card, (3) the "not yet connected" empty state, (4) quick links — no step
-// added or reordered beyond restyling onto tokens/primitives.
+// card, (3) identity-claim status, (4) quick links.
 //
-// This page must never query or expose `people` records — identity
-// claiming is a later milestone (see
-// docs/decisions/0001-separate-people-from-user-accounts.md). It only
-// displays the authenticated account's own email, unchanged from M4/M5.1 —
-// no new Supabase call was added for this redesign.
+// This page never queries `people`/`user_person_links` directly — status
+// comes entirely from src/features/identity/status.ts, which itself only
+// reads the claimant's own `profile_claims` rows plus the one narrow,
+// claim-scoped name lookup (get_claimed_person_display_name). See
+// docs/decisions/0008-claim-discovery-security-definer-function.md.
 //
 // Single-column `Container` deliberately: nothing on this page has enough
 // content to justify a second column yet. `Section`/`Stack`/`Grid`
@@ -42,6 +47,9 @@ export default async function MemberPage({ searchParams }: MemberPageProps) {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const email = typeof data?.claims?.email === "string" ? data.claims.email : "your account";
+
+  const identityStatus = await getIdentityStatus();
+  const statusCopy = getIdentityStatusCopy(identityStatus);
 
   return (
     <main id="main-content" tabIndex={-1} className="py-16">
@@ -79,15 +87,41 @@ export default async function MemberPage({ searchParams }: MemberPageProps) {
             </dl>
           </Card>
 
-          {/* 3. "Not yet connected" state — restyled, not reworded in
-              substance. Every future section (participation, network,
-              publications) is represented only as this one honest empty
-              state — never a zero, a skeleton, or a fabricated example. */}
-          <EmptyState
-            title="Not yet connected to a NetPDBFF person record"
-            description="Claiming a historical or existing person record — and everything about PDBFF participants, participation history, and the network — will be available in a later milestone."
-            action={<FutureAction label="Claim a person record" />}
-          />
+          {/* 3. Identity-claim status — the real workflow, M5.3. Every
+              branch renders only real, currently-true state from
+              src/features/identity/status.ts; no participation, network,
+              or publication content appears anywhere here, at any status —
+              that remains a later milestone regardless of claim outcome. */}
+          {identityStatus.kind === "no_claim" ? (
+            <EmptyState
+              title={statusCopy.title}
+              description={statusCopy.description}
+              action={
+                <Link href="/member/claim" className={buttonVariants({ emphasis: "secondary", size: "sm" })}>
+                  Claim a person record
+                </Link>
+              }
+            />
+          ) : identityStatus.kind === "pending" ? (
+            <EmptyState
+              title={statusCopy.title}
+              description={statusCopy.description}
+              action={<WithdrawClaimButton claimId={identityStatus.claim.id} />}
+            />
+          ) : identityStatus.kind === "approved" ? (
+            <EmptyState title={statusCopy.title} description={statusCopy.description} />
+          ) : (
+            // rejected or withdrawn
+            <EmptyState
+              title={statusCopy.title}
+              description={statusCopy.description}
+              action={
+                <Link href="/member/claim" className={buttonVariants({ emphasis: "secondary", size: "sm" })}>
+                  Search again
+                </Link>
+              }
+            />
+          )}
 
           {/* 4. Quick links */}
           <div className="flex flex-wrap items-center gap-4 text-sm">
