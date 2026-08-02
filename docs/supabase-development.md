@@ -164,6 +164,27 @@ it stays server-side only, is set directly in `.env.local` (local) or the
 hosting provider's environment/secrets configuration (deployed), and is
 never referenced from a Client Component — per `CLAUDE.md`.
 
+### Local service-role key for the reviewer E2E tests (M5.4)
+
+`tests/e2e/helpers/reviewer.ts` needs a service-role connection to grant
+reviewer status directly during test setup, since there is deliberately no
+client-facing way to do this (see
+`docs/decisions/0009-reviewer-authorization-table.md`). To run
+`npm run test:e2e` locally:
+
+1. Start the local stack: `npm run supabase:start`.
+2. Get the local secret key: `npm run supabase:status` (look for
+   `service_role key` in the output).
+3. Add it to `.env.local` (already gitignored, never committed):
+   `SUPABASE_SERVICE_ROLE_KEY=<value>`.
+
+`playwright.config.ts` loads `.env.local` via Node's built-in
+`process.loadEnvFile()` before the test run starts, so no manual `export`
+step is needed on top of adding the line above. A value already exported
+in your shell takes precedence over `.env.local` if both are present. If
+the key is missing entirely, the reviewer tests fail immediately with a
+clear error rather than skipping silently.
+
 ## Development vs. production projects
 
 - **Local Supabase** (`supabase start`, Docker) — fully disposable, no

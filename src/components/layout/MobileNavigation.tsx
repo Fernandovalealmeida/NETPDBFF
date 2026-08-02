@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { NavLink } from "@/components/layout/NavLink";
+import { REVIEW_NAV_ITEM } from "@/components/layout/reviewNavItem";
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/ui/Drawer";
 import { getNavItemsByGroup } from "@/lib/navigation/select";
 
@@ -12,6 +13,17 @@ export interface MobileNavigationProps {
   audience: "public" | "protected";
   /** Signed-in email, shown above Log out. Only meaningful when audience is "protected". */
   email?: string;
+  /**
+   * Whether the signed-in account is an authorized reviewer, per
+   * src/features/review/authorization.ts's am_i_a_reviewer() read. Only
+   * meaningful when audience is "protected". Deliberately not part of
+   * navigationConfig (like `email`, this is account-specific, not a
+   * fixed destination) -- and, per the milestone's explicit "do not rely
+   * on hiding navigation as the authorization boundary" requirement, this
+   * only controls whether the link *renders*; every /review route and
+   * database function re-checks reviewer authorization independently.
+   */
+  isReviewer?: boolean;
 }
 
 // Below the `md` breakpoint (docs/design-system-architecture.md,
@@ -34,10 +46,11 @@ export interface MobileNavigationProps {
 // separately-rendered list. If a future entry is ever user-menu-only (not
 // also protected-primary), union it into `items` here rather than
 // duplicating this component's rendering logic.
-export function MobileNavigation({ audience, email }: MobileNavigationProps) {
+export function MobileNavigation({ audience, email, isReviewer }: MobileNavigationProps) {
   const [open, setOpen] = useState(false);
 
   const items = getNavItemsByGroup(audience === "public" ? "public-primary" : "protected-primary");
+  const allItems = audience === "protected" && isReviewer ? [...items, REVIEW_NAV_ITEM] : items;
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
@@ -52,7 +65,7 @@ export function MobileNavigation({ audience, email }: MobileNavigationProps) {
         <DrawerTitle>Menu</DrawerTitle>
 
         <nav aria-label="Primary" className="mt-6 flex flex-col gap-1">
-          {items.map((item) => (
+          {allItems.map((item) => (
             <NavLink
               key={item.id}
               item={item}

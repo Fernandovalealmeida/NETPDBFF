@@ -168,6 +168,42 @@ export type Database = {
           },
         ]
       }
+      reviewers: {
+        Row: {
+          created_at: string
+          granted_at: string
+          granted_by_user_id: string | null
+          id: string
+          revoked_at: string | null
+          revoked_by_user_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          granted_at?: string
+          granted_by_user_id?: string | null
+          id?: string
+          revoked_at?: string | null
+          revoked_by_user_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          granted_at?: string
+          granted_by_user_id?: string | null
+          id?: string
+          revoked_at?: string | null
+          revoked_by_user_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_person_links: {
         Row: {
           created_at: string
@@ -227,6 +263,47 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      am_i_a_reviewer: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      approve_profile_claim: {
+        Args: { p_claim_id: string }
+        Returns: {
+          id: string
+          status: string
+          decided_at: string
+          link_id: string
+        }[]
+      }
+      begin_claim_review: {
+        Args: { p_claim_id: string }
+        Returns: {
+          id: string
+          status: string
+        }[]
+      }
+      get_claim_review_detail: {
+        Args: { p_claim_id: string }
+        Returns: {
+          id: string
+          status: string
+          claimant_email: string | null
+          person_id: string
+          person_display_name: string
+          person_given_name: string
+          person_family_name: string
+          person_verification_status: string
+          person_source_type: string
+          person_created_at: string
+          supporting_evidence: string | null
+          submitted_at: string
+          decided_at: string | null
+          reviewer_email: string | null
+          decision_notes: string | null
+          active_link_exists: boolean
+        }[]
+      }
       get_claimed_person_display_name: {
         Args: { p_person_id: string }
         Returns: string | null
@@ -234,6 +311,26 @@ export type Database = {
       is_person_claimable: {
         Args: { p_person_id: string }
         Returns: boolean
+      }
+      list_claims_for_review: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          status: string
+          claimant_email: string | null
+          person_id: string
+          person_display_name: string
+          person_verification_status: string
+          submitted_at: string
+        }[]
+      }
+      reject_profile_claim: {
+        Args: { p_claim_id: string; p_decision_notes?: string | null }
+        Returns: {
+          id: string
+          status: string
+          decided_at: string
+        }[]
       }
       search_claimable_people: {
         Args: { p_query?: string | null }

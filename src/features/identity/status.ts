@@ -23,7 +23,7 @@ export async function getIdentityStatus(): Promise<IdentityStatus> {
 
   const { data, error } = await supabase
     .from("profile_claims")
-    .select("id, claimed_person_id, status, submitted_at, decided_at")
+    .select("id, claimed_person_id, status, submitted_at, decided_at, decision_notes")
     .order("submitted_at", { ascending: false });
 
   if (error || !data) {
@@ -43,6 +43,7 @@ export async function getIdentityStatus(): Promise<IdentityStatus> {
       status: row.status,
       submittedAt: row.submitted_at,
       decidedAt: row.decided_at,
+      decisionNotes: row.decision_notes,
     }));
 
   if (claims.length === 0) {

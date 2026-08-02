@@ -3,6 +3,7 @@ import Link from "next/link";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { MobileNavigation } from "@/components/layout/MobileNavigation";
 import { NavLink } from "@/components/layout/NavLink";
+import { REVIEW_NAV_ITEM } from "@/components/layout/reviewNavItem";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Avatar } from "@/components/ui/Avatar";
 import {
@@ -17,6 +18,14 @@ import { getNavItemsByGroup } from "@/lib/navigation/select";
 
 interface ProtectedHeaderProps {
   email: string;
+  /**
+   * Whether the signed-in account is an authorized reviewer -- see
+   * MobileNavigationProps' matching field for the full reasoning. Purely
+   * a rendering signal; /review's own layout and every review database
+   * function independently re-verify authorization regardless of this
+   * prop's value.
+   */
+  isReviewer?: boolean;
 }
 
 // Generalizes ProtectedNav (M4) per docs/design-system-architecture.md's
@@ -30,7 +39,7 @@ interface ProtectedHeaderProps {
 // (signed-in email, links to Member and Account, Log out — fully
 // keyboard-operable, Escape closes, focus returns to the trigger, all
 // supplied by Radix per ADR-0003).
-export function ProtectedHeader({ email }: ProtectedHeaderProps) {
+export function ProtectedHeader({ email, isReviewer }: ProtectedHeaderProps) {
   const primaryItems = getNavItemsByGroup("protected-primary");
   const menuLinkItems = getNavItemsByGroup("user-menu").filter(
     (item) => item.availability.status === "available" && item.href,
@@ -48,6 +57,13 @@ export function ProtectedHeader({ email }: ProtectedHeaderProps) {
               activeClassName="text-foreground font-medium"
             />
           ))}
+          {isReviewer ? (
+            <NavLink
+              item={REVIEW_NAV_ITEM}
+              className="text-muted-foreground transition-colors hover:text-foreground"
+              activeClassName="text-foreground font-medium"
+            />
+          ) : null}
         </nav>
 
         <div className="flex items-center gap-3">
@@ -104,7 +120,7 @@ export function ProtectedHeader({ email }: ProtectedHeaderProps) {
             </DropdownContent>
           </Dropdown>
 
-          <MobileNavigation audience="protected" email={email} />
+          <MobileNavigation audience="protected" email={email} isReviewer={isReviewer} />
         </div>
       </div>
     </header>

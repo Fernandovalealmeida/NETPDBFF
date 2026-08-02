@@ -1,6 +1,6 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
-import { waitForConfirmationLink } from "./helpers/mailpit";
+import { registerAndConfirm } from "./helpers/auth";
 
 // Browser coverage for the M5.3 identity-claiming workflow
 // (/member/claim, plus its effect on /member and /account). Relies on the
@@ -14,27 +14,13 @@ import { waitForConfirmationLink } from "./helpers/mailpit";
 // console/theme coverage for /member/claim itself lives in
 // workspace-pages-quality.spec.ts's existing per-path loop, not repeated
 // here either — this file is scoped to the workflow's own behavior.
-
-async function registerAndConfirm(page: Page): Promise<string> {
-  const email = `e2e-claim-${Date.now()}@example.com`;
-  const password = "correcthorse1";
-
-  await page.goto("/register");
-  await page.getByLabel("Email").fill(email);
-  await page.getByLabel("Password", { exact: true }).fill(password);
-  await page.getByLabel("Confirm password").fill(password);
-  await page.getByRole("checkbox").check();
-  await page.getByRole("button", { name: "Create account" }).click();
-
-  const confirmLink = await waitForConfirmationLink(email);
-  await page.goto(confirmLink);
-
-  return email;
-}
+//
+// registerAndConfirm now lives in helpers/auth.ts (shared with
+// claim-review.spec.ts, M5.4) — this file no longer defines its own copy.
 
 test.describe("Claim discovery", () => {
   test("an authenticated user can search and find an eligible person record", async ({ page }) => {
-    await registerAndConfirm(page);
+    await registerAndConfirm(page, "e2e-claim");
     await page.goto("/member/claim");
 
     await page.getByLabel("Search by name").fill("Lovelace");
@@ -50,7 +36,7 @@ test.describe("Claim discovery", () => {
   test("a search with no eligible match shows the honest no-matches state, not an error", async ({
     page,
   }) => {
-    await registerAndConfirm(page);
+    await registerAndConfirm(page, "e2e-claim");
     await page.goto("/member/claim");
 
     await page.getByLabel("Search by name").fill("Zzyzyxqqnomatch");
@@ -60,7 +46,7 @@ test.describe("Claim discovery", () => {
   });
 
   test("selecting a result moves keyboard focus to the confirmation step", async ({ page }) => {
-    await registerAndConfirm(page);
+    await registerAndConfirm(page, "e2e-claim");
     await page.goto("/member/claim");
 
     await page.getByLabel("Search by name").fill("Hopper");
@@ -75,7 +61,7 @@ test.describe("Claim submission, status, and duplicate prevention", () => {
   test("submitting a claim shows pending status on both /member and /account, blocks a second claim, and withdrawal reopens discovery", async ({
     page,
   }) => {
-    await registerAndConfirm(page);
+    await registerAndConfirm(page, "e2e-claim");
     await page.goto("/member/claim");
 
     await page.getByLabel("Search by name").fill("Lovelace");

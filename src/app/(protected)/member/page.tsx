@@ -110,8 +110,22 @@ export default async function MemberPage({ searchParams }: MemberPageProps) {
             />
           ) : identityStatus.kind === "approved" ? (
             <EmptyState title={statusCopy.title} description={statusCopy.description} />
+          ) : identityStatus.kind === "rejected" ? (
+            <EmptyState
+              title={statusCopy.title}
+              description={
+                identityStatus.claim.decisionNotes
+                  ? `${statusCopy.description} Reviewer note: ${identityStatus.claim.decisionNotes}`
+                  : statusCopy.description
+              }
+              action={
+                <Link href="/member/claim" className={buttonVariants({ emphasis: "secondary", size: "sm" })}>
+                  Search again
+                </Link>
+              }
+            />
           ) : (
-            // rejected or withdrawn
+            // withdrawn
             <EmptyState
               title={statusCopy.title}
               description={statusCopy.description}

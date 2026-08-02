@@ -34,4 +34,9 @@ test.describe("Protected routes", () => {
     await page.goto("/member/claim");
     await expect(page).toHaveURL(/\/login/);
   });
+
+  test("an unauthenticated visitor is redirected from /review/claims", async ({ page }) => {
+    await page.goto("/review/claims");
+    await expect(page).toHaveURL(/\/login/);
+  });
 });

@@ -10,6 +10,7 @@ function claim(overrides: Partial<ClaimRecord>): ClaimRecord {
     status: "submitted",
     submittedAt: "2026-01-01T00:00:00Z",
     decidedAt: null,
+    decisionNotes: null,
     ...overrides,
   };
 }

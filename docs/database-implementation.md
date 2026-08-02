@@ -367,6 +367,25 @@ invent a temporary insecure admin policy. When a real role system is
 designed, `profile_claims`/`user_person_links` policies will need
 revisiting to allow a genuine admin role to act directly.
 
+**Closed by M5.4 (`supabase/migrations/20260802130000_add_claim_review_governance.sql`).**
+The limitation above described M3.1's state and no longer holds: a
+`public.reviewers` table now exists (one row per reviewer account,
+`service_role`-only writes, no client-controlled role values — see
+`docs/decisions/0009-reviewer-authorization-table.md`), and claim
+approval/rejection/link creation now happen through `SECURITY DEFINER`
+functions (`begin_claim_review`, `approve_profile_claim`,
+`reject_profile_claim`) that a signed-in reviewer's own session can call
+directly — never through `service_role` standing in for a user, and
+never through a direct `UPDATE`/`INSERT` on `profile_claims` or
+`user_person_links`, both of which remain exactly as locked down as this
+document originally described. This is deliberately still not "a real
+role system": there is no general roles table, no role hierarchy, and no
+client-facing way to grant or revoke reviewer status — only a trusted
+service-role connection can write to `public.reviewers` at all. See
+ADR-0009 for the full reasoning and for what is intentionally still
+deferred (general roles, moderation beyond identity claims, link
+revocation/appeals).
+
 ## Running the local database tests
 
 ```bash
@@ -444,6 +463,15 @@ Two things worth double-checking when you do:
 
 - Design and implement an administrator-role mechanism, then revisit
   every RLS policy here that currently says "service-role only."
+  **Partially addressed in M5.4**, narrowly and without building a
+  general role system: `public.reviewers` (one row per reviewer account,
+  `service_role`-only writes) plus a small set of reviewer-gated
+  `SECURITY DEFINER` functions now let an authorized reviewer's own
+  session review and decide identity claims directly — see "Admin-review
+  limitation" above and `docs/decisions/0009-reviewer-authorization-table.md`.
+  No general roles table, role hierarchy, or role-management UI exists;
+  this remains a real follow-up for any future moderation need beyond
+  identity claims.
 - Design `profile_visibility_settings` and decide what (if anything)
   about `people` becomes readable by `anon`/`authenticated` — this
   unblocks giving `people` any GRANT/policy at all.

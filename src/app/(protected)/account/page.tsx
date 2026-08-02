@@ -77,6 +77,11 @@ export default async function AccountPage() {
           <h2 className="text-sm font-medium text-foreground">Person-record link</h2>
           <p className="mt-2 text-sm text-foreground">{statusCopy.title}.</p>
           <p className="mt-1 text-sm text-muted-foreground">{statusCopy.description}</p>
+          {identityStatus.kind === "rejected" && identityStatus.claim.decisionNotes ? (
+            <p className="mt-1 text-sm text-muted-foreground">
+              Reviewer note: {identityStatus.claim.decisionNotes}
+            </p>
+          ) : null}
           <p className="mt-3 text-sm">
             <Link href="/member" className="font-medium text-foreground underline underline-offset-2">
               Manage in the Member area

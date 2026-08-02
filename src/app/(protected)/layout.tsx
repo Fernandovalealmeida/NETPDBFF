@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { AppShell } from "@/components/layout/AppShell";
 import { ProtectedHeader } from "@/components/layout/ProtectedHeader";
+import { isCurrentUserReviewer } from "@/features/review/authorization";
 import { createClient } from "@/lib/supabase/server";
 
 // Wraps /member, /account, /update-password (this is a route group — the
@@ -41,5 +42,16 @@ export default async function ProtectedLayout({
 
   const email = typeof data.claims.email === "string" ? data.claims.email : "your account";
 
-  return <AppShell header={<ProtectedHeader email={email} />}>{children}</AppShell>;
+  // One extra, cheap RPC on an already-force-dynamic, already-Supabase-
+  // calling layout (per ADR-0006, this cost is only acceptable here
+  // because every route under (protected) is already dynamic for
+  // unrelated reasons -- a PublicHeader-reachable component must never
+  // do this). Purely a nav-visibility signal -- see
+  // src/features/review/authorization.ts's own doc comment for why this
+  // is not, and must never become, the authorization boundary itself.
+  const isReviewer = await isCurrentUserReviewer();
+
+  return (
+    <AppShell header={<ProtectedHeader email={email} isReviewer={isReviewer} />}>{children}</AppShell>
+  );
 }

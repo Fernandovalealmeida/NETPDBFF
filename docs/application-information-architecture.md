@@ -25,14 +25,24 @@ rather than redefining them:
 3. **Linked NetPDBFF member** *(future)* — an authenticated account with
    an approved `user_person_links` row (`docs/database-schema.md`). Not
    implemented anywhere yet; M5 must not fabricate this state.
-4. **Administrator** *(future)* — a role that doesn't exist in the schema
-   yet (`docs/database-implementation.md`, "Admin-review limitation").
+4. **Reviewer** — an authenticated account with an active row in
+   `public.reviewers` (`docs/decisions/0009-reviewer-authorization-table.md`).
+   **Built narrowly in M5.4**: authorization lives entirely in
+   PostgreSQL, there is no general "Administrator" role and no
+   role-management UI — a reviewer can review and decide identity
+   claims, nothing else. The broader "Administrator" audience this
+   section used to describe as fully future is now split: the identity-
+   claim-review slice of it is real (see "Reviewer application
+   structure" below); everything else administrative remains future,
+   with no role or mechanism to support it yet (see "Future
+   administration structure").
 
-M5 builds interface for audiences 1 and 2 only. It establishes visual and
-structural *placeholders* consistent with audiences 3 and 4 (so later
-milestones don't require a redesign) without implementing any gating,
-content, or workflow for them — this document is explicit about which
-parts of the structure below are placeholder-only.
+M5 built interface for audiences 1 and 2. M5.4 additionally built a
+narrow slice of audience 4 (claim review only). It establishes visual and
+structural *placeholders* consistent with audience 3 and the rest of
+audience 4 (so later milestones don't require a redesign) without
+implementing any gating, content, or workflow for them — this document is
+explicit about which parts of the structure below are placeholder-only.
 
 ## Public application structure
 
@@ -57,6 +67,25 @@ parts of the structure below are placeholder-only.
 | `/update-password` | Built (M4); redesigned visually in M5 | Complete a password reset started by email |
 | `/account/security` | **Not built.** Named as "coming soon" by both `/account` and `/update-password` today | Voluntary password/email changes while signed in — explicitly deferred past M5 too; M5 may reserve the navigational slot, not the page |
 
+## Reviewer application structure
+
+**Built in M5.4.** Nested under the existing authenticated shell (per
+`docs/decisions/0006-static-shell-vs-dynamic-shell.md`'s distinction
+between a new shell variant and an additional access gate within an
+existing one) — not a separate shell or route group.
+
+| Route | Status | Purpose |
+|---|---|---|
+| `/review/claims` | **Built in M5.4.** | Claim review queue — claims awaiting a decision (`submitted`/`under_review`), reviewer-authorized only |
+| `/review/claims/[claimId]` | **Built in M5.4.** | Claim detail/evidence review, begin-review, and the approve/reject decision — reviewer-authorized only |
+
+An authenticated-but-not-a-reviewer visitor sees a calm permission-denied
+state in place of this content, never a redirect and never a claim's
+existence disclosed one way or the other — see
+`src/app/(protected)/review/layout.tsx`. Nothing beyond these two routes
+exists: no bulk actions, no reviewer analytics, no general claim/person
+administration.
+
 ## Future member structure (placeholder only)
 
 None of the following exist yet. They are listed so M5's shells,
@@ -80,23 +109,34 @@ Still entirely unbuilt:
   career/education history, institutional affiliations.
 - Relationships/network view (`person_relationships`).
 - Publications (`person_publications`).
-- Claim *review* (moderator-side) — see "Future administration structure"
-  below; M5.3 built only the claimant-facing submission/status side.
+- Claim *review* (moderator-side) — no longer a placeholder; built in
+  M5.4 as `/review/claims` (see "Reviewer application structure" above).
+  M5.3 built only the claimant-facing submission/status side.
 
 ## Future administration structure (placeholder only)
 
-Also entirely unbuilt — no admin role exists in the schema yet:
+One item that used to be listed here — the claim-review queue — is no
+longer a placeholder: it was built in M5.4 as `/review/claims`, per
+`docs/decisions/0009-reviewer-authorization-table.md` (see "Reviewer
+application structure" above). Everything else below remains entirely
+unbuilt, and no general admin role or role-management mechanism exists
+to support it:
 
-- A claim-review queue (`profile_claims` awaiting decision).
 - A nomination-review queue (`person_nominations`).
 - A duplicate-resolution queue (`duplicate_candidates`).
 - A verification-review console (`verification_reviews`).
 - A moderation console (`moderation_actions`).
 - Controlled-vocabulary management (`controlled_vocabulary_requests`).
+- General user/role administration, bulk actions, and reviewer
+  analytics — explicitly out of scope for M5.4; `public.reviewers`
+  (docs/decisions/0009-reviewer-authorization-table.md) has no
+  client-facing grant/revoke path at all, on purpose.
 
-M5 does not build an `/admin` route, an admin shell variant, or any
-role-based UI branching — there is no role to branch on. Where the design
-system needs to anticipate a third chrome variant (beyond public and
+M5 does not build an `/admin` route or an admin shell variant. M5.4 added
+one narrow, reviewer-gated slice nested inside the existing authenticated
+shell (see "Reviewer application structure" above) — not a new shell
+variant and not general role-based UI branching. Where the design system
+needs to anticipate a third chrome variant (beyond public and
 authenticated), it should note that possibility structurally (see
 `AppShell` in `docs/design-system-architecture.md`) without building it.
 
@@ -111,7 +151,12 @@ formalized): Member, Account, and — once it exists — a future Profile
 entry point. The signed-in identity (currently just an email string) and
 Log out move into a **user menu** (below) rather than sitting inline as
 plain text, now that the design system has a real menu/dropdown
-component.
+component. As of M5.4, a "Claim review" entry is additionally shown, but
+only to an active reviewer — it is account-specific and session-dependent
+the same way the email/logout entries are, so it is computed per-request
+in `(protected)/layout.tsx` and passed down as a prop, not added to the
+static `navigationConfig`. Its visibility is a UI convenience only, never
+the authorization boundary — see "Reviewer application structure" above.
 
 Primary navigation never includes a destination that doesn't resolve to a
 real, built page — no dead links to `/about`, future member routes, or

@@ -126,8 +126,8 @@ implements), and two levels that don't exist yet anywhere in the code —
 **Future linked NetPDBFF member** (an authenticated account with an
 *approved* `user_person_links` row, per
 `docs/decisions/0001-separate-people-from-user-accounts.md`) and **Future
-administrator** (a role that doesn't exist in the schema yet — see
-`docs/database-implementation.md`, "Admin-review limitation"). The last two
+administrator** (a general administrator role — still doesn't exist, and
+is not what M5.4 built; see the note below the table). The last two
 columns describe *intended future gating*, not anything enforced today —
 every current route's actual enforcement is exactly what "Public" or
 "Authenticated account" says.
@@ -146,6 +146,19 @@ every current route's actual enforcement is exactly what "Public" or
 Nothing in this table implies the future columns are implemented — see
 "Future security work" below for what's documented but deliberately not
 built yet.
+
+**M5.4 update.** The "an admin claim-review queue" row above described a
+fully future state as of M4/M5.3 and is now partially built: `/review/claims`
+and `/review/claims/[claimId]` are real, gated by `public.reviewers` (an
+active row, checked live inside PostgreSQL — never inferred from email,
+role claims, or client input), not by the general "Future administrator"
+role this table otherwise still describes as unbuilt. See
+`docs/decisions/0009-reviewer-authorization-table.md` and
+`docs/application-information-architecture.md`'s "Reviewer application
+structure" for the actual route table and access rule. Every other cell in
+the "Future administrator" column remains exactly as unbuilt as this
+document originally described — reviewer authorization only covers
+identity-claim review, nothing else.
 
 ### Why no separate `/auth/callback`
 
@@ -1021,6 +1034,20 @@ rather than using any service-role Admin API call, keeping test setup
 within the same constraints as the application code (no service-role
 operations — see CLAUDE.md's scope discipline and this milestone's explicit
 "do not implement" list).
+
+**M5.4 exception, deliberate and documented.** `tests/e2e/helpers/reviewer.ts`
+(added in M5.4) does use a service-role Supabase client — the one place in
+the whole e2e suite that does. This is not the same shortcut the paragraph
+above avoids: there, a service-role call would have bypassed a boundary the
+*application* itself also has a legitimate way around (reading Mailpit).
+Here, there is no application-reachable alternative to reach at all —
+per `docs/decisions/0009-reviewer-authorization-table.md`, granting
+reviewer status has no client-facing path in the real system either; only
+a trusted service-role connection can do it, by design. The test helper
+plays exactly that role for setup, the same way
+`supabase/tests/database/claim_review.test.sql`'s pgTAP fixtures insert
+`reviewers` rows directly as the table owner — it never bypasses an
+authorization check the application code itself would have enforced.
 
 ## Future security work (documented, not implemented)
 

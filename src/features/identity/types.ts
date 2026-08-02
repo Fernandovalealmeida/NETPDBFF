@@ -30,6 +30,17 @@ export interface ClaimRecord {
   status: ClaimStatus;
   submittedAt: string;
   decidedAt: string | null;
+  /**
+   * Concise reviewer context, added in M5.4. Never `reviewer_admin_id` --
+   * see the profile_claims column-grant note in
+   * supabase/migrations/20260802130000_add_claim_review_governance.sql
+   * for why decision_notes is safe to surface to the claimant while the
+   * reviewer's own identity is not. May be present on any decided claim,
+   * but only rendered for rejected claims today (see
+   * src/features/identity/copy.ts) -- approval's own copy states the
+   * outcome plainly and doesn't need a reviewer note to be understood.
+   */
+  decisionNotes: string | null;
 }
 
 /**
