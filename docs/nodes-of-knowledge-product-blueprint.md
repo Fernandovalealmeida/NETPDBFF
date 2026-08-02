@@ -349,6 +349,36 @@ the grammar nothing. It does not compete with Entity, Assertion, and Provenance;
 composes from them, on a different plane. The grammar gains a clearly named
 structural keystone and keeps its epistemic core exactly as elegant as before.
 
+**The semantic boundary of Participation** (constitutional clarification CC1, ratified
+at M6.V). To keep the structural primitive precise, its boundary is made explicit.
+Participation represents an entity's bounded, capacity-qualified *belonging or
+inclusion* within a larger context across time — and only that. It must **not** be
+used to represent:
+
+- production,
+- authorship,
+- causation,
+- ownership,
+- object-of-study, or
+- the representation of one entity by another.
+
+Those meanings belong to Relationships, Events, Assertions, or another appropriate
+primitive — never to Participation. The distinction in practice:
+
+- A person participating in PDBFF — **Participation.**
+- An institution participating in a collaboration — **Participation.**
+- A project belonging to a wider programme — **Participation.**
+- A collection produced by an expedition — **not** Participation; this is a production
+  Relationship or Event.
+- A species studied by a project — **not** Participation; this is an object-of-study
+  Relationship.
+
+This clarification narrows what Participation *means* without diminishing what it
+*is.* It remains the foundational structural primitive of the platform — the primary
+shape through which entities enter institutional memory — now with a semantic boundary
+that prevents it from absorbing relations of production, authorship, causation,
+ownership, study, or representation, each of which has its own proper primitive.
+
 > **Structural Primitive Principle** — Participation is the foundational primitive of
 > the structural plane — any entity's bounded, capacity-qualified belonging to a
 > larger context across time — and it earns that standing without joining the
@@ -1375,6 +1405,29 @@ begin at a person and arrive at a species; begin at a photograph and arrive at a
 expedition; begin at a station and arrive at a *mateiro* and from there at another
 scientist. Every object having a story is not a feature added to the pages; it is the
 property that turns a set of pages into a single fabric of connected memory.
+
+**Datasets and the knowledge-history boundary** (constitutional clarification CC2,
+ratified at M6.V). Because every object can be an entity, scientific datasets can be
+entities too — and the boundary of that inclusion must be made explicit, so that
+"every object has a story" is never mistaken for a mandate to become a data
+warehouse. Nodes of Knowledge preserves the *history of knowledge-making.* Within that
+purpose, the platform may represent:
+
+- datasets as scientific contributions or referenced entities;
+- who created or maintained them;
+- when and where they were produced;
+- the projects, methods, institutions, sites, and people connected to them; and
+- their provenance, custodianship, and access information.
+
+What the platform does **not** become, in its initial scope, is a raw scientific-data
+repository, an analytical environment, or a replacement for specialist data
+infrastructure. A dataset enters the record as a documented contribution carrying its
+provenance and custodianship — the history of its making — not as raw data to be
+stored, queried, or analysed here. This boundary preserves the possibility of future
+integrations with specialist data infrastructure without expanding the platform's
+current scope: because a dataset-entity is represented as a contribution with
+provenance rather than as the data itself, it can later point to, or be enriched by,
+external systems without any change to what the platform fundamentally is.
 
 > **Every-Object Principle** — Give every kind of thing the platform holds — project,
 > station, collection, species, publication, archive, photograph, document,

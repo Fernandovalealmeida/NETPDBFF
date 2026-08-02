@@ -73,6 +73,11 @@ docs/           Product, architecture, and data-model documentation
   (Scientific Biography, Timeline, Participation, Relationships, Institution),
   and the capability roadmap from which M6 implementation milestones emerge
   (Product Architecture, not implementation spec)
+- `docs/nodes-of-knowledge-constitutional-validation-m6v.md` — The Nodes of
+  Knowledge Constitutional Validation (M6.V): validates the Design Bible and
+  Product Blueprint end-to-end against one real scientific life (G. Bruce
+  Williamson at PDBFF); records the verdict that M6.1 may begin, and the
+  provenance, participation, and knowledge-history findings behind it
 - `docs/product-specification.md` — product scope and goals
 - `docs/architecture.md` — modular-monolith architecture and planned modules
 - `docs/database-model.md` — preliminary conceptual data model

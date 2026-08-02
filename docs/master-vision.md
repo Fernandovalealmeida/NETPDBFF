@@ -25,6 +25,14 @@ Blueprint, First Constitutional Edition). Like the Design Bible, it defines no
 schema, API, or route; it is the bridge between the vision and implementation,
 not implementation itself.
 
+Both constitutional documents were validated end-to-end against one real,
+incomplete scientific life in
+`docs/nodes-of-knowledge-constitutional-validation-m6v.md` (M6.V — Validation
+Through a Living Biography), which found no architectural contradiction,
+ratified two Blueprint clarifications (the Participation boundary and the
+knowledge-history boundary), and approved the verdict that M6.1 implementation
+may begin.
+
 This document describes intent and architecture. It is **not** a
 description of what is built. Today, exactly one Node exists (Node PDBFF),
 and the platform is deliberately a single-Node application. Everything here
