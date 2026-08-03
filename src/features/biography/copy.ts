@@ -20,12 +20,10 @@ export const biographyCopy = {
       "This record is not available. It may not exist, or it may have been merged into another record.",
   },
   // Reserved sections for later capabilities. Honest "not yet recorded"
-  // states -- never fabricated data or decorative modules.
+  // states -- never fabricated data or decorative modules. Scientific
+  // contributions became a live projection in M6.6 (see
+  // src/features/contribution) and is no longer reserved here.
   reservedSections: {
-    contributions: {
-      title: "Scientific contributions",
-      description: "Contributions and publications will appear here as they are recorded.",
-    },
     records: {
       title: "Historical records",
       description: "Photographs, documents, and other historical records will appear here as they are added.",
@@ -41,7 +39,6 @@ export const biographyCopy = {
 export type ReservedSectionKey = keyof typeof biographyCopy.reservedSections;
 
 export const RESERVED_SECTION_ORDER: readonly ReservedSectionKey[] = [
-  "contributions",
   "records",
   "legacy",
 ];

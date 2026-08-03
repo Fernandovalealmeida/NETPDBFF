@@ -81,14 +81,6 @@ export const institutionCopy = {
         "Relationships between institutions will appear here once the relationship model is extended beyond people. This is an honest deferred state, not an absence of history.",
     },
   },
-  contributions: {
-    heading: "Scientific contributions",
-    reserved: {
-      title: "Scientific contributions are not yet recorded",
-      description:
-        "What knowledge this institution made possible will appear here as it is documented — never inferred from affiliation, and never reduced to a publication count.",
-    },
-  },
   records: {
     heading: "Historical records",
     reserved: {

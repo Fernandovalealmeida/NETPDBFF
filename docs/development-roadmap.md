@@ -157,3 +157,28 @@ accompanies it. See `docs/m6.5-institution-engine.md` and
 `docs/decisions/0015-institution-engine.md`. The universal Entity Engine,
 institution↔institution Relationships, the Contribution and Historical Records
 engines, the Knowledge Network, and any Node administration remain deferred.
+
+## Milestone status — M6.6 (Contribution Engine: what was made possible)
+
+**Implemented (pending local validation).** M6.6 turns the sixth constitutional
+engine into software: Contribution as a first-class historical object — a
+provenance-bearing account of what people, institutions, communities, and
+knowledge traditions made possible. One additive migration
+(`20260808090000_add_contribution_engine.sql`) adds `contribution_kinds` /
+`contribution_capacities` (kind and capacity as distinct data-backed axes),
+the canonical `contributions` record (its own temporal scope and provenance;
+no ranking/impact/status), explicit typed `person_contributions` /
+`organization_contributions` attributions (each its own assertion, never
+inferred, never polymorphic), `contribution_narrative` (interpretation separate
+from evidence), and `contribution_events` (canonical Event projection without
+duplication). Four bounded SECURITY DEFINER reads drive a new
+`/contributions/[contributionId]` page and replace the reserved
+"Scientific contributions" placeholders on the person and institution pages with
+live projections, consistent by construction. Collective and Indigenous
+contributions are representable without fabricating individuals; community
+authorization and culturally-restricted-knowledge governance are documented
+deferred extension points. See `docs/decisions/0016-contribution-engine.md`,
+`docs/m6.6-contribution-engine.md`, and
+`docs/m6.6-contribution-engine-engineering-report.md`. The universal Entity
+Engine, generalized polymorphic attribution, outputs/records ingestion, impact
+scoring, and M6.7 remain deferred.

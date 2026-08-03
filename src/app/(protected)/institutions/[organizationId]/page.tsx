@@ -5,6 +5,8 @@ import { Container } from "@/components/ui/Container";
 import { Divider } from "@/components/ui/Divider";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { pageTitle } from "@/config/site";
+import { InstitutionContributions } from "@/features/contribution/components/InstitutionContributions";
+import { getOrganizationContributions } from "@/features/contribution/read";
 import { institutionCopy, NARRATIVE_FACET_LABELS } from "@/features/institution/copy";
 import { InstitutionalNameHistory } from "@/features/institution/components/InstitutionalNameHistory";
 import { InstitutionIdentityHeader } from "@/features/institution/components/InstitutionIdentityHeader";
@@ -22,7 +24,9 @@ import { Timeline } from "@/features/timeline/components/Timeline";
 // (/institutions/[organizationId]) -- Node-neutral. Historical/closed/merged
 // institutions are readable (never hidden). The title is generic (no
 // institution name in <title>/history). Server Component; the reads happen
-// server-side and are composed here, each independently evolving.
+// server-side and are composed here, each independently evolving. As of M6.6
+// the Scientific-contributions surface is a live canonical projection (the SAME
+// records that drive each dedicated Contribution page), no longer reserved.
 export const metadata: Metadata = {
   title: pageTitle("Institution"),
 };
@@ -41,6 +45,7 @@ export default async function InstitutionPage({ params }: InstitutionPageProps) 
 
   const timeline = await getOrganizationTimeline(organizationId);
   const participation = await getOrganizationParticipation(organizationId);
+  const contributions = await getOrganizationContributions(organizationId);
 
   const introduction = narrativeFacet(organization, "introduction");
   const overview = narrativeFacet(organization, "overview");
@@ -102,12 +107,7 @@ export default async function InstitutionPage({ params }: InstitutionPageProps) 
         </div>
 
         <div className="mt-10">
-          <InstitutionReservedSection
-            id="contributions"
-            heading={institutionCopy.contributions.heading}
-            title={institutionCopy.contributions.reserved.title}
-            description={institutionCopy.contributions.reserved.description}
-          />
+          <InstitutionContributions document={contributions} />
         </div>
 
         <div className="mt-10">

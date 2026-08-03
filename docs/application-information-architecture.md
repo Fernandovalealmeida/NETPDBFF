@@ -404,3 +404,33 @@ records surfaces → Significance → Legacy. Historical/closed/merged instituti
 are readable (never hidden). **Discovery**: the person biography's Participation
 links each organization name to its Institution page; a directory/search and a
 public (unauthenticated) institution surface are deferred.
+
+## M6.6 — Contribution Engine additions
+
+M6.6 adds the dedicated Contribution reading surface and turns two reserved
+placeholders into live projections (ADR-0016, `docs/m6.6-contribution-engine.md`).
+
+- New route `/contributions/[contributionId]` — a first-class historical reading
+  experience for a Contribution as a historical object (a scholarly object
+  history / archival dossier, never a publication page, grant report,
+  project card, impact dashboard, or leaderboard). Protected; Node-neutral
+  generic route keyed by UUID; generic `<title>`. Reading flow: identity (title,
+  kind, own temporal scope, place, provenance), overview + historical context,
+  contributors by capacity, institutional context, related events (only when
+  present), significance, legacy, and honest reserved Records / Consequences
+  surfaces.
+- `/people/[personId]` — the reserved "Scientific contributions" section is now
+  the live `PersonContributions` projection (what this person helped make
+  possible, in what capacity, when, with provenance; each links to its dedicated
+  page). It is no longer a reserved section; the biography reserved architecture
+  is now Historical records and Legacy.
+- `/institutions/[organizationId]` — the reserved "Scientific contributions"
+  section is now the live `InstitutionContributions` projection (the same
+  canonical records from the institution's perspective). Institutional
+  relationships and Historical records remain honest reserved surfaces.
+
+All three surfaces project one canonical set of attributions, so they are
+consistent by construction. Empty, collective, undated, and disputed states are
+rendered honestly; contributions are never inferred from participation,
+affiliation, or authorship, and are never shown as counts, rankings, or credit
+shares.

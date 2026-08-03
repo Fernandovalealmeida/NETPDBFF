@@ -97,3 +97,29 @@ and narrative `kind` — following the established distinction: open domain
 taxonomies are lookup tables (`event_kinds`, `participation_capacities`,
 `relationship_kinds`, `organization_types`), while small stable state sets are
 CHECKs (like `source_type`/`verification_status`).
+
+## Fifth realization: `contribution_kinds` and `contribution_capacities` (M6.6)
+
+The Contribution Engine introduces the fifth and sixth controlled vocabularies
+implemented as data (see `docs/database-implementation.md` and
+`docs/decisions/0016-contribution-engine.md`), and crucially keeps them on two
+distinct axes. `public.contribution_kinds` (referenced by
+`contributions.contribution_kind`) names the *kind* of historical object
+contributed — empirical observation, field knowledge, long-term monitoring,
+archival preservation, training, local/Indigenous knowledge, and so on (28
+seeded, Node-neutral). `public.contribution_capacities` (referenced by
+`person_contributions.capacity` and `organization_contributions.capacity`) names
+the *capacity* in which a particular contributor helped — field observation,
+coordination, funding, institutional support, custodianship, and so on (18
+seeded). Neither reproduces CRediT or a publication/authorship taxonomy:
+"author" is not a kind, "mentorship" is an M6.4 Relationship (not a kind), and
+"funding"/"hosting" are capacities (not kinds and not ownership). Both are
+lookup tables a Node extends as data. M6.6 also adds one small FIXED-state
+vocabulary as a CHECK rather than a table — contribution-narrative `kind`
+(`overview` / `context` / `significance` / `legacy`) — following the established
+distinction: open domain taxonomies are lookup tables (`event_kinds`,
+`participation_capacities`, `relationship_kinds`, `organization_types`,
+`contribution_kinds`, `contribution_capacities`), while small stable state sets
+are CHECKs (like `source_type` / `verification_status` and narrative `kind`). A
+contribution↔event relation vocabulary is deliberately deferred rather than
+guessed at.

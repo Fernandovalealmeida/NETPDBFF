@@ -104,7 +104,7 @@ test.describe("reserved section architecture", () => {
     const person = await make({});
     await page.goto(person.url);
 
-    for (const heading of ["Timeline", "Participation", "Scientific contributions", "Relationships", "Historical records", "Legacy"]) {
+    for (const heading of ["Timeline", "Participation", "Relationships", "Historical records", "Legacy"]) {
       await expect(page.getByRole("heading", { level: 2, name: heading })).toBeVisible();
     }
   });

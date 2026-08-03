@@ -10,6 +10,8 @@ import { BiographySection } from "@/features/biography/components/BiographySecti
 import { IdentityHeader } from "@/features/biography/components/IdentityHeader";
 import { biographyCopy, RESERVED_SECTION_ORDER } from "@/features/biography/copy";
 import { getPersonBiography } from "@/features/biography/read";
+import { PersonContributions } from "@/features/contribution/components/PersonContributions";
+import { getPersonContributions } from "@/features/contribution/read";
 import { Participation } from "@/features/participation/components/Participation";
 import { getPersonParticipation } from "@/features/participation/read";
 import { Relationships } from "@/features/relationships/components/Relationships";
@@ -26,9 +28,10 @@ import { getPersonTimeline } from "@/features/timeline/read";
 // intentionally generic (no personal name in <title>/history).
 //
 // Reading order (Blueprint's Biography Engine): identity band, then the
-// introductory narrative (or honest absence), then the reserved section
-// architecture for later engines, then the honest withheld-note. Server
-// Component; the read happens server-side.
+// introductory narrative (or honest absence), then the historical engines
+// (timeline, participation, relationships, contributions), then the remaining
+// reserved section architecture, then the honest withheld-note. Server
+// Component; the reads happen server-side and are composed here.
 export const metadata: Metadata = {
   title: pageTitle("Scientific biography"),
 };
@@ -48,6 +51,7 @@ export default async function BiographyPage({ params }: BiographyPageProps) {
   const timeline = await getPersonTimeline(personId);
   const participation = await getPersonParticipation(personId);
   const relationships = await getPersonRelationships(personId);
+  const contributions = await getPersonContributions(personId);
 
   return (
     <main id="main-content" tabIndex={-1} className="py-16">
@@ -70,6 +74,10 @@ export default async function BiographyPage({ params }: BiographyPageProps) {
 
         <div className="mt-10">
           <Relationships document={relationships} />
+        </div>
+
+        <div className="mt-10">
+          <PersonContributions document={contributions} />
         </div>
 
         <div className="mt-10 flex flex-col gap-8">

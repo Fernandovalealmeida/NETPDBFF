@@ -58,3 +58,4 @@ to those choices should be recorded here.
 - [0013](0013-participation-engine.md) — Participation Engine: bounded belonging, the minimal organization entity, and the shared temporal/provenance kernel
 - [0014](0014-relationship-engine.md) — Relationship Engine: bonds as historical narratives, one canonical record, and directionality with inverse labels
 - [0015](0015-institution-engine.md) — Institution Engine: institutions as historical actors, extended additively from organizations
+- [0016](0016-contribution-engine.md) — Contribution Engine: contribution as a first-class historical object, explicit typed attribution, kind distinct from capacity

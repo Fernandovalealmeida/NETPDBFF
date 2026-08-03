@@ -101,6 +101,7 @@ docs/           Product, architecture, and data-model documentation
   projection, the three bounded `get_organization*` reads, the
   `/institutions/[organizationId]` page, sovereignty/ethics notes, what it
   defers, and the required local validation sequence
+- `docs/m6.6-contribution-engine.md` — M6.6 Contribution Engine (contribution as a first-class historical object; ADR-0016; engineering report in `docs/m6.6-contribution-engine-engineering-report.md`)
 - `docs/product-specification.md` — product scope and goals
 - `docs/architecture.md` — modular-monolith architecture and planned modules
 - `docs/database-model.md` — preliminary conceptual data model

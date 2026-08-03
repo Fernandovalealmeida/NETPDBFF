@@ -770,3 +770,48 @@ ADR-0015.
 Relationships, the Contribution Engine, Historical Records ingestion,
 external-registry reconciliation / duplicate merging, and any public (anon)
 path — see ADR-0015.
+
+## M6.6 — Contribution Engine additions
+
+Migration `20260808090000_add_contribution_engine.sql` adds the sixth engine
+(ADR-0016, `docs/m6.6-contribution-engine.md`). A Contribution is a
+historically situated, provenance-bearing account of something an actor helped
+make possible — never a publication, participation, relationship, event, or
+output, and never inferred from them. All additions are deny-by-default (RLS on,
+no client policy; table writes granted only to `service_role`; reads only
+through SECURITY DEFINER functions).
+
+Tables:
+
+- `contribution_kinds` — data-backed vocabulary of the *kind* of historical
+  object contributed (28 seeded, Node-neutral; not a publication/authorship
+  taxonomy). `contribution_capacities` — data-backed vocabulary of the
+  *capacity* in which a contributor helped (18 seeded), a distinct axis from
+  kind. Funding and institutional hosting are capacities, never kinds.
+- `contributions` — the canonical record: `title`, `contribution_kind` (FK),
+  `description`, the shared M6.2 Many-Clocks temporal model (identical CHECK
+  discipline to `events` / `participations`: precision/approximation/uncertainty/
+  missing + intervals + open-ended), a safe-granularity free-text `place`, and
+  its own `source_type` / `verification_status`. No ranking, score, impact, or
+  count; no contribution "status" (verification is not a success state).
+- `person_contributions` / `organization_contributions` — explicit, typed
+  attributions (not polymorphic), each carrying a `capacity` (FK), an optional
+  `attribution_note`, a non-prestige `sort_order`, and its own provenance;
+  `unique(contribution_id, actor_id, capacity)`. Each attribution is its own
+  assertion; the contribution record's provenance never proves it.
+- `contribution_narrative` — curated interpretation in facets (`overview` /
+  `context` / `significance` / `legacy`), `unique(contribution_id, kind)`,
+  `updated_at` trigger; separate from the assertion.
+- `contribution_events` — projects canonical M6.2 Events with no duplication
+  (`unique(contribution_id, event_id)`; mirrors `person_events` /
+  `organization_events`).
+
+Read functions (SECURITY DEFINER, `search_path=public, pg_temp`, `auth.uid()`
+required, EXECUTE revoked from PUBLIC / granted to `authenticated`):
+`get_contribution`, `get_contribution_timeline`, `get_person_contributions`,
+`get_organization_contributions`. Merged people are omitted; merged/historical
+institutions remain readable (M6.5). The person page, institution page, and
+dedicated Contribution page each compose these bounded reads and are consistent
+by construction — one canonical set of records, projected, never duplicated. The
+M6.6 additions do not weaken any prior migration and add no Contribution field
+to the Biography or Institution identity RPCs.

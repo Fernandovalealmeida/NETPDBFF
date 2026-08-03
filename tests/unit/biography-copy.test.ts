@@ -6,9 +6,8 @@ import { biographyCopy, RESERVED_SECTION_ORDER } from "../../src/features/biogra
 // (no PDBFF-specific language, no fabricated metrics).
 
 describe("biographyCopy", () => {
-  it("reserves exactly the three later-capability sections, in order", () => {
+  it("reserves exactly the two later-capability sections, in order", () => {
     expect(RESERVED_SECTION_ORDER).toEqual([
-      "contributions",
       "records",
       "legacy",
     ]);
