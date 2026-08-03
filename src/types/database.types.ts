@@ -1328,6 +1328,37 @@ export type Database = {
           submitted_at: string
         }[]
       }
+      list_contributions: {
+        Args: never
+        Returns: {
+          contribution_kind: string
+          contribution_kind_label: string
+          id: string
+          title: string
+          verification_status: string
+        }[]
+      }
+      list_organizations: {
+        Args: never
+        Returns: {
+          id: string
+          name: string
+          organization_type: string
+          organization_type_label: string
+          short_name: string
+          status: string
+          verification_status: string
+        }[]
+      }
+      list_people: {
+        Args: never
+        Returns: {
+          display_name: string
+          id: string
+          is_deceased: boolean
+          verification_status: string
+        }[]
+      }
       reject_profile_claim: {
         Args: { p_claim_id: string; p_decision_notes?: string }
         Returns: {

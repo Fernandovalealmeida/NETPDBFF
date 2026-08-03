@@ -1,46 +1,54 @@
+import Link from "next/link";
+
 import { Alert } from "@/components/ui/Alert";
+import { buttonVariants } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/config/site";
 
-// M5.2 landing-page redesign (M5 spec item 6): same three pieces of content
-// as the M1–M4 version — project name, temporary subtitle, development
-// notice — rebuilt on the token system and layout primitives, not expanded.
-// Per docs/product-specification.md: "no dashboard, statistics, member
-// profiles, or decorative product features — only the project name, a
-// temporary subtitle, and a development notice." Per
-// docs/ui-vision.md's design philosophy ("quiet... like opening a
-// well-organized field station's records"), this stays minimal rather than
-// gaining hero-section visual flourish just because a richer component set
-// now exists.
+// Public landing — the entrance to the reading experience. Evolving the
+// original M5.2 minimal landing (project name + subtitle + development
+// notice) per the current product direction: the application's primary
+// activity is *reading* the record of science, so the entrance now names
+// what is inside (people, institutions, contributions) and invites the
+// visitor in, while staying quiet — no dashboard, statistics, metrics, or
+// decorative flourish, consistent with docs/ui-vision.md ("quiet... like
+// opening a well-organized field station's records"). Reading itself is
+// authenticated (the deny-by-default security model is unchanged), so the
+// entrance is honest that a free account is needed.
 //
-// Title + subtitle are hand-built here rather than via the `PageHeader`
-// component: PageHeader's layout (left-aligned title/description with an
-// optional right-aligned action, `justify-between`) is shaped for
-// interior/dashboard pages per docs/application-information-architecture.md's
-// "Page hierarchy", not a centered marketing-style hero — and `cn()` is
-// deliberately not `tailwind-merge` (see src/lib/ui/cn.ts), so overriding
-// PageHeader's alignment classes via `className` wouldn't reliably win in
-// the generated stylesheet. Using the token system directly here is more
-// honest than forcing a component whose shape doesn't fit.
-//
-// Statically rendered (no `cookies()`/Supabase call, directly or
-// transitively) — required by item 6's acceptance criteria and already
-// guaranteed by `src/app/(public)/layout.tsx` staying static per ADR-0006.
+// Statically rendered (no cookies()/Supabase call) — the two calls to
+// action are plain links to the existing /register and /login routes.
 export default function HomePage() {
   return (
-    <main id="main-content" tabIndex={-1} className="flex flex-1 flex-col items-center justify-center px-6 py-24">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="flex flex-1 flex-col items-center justify-center px-6 py-24"
+    >
       <Container width="content" padded={false} className="text-center">
         <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           {SITE_NAME}
         </h1>
 
-        <p className="mt-4 text-base text-muted-foreground sm:text-lg">
-          {SITE_DESCRIPTION}
+        <p className="mt-4 text-base text-muted-foreground sm:text-lg">{SITE_DESCRIPTION}</p>
+
+        <p className="mx-auto mt-6 max-w-prose text-base text-foreground">
+          A reading record of scientific lives, the institutions they worked through, and the
+          contributions they made — each with its history, its sources, and its honest gaps.
         </p>
 
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Link href="/register" className={buttonVariants({ emphasis: "primary", size: "md" })}>
+            Create an account to read
+          </Link>
+          <Link href="/login" className={buttonVariants({ emphasis: "secondary", size: "md" })}>
+            Sign in
+          </Link>
+        </div>
+
         <Alert tone="neutral" className="mt-10 text-left">
-          This platform is under development. Content and functionality will be introduced
-          progressively.
+          This platform is under development. Reading requires a free account, and the record
+          grows as verified people, institutions, and contributions are added.
         </Alert>
       </Container>
     </main>

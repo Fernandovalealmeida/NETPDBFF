@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { isDevOnlyRouteBlocked } from "@/lib/dev-only-route";
@@ -132,6 +133,19 @@ export default function DesignSystemDevPage() {
           description="Internal only. Not linked; returns a real 404 unless NODE_ENV=development. Every token and every component built so far, for manual review in both themes."
           action={<ThemeToggleDemo />}
         />
+      </Section>
+
+      <Section spacing="sm">
+        <p className="text-sm text-muted-foreground">
+          Related dev route:{" "}
+          <Link
+            href="/dev/exhibition"
+            className="font-medium text-foreground underline underline-offset-2"
+          >
+            M6 system exhibition
+          </Link>{" "}
+          — a development-only tour of every completed M6 engine, built from a fictional world.
+        </p>
       </Section>
 
       <Section spacing="md">
