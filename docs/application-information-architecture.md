@@ -333,3 +333,19 @@ Scientific Contributions, Relationships, Historical Records, and Legacy
 engines as honest "not yet recorded" states — never fabricated modules. Its
 not-found state uses the calm, specific empty-state pattern defined under
 "Empty, loading, error, and permission-denied states."
+
+## M6.2 — Timeline Engine additions
+
+**No new route.** M6.2 does not add a route; it fills the reserved Timeline
+section *inside* the existing `/people/[personId]` biography with the real
+Timeline Engine, replacing the M6.1 "will appear here" placeholder. The
+timeline renders after the identity/narrative region as a calm, ordered
+chronology: decade period groupings appear only when the record spans two or
+more decades (otherwise a single ordered list), undated events collect into a
+final "Date unknown" group, and each event carries a one-gesture provenance
+disclosure — never an audit wall. An empty timeline is the same dignified
+empty-state pattern used elsewhere, not an error. The engine is subject-
+neutral by construction, so the later institution/project/station/expedition/
+collection/record/species clocks reuse this pattern at their own routes as
+they are built; the remaining reserved sections (Participation, Relationships,
+Historical Records, Legacy) stay honest "not yet recorded" placeholders.

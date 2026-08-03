@@ -10,6 +10,8 @@ import { BiographySection } from "@/features/biography/components/BiographySecti
 import { IdentityHeader } from "@/features/biography/components/IdentityHeader";
 import { biographyCopy, RESERVED_SECTION_ORDER } from "@/features/biography/copy";
 import { getPersonBiography } from "@/features/biography/read";
+import { Timeline } from "@/features/timeline/components/Timeline";
+import { getPersonTimeline } from "@/features/timeline/read";
 
 // The Scientific Biography read route -- the first production surface of the
 // Digital Scientific Biography. Protected (authenticated authorized reading);
@@ -39,6 +41,8 @@ export default async function BiographyPage({ params }: BiographyPageProps) {
     notFound();
   }
 
+  const timeline = await getPersonTimeline(personId);
+
   return (
     <main id="main-content" tabIndex={-1} className="py-16">
       <Container width="content">
@@ -49,6 +53,10 @@ export default async function BiographyPage({ params }: BiographyPageProps) {
         </Section>
 
         <Divider />
+
+        <div className="mt-10">
+          <Timeline document={timeline} />
+        </div>
 
         <div className="mt-10 flex flex-col gap-8">
           {RESERVED_SECTION_ORDER.map((key) => {

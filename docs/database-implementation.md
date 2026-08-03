@@ -531,3 +531,60 @@ locked at the table level — this function is the only new read path.
 **Deferred**: `profile_visibility_settings` / per-field visibility, any public
 (anon) read path, and client narrative editing — see ADR-0011 and the M6.V
 open questions (G1, G2).
+
+## M6.2 — Timeline Engine additions
+
+Migration: `supabase/migrations/20260804090000_add_timeline_engine.sql`.
+See `docs/decisions/0012-timeline-engine.md` and
+`docs/m6.2-timeline-engine.md`.
+
+**New table `public.event_kinds`** — the event-kind controlled vocabulary as
+data (`docs/controlled-vocabularies.md`). Columns: `key` (PK), `label`,
+`description`, `sort_order`, `is_active`. Seeded with 18 generic, Node-neutral
+kinds (appointment, arrival, departure, fieldwork, expedition, project
+start/end, publication, contribution, institutional milestone, site
+established, interview, award, retirement, death, archival deposit,
+observation, other). No PDBFF-specific category is hardcoded anywhere.
+
+**New table `public.events`** — the canonical, subject-neutral event model.
+Columns include `event_kind` (FK -> `event_kinds`), `title`, `summary`,
+`place`, a structured temporal envelope (`start_date`/`start_precision`,
+`end_date`/`end_precision`, `is_approximate`, `is_ongoing`, `date_is_unknown`,
+`date_is_uncertain`), `source_type`, `verification_status`,
+`created_by_user_id`, timestamps. CHECK constraints keep the nine temporal
+states mutually honest: `title` not blank; each precision in
+(`day`,`month`,`year`,`decade`); a date and its precision present-or-absent
+together; an unknown date carries no value and no qualifiers; an end requires a
+start and `end_date >= start_date`; an ongoing event requires an open start;
+`source_type` and `verification_status` in the M6.1 vocabularies. The database
+refuses to store a dishonest date.
+
+**New table `public.person_events`** — the person↔event projection edge
+(`person_id` FK -> `people` `on delete cascade`, `event_id` FK -> `events` `on
+delete cascade`, unique `(person_id, event_id)`). An event exists
+independently of the subject it is projected onto, so the same core later
+serves other subject clocks via sibling join tables.
+
+**New function `public.get_person_timeline(uuid) returns jsonb`** — the
+canonical per-subject timeline read model. `SECURITY DEFINER`, `search_path`
+pinned, `auth.uid()` required, `EXECUTE` revoked from `PUBLIC` and granted only
+to `authenticated`. Returns `{ person_id, events: [...] }`, each event
+provenance-bearing, ordered `start_date asc nulls last, created_at asc`
+(undated events honestly last). One function per subject clock (Many-Clocks),
+not a monolith.
+
+**Deny-by-default + service_role grants.** All three tables are RLS-enabled
+with **no client GRANT/policy** — client read access is only through
+`get_person_timeline`. They additionally carry explicit `grant select, insert,
+update, delete ... to service_role` (M3.1 pattern: BYPASSRLS is not enough).
+This is a deliberate divergence from M6.1's `person_narrative` (which was left
+without a service_role grant); it enables the trusted server-side write path
+(there is no client event-authoring path in M6.2) and per-test disposable
+Playwright fixtures, without widening client access. Flagged for review in
+ADR-0012 and `docs/m6.2-timeline-engine.md`.
+
+**pgTAP**: `supabase/tests/database/timeline.test.sql`.
+
+**Deferred**: a client event-authoring/editorial workflow, event
+revision/history, other subject-clock read functions, any public (anon)
+timeline path, and a general Participation model — see ADR-0012.

@@ -74,3 +74,22 @@ coverage. See `docs/m6.1-scientific-biography-foundation.md` and
 `docs/decisions/0011-scientific-biography-read-model.md`. The Timeline,
 Participation, Relationship, Institution, Historical Records, and Legacy
 engines are deferred to later M6 milestones and reserved as extension points.
+
+## Milestone status — M6.2 (Timeline Engine: the Historical Spine)
+
+**Implemented (pending local validation).** M6.2 delivers the second
+production engine of the Digital Scientific Biography: the historical spine.
+It adds the subject-neutral event model (`events`), the event-kinds
+vocabulary table (`event_kinds`), the person↔event projection edge
+(`person_events`), and the `get_person_timeline` canonical read model, then
+renders a calm, provenance-aware, honestly-uncertain chronology inside the
+`/people/[personId]` biography — replacing the M6.1 reserved Timeline
+placeholder with the real engine. The nine-state temporal model keeps
+precision, approximation, uncertainty, intervals, open-endedness, and unknown
+dates distinct; decade period navigation appears only when the record spans
+two or more decades. pgTAP/Vitest/Playwright coverage accompanies it. See
+`docs/m6.2-timeline-engine.md` and
+`docs/decisions/0012-timeline-engine.md`. The event core is architected so the
+same model later serves institution/project/station/expedition/collection/
+record/species clocks unchanged; the Participation, Relationship, Institution,
+and Legacy engines remain deferred and reserved as extension points.

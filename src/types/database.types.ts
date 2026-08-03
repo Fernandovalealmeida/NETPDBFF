@@ -67,6 +67,101 @@ export type Database = {
         }
         Relationships: []
       }
+      event_kinds: {
+        Row: {
+          description: string | null
+          is_active: boolean
+          key: string
+          label: string
+          sort_order: number
+        }
+        Insert: {
+          description?: string | null
+          is_active?: boolean
+          key: string
+          label: string
+          sort_order?: number
+        }
+        Update: {
+          description?: string | null
+          is_active?: boolean
+          key?: string
+          label?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          created_at: string
+          created_by_user_id: string | null
+          date_is_uncertain: boolean
+          date_is_unknown: boolean
+          end_date: string | null
+          end_precision: string | null
+          event_kind: string
+          id: string
+          is_approximate: boolean
+          is_ongoing: boolean
+          place: string | null
+          source_type: string
+          start_date: string | null
+          start_precision: string | null
+          summary: string | null
+          title: string
+          updated_at: string
+          verification_status: string
+        }
+        Insert: {
+          created_at?: string
+          created_by_user_id?: string | null
+          date_is_uncertain?: boolean
+          date_is_unknown?: boolean
+          end_date?: string | null
+          end_precision?: string | null
+          event_kind: string
+          id?: string
+          is_approximate?: boolean
+          is_ongoing?: boolean
+          place?: string | null
+          source_type: string
+          start_date?: string | null
+          start_precision?: string | null
+          summary?: string | null
+          title: string
+          updated_at?: string
+          verification_status?: string
+        }
+        Update: {
+          created_at?: string
+          created_by_user_id?: string | null
+          date_is_uncertain?: boolean
+          date_is_unknown?: boolean
+          end_date?: string | null
+          end_precision?: string | null
+          event_kind?: string
+          id?: string
+          is_approximate?: boolean
+          is_ongoing?: boolean
+          place?: string | null
+          source_type?: string
+          start_date?: string | null
+          start_precision?: string | null
+          summary?: string | null
+          title?: string
+          updated_at?: string
+          verification_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_event_kind_fkey"
+            columns: ["event_kind"]
+            isOneToOne: false
+            referencedRelation: "event_kinds"
+            referencedColumns: ["key"]
+          },
+        ]
+      }
       people: {
         Row: {
           biography: string | null
@@ -117,6 +212,42 @@ export type Database = {
           verification_status?: string
         }
         Relationships: []
+      }
+      person_events: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          person_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          person_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          person_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "person_events_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "person_events_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       person_narrative: {
         Row: {
@@ -347,6 +478,7 @@ export type Database = {
         Returns: string
       }
       get_person_biography: { Args: { p_person_id: string }; Returns: Json }
+      get_person_timeline: { Args: { p_person_id: string }; Returns: Json }
       is_active_reviewer: { Args: { p_user_id: string }; Returns: boolean }
       is_person_claimable: { Args: { p_person_id: string }; Returns: boolean }
       list_claims_for_review: {

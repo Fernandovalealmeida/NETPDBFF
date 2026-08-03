@@ -2,9 +2,10 @@
 
 ## Status
 
-This document explains how controlled vocabularies will be managed. No
-vocabularies are implemented yet — this is a statement of approach ahead
-of the database and features that will need it.
+This document explains how controlled vocabularies are managed. The first
+database-backed vocabulary table — `public.event_kinds` (M6.2 Timeline Engine)
+— now realizes the approach described here; the rest of this document remains
+the statement of approach for the vocabularies still ahead.
 
 ## What a controlled vocabulary is, here
 
@@ -44,3 +45,16 @@ component-rewrite concern.
 The actual set of vocabularies, their storage schema, and an
 administration interface for managing them are future work, sequenced in
 `docs/development-roadmap.md`.
+
+## First realization: `event_kinds` (M6.2)
+
+The Timeline Engine's `public.event_kinds` table (see
+`docs/database-implementation.md` and `docs/decisions/0012-timeline-engine.md`)
+is the first controlled vocabulary implemented as data rather than code: a
+lookup table (`key`, `label`, `description`, `sort_order`, `is_active`) that
+`events.event_kind` references by foreign key, seeded with generic,
+Node-neutral kinds. Kinds can be added, retired, or eventually translated
+without a code change, and no PDBFF-specific category is embedded in interface
+components — exactly the discipline this document describes. It is the template
+for the participation-role, institution-type, and relationship-type
+vocabularies still to come.

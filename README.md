@@ -81,6 +81,10 @@ docs/           Product, architecture, and data-model documentation
 - `docs/m6.1-scientific-biography-foundation.md` — M6.1 Scientific Biography
   Foundation: what the first production biography slice implements, defers, and
   reserves as extension points, plus the required local validation sequence
+- `docs/m6.2-timeline-engine.md` — M6.2 Timeline Engine (the Historical
+  Spine): the canonical event model, the nine-state temporal model, the
+  `get_person_timeline` per-subject read boundary, what it defers, and the
+  required local validation sequence
 - `docs/product-specification.md` — product scope and goals
 - `docs/architecture.md` — modular-monolith architecture and planned modules
 - `docs/database-model.md` — preliminary conceptual data model

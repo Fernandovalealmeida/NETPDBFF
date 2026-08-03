@@ -8,7 +8,6 @@ import { biographyCopy, RESERVED_SECTION_ORDER } from "../../src/features/biogra
 describe("biographyCopy", () => {
   it("reserves exactly the six later-capability sections, in order", () => {
     expect(RESERVED_SECTION_ORDER).toEqual([
-      "timeline",
       "participation",
       "contributions",
       "relationships",
