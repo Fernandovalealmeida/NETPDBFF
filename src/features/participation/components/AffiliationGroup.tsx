@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import type { Participation as ParticipationModel } from "../types";
 import { ParticipationEntry } from "./ParticipationEntry";
 
@@ -7,16 +9,22 @@ import { ParticipationEntry } from "./ParticipationEntry";
 // role/range (CLAUDE.md). The organization name leads; its short form, when
 // one exists, sits quietly beside it. Server Component.
 export interface AffiliationGroupProps {
+  organizationId: string;
   organizationName: string;
   organizationShortName: string | null;
   participations: ParticipationModel[];
 }
 
-export function AffiliationGroup({ organizationName, organizationShortName, participations }: AffiliationGroupProps) {
+export function AffiliationGroup({ organizationId, organizationName, organizationShortName, participations }: AffiliationGroupProps) {
   return (
     <div>
       <h3 className="text-sm font-semibold text-foreground">
-        {organizationName}
+        <Link
+          href={`/institutions/${organizationId}`}
+          className="rounded-sm underline decoration-dotted underline-offset-2 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          {organizationName}
+        </Link>
         {organizationShortName ? (
           <span className="ml-2 text-xs font-normal text-muted-foreground">({organizationShortName})</span>
         ) : null}

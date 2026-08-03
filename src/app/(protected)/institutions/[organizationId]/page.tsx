@@ -1,0 +1,151 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+
+import { Container } from "@/components/ui/Container";
+import { Divider } from "@/components/ui/Divider";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { pageTitle } from "@/config/site";
+import { institutionCopy, NARRATIVE_FACET_LABELS } from "@/features/institution/copy";
+import { InstitutionalNameHistory } from "@/features/institution/components/InstitutionalNameHistory";
+import { InstitutionIdentityHeader } from "@/features/institution/components/InstitutionIdentityHeader";
+import { InstitutionNarrative } from "@/features/institution/components/InstitutionNarrative";
+import { InstitutionParticipation } from "@/features/institution/components/InstitutionParticipation";
+import { InstitutionReservedSection } from "@/features/institution/components/InstitutionReservedSection";
+import { narrativeFacet } from "@/features/institution/derive";
+import { getOrganization, getOrganizationParticipation, getOrganizationTimeline } from "@/features/institution/read";
+import { Timeline } from "@/features/timeline/components/Timeline";
+
+// The Institution page -- a first-class historical reading experience for an
+// institution as a HISTORICAL ACTOR (M6.5). Protected (authenticated authorized
+// reading); the (protected) layout enforces auth and get_organization re-checks
+// it. Keyed by the organization UUID and named generically
+// (/institutions/[organizationId]) -- Node-neutral. Historical/closed/merged
+// institutions are readable (never hidden). The title is generic (no
+// institution name in <title>/history). Server Component; the reads happen
+// server-side and are composed here, each independently evolving.
+export const metadata: Metadata = {
+  title: pageTitle("Institution"),
+};
+
+interface InstitutionPageProps {
+  params: Promise<{ organizationId: string }>;
+}
+
+export default async function InstitutionPage({ params }: InstitutionPageProps) {
+  const { organizationId } = await params;
+  const organization = await getOrganization(organizationId);
+
+  if (!organization) {
+    notFound();
+  }
+
+  const timeline = await getOrganizationTimeline(organizationId);
+  const participation = await getOrganizationParticipation(organizationId);
+
+  const introduction = narrativeFacet(organization, "introduction");
+  const overview = narrativeFacet(organization, "overview");
+  const significance = narrativeFacet(organization, "significance");
+  const legacy = narrativeFacet(organization, "legacy");
+
+  return (
+    <main id="main-content" tabIndex={-1} className="py-16">
+      <Container width="content">
+        <InstitutionIdentityHeader organization={organization} />
+
+        <Divider />
+
+        <section className="mt-10" aria-labelledby="introduction-heading">
+          <h2 id="introduction-heading" className="text-sm font-medium text-foreground">
+            {institutionCopy.introduction.heading}
+          </h2>
+          {introduction ? (
+            <InstitutionNarrative facet={introduction} />
+          ) : (
+            <div className="mt-3">
+              <EmptyState
+                title={institutionCopy.introduction.absent.title}
+                description={institutionCopy.introduction.absent.description}
+              />
+            </div>
+          )}
+          {overview ? (
+            <div className="mt-6">
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {NARRATIVE_FACET_LABELS.overview}
+              </h3>
+              <InstitutionNarrative facet={overview} />
+            </div>
+          ) : null}
+        </section>
+
+        {organization.names.length > 0 ? (
+          <div className="mt-10">
+            <InstitutionalNameHistory names={organization.names} />
+          </div>
+        ) : null}
+
+        <div className="mt-10">
+          <Timeline document={timeline} />
+        </div>
+
+        <div className="mt-10">
+          <InstitutionParticipation document={participation} />
+        </div>
+
+        <div className="mt-10">
+          <InstitutionReservedSection
+            id="relationships"
+            heading={institutionCopy.relationships.heading}
+            title={institutionCopy.relationships.deferred.title}
+            description={institutionCopy.relationships.deferred.description}
+          />
+        </div>
+
+        <div className="mt-10">
+          <InstitutionReservedSection
+            id="contributions"
+            heading={institutionCopy.contributions.heading}
+            title={institutionCopy.contributions.reserved.title}
+            description={institutionCopy.contributions.reserved.description}
+          />
+        </div>
+
+        <div className="mt-10">
+          <InstitutionReservedSection
+            id="records"
+            heading={institutionCopy.records.heading}
+            title={institutionCopy.records.reserved.title}
+            description={institutionCopy.records.reserved.description}
+          />
+        </div>
+
+        {significance ? (
+          <section className="mt-10" aria-labelledby="significance-heading">
+            <h2 id="significance-heading" className="text-sm font-medium text-foreground">
+              {NARRATIVE_FACET_LABELS.significance}
+            </h2>
+            <InstitutionNarrative facet={significance} />
+          </section>
+        ) : null}
+
+        <section className="mt-10" aria-labelledby="legacy-heading">
+          <h2 id="legacy-heading" className="text-sm font-medium text-foreground">
+            {institutionCopy.legacy.heading}
+          </h2>
+          {legacy ? (
+            <InstitutionNarrative facet={legacy} />
+          ) : (
+            <div className="mt-3">
+              <EmptyState
+                title={institutionCopy.legacy.absent.title}
+                description={institutionCopy.legacy.absent.description}
+              />
+            </div>
+          )}
+        </section>
+
+        <p className="mt-10 text-xs text-muted-foreground">{institutionCopy.withheldNote}</p>
+      </Container>
+    </main>
+  );
+}

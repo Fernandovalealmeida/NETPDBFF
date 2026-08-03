@@ -162,29 +162,268 @@ export type Database = {
           },
         ]
       }
-      organizations: {
+      organization_events: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          organization_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          organization_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          organization_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_events_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_external_identifiers: {
         Row: {
           created_at: string
           id: string
-          name: string
-          short_name: string | null
-          updated_at: string
+          identifier_value: string
+          organization_id: string
+          scheme: string
+          source_type: string
+          url: string | null
+          verification_status: string
         }
         Insert: {
           created_at?: string
           id?: string
-          name: string
-          short_name?: string | null
-          updated_at?: string
+          identifier_value: string
+          organization_id: string
+          scheme: string
+          source_type: string
+          url?: string | null
+          verification_status?: string
         }
         Update: {
           created_at?: string
           id?: string
+          identifier_value?: string
+          organization_id?: string
+          scheme?: string
+          source_type?: string
+          url?: string | null
+          verification_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_external_identifiers_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_names: {
+        Row: {
+          created_at: string
+          end_date: string | null
+          end_precision: string | null
+          id: string
+          language: string | null
+          name: string
+          name_type: string
+          organization_id: string
+          source_type: string
+          start_date: string | null
+          start_precision: string | null
+          verification_status: string
+        }
+        Insert: {
+          created_at?: string
+          end_date?: string | null
+          end_precision?: string | null
+          id?: string
+          language?: string | null
+          name: string
+          name_type: string
+          organization_id: string
+          source_type: string
+          start_date?: string | null
+          start_precision?: string | null
+          verification_status?: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string | null
+          end_precision?: string | null
+          id?: string
+          language?: string | null
           name?: string
-          short_name?: string | null
+          name_type?: string
+          organization_id?: string
+          source_type?: string
+          start_date?: string | null
+          start_precision?: string | null
+          verification_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_names_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_narrative: {
+        Row: {
+          authored_by_user_id: string | null
+          body: string
+          created_at: string
+          id: string
+          kind: string
+          organization_id: string
+          source_type: string
+          updated_at: string
+          verification_status: string
+        }
+        Insert: {
+          authored_by_user_id?: string | null
+          body: string
+          created_at?: string
+          id?: string
+          kind: string
+          organization_id: string
+          source_type: string
           updated_at?: string
+          verification_status?: string
+        }
+        Update: {
+          authored_by_user_id?: string | null
+          body?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          organization_id?: string
+          source_type?: string
+          updated_at?: string
+          verification_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_narrative_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_types: {
+        Row: {
+          description: string | null
+          is_active: boolean
+          key: string
+          label: string
+          sort_order: number
+        }
+        Insert: {
+          description?: string | null
+          is_active?: boolean
+          key: string
+          label: string
+          sort_order?: number
+        }
+        Update: {
+          description?: string | null
+          is_active?: boolean
+          key?: string
+          label?: string
+          sort_order?: number
         }
         Relationships: []
+      }
+      organizations: {
+        Row: {
+          closure_date: string | null
+          closure_precision: string | null
+          created_at: string
+          founding_date: string | null
+          founding_is_approximate: boolean
+          founding_precision: string | null
+          id: string
+          location: string | null
+          name: string
+          organization_type: string | null
+          short_name: string | null
+          source_type: string
+          status: string
+          updated_at: string
+          verification_status: string
+          website: string | null
+        }
+        Insert: {
+          closure_date?: string | null
+          closure_precision?: string | null
+          created_at?: string
+          founding_date?: string | null
+          founding_is_approximate?: boolean
+          founding_precision?: string | null
+          id?: string
+          location?: string | null
+          name: string
+          organization_type?: string | null
+          short_name?: string | null
+          source_type?: string
+          status?: string
+          updated_at?: string
+          verification_status?: string
+          website?: string | null
+        }
+        Update: {
+          closure_date?: string | null
+          closure_precision?: string | null
+          created_at?: string
+          founding_date?: string | null
+          founding_is_approximate?: boolean
+          founding_precision?: string | null
+          id?: string
+          location?: string | null
+          name?: string
+          organization_type?: string | null
+          short_name?: string | null
+          source_type?: string
+          status?: string
+          updated_at?: string
+          verification_status?: string
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organizations_organization_type_fkey"
+            columns: ["organization_type"]
+            isOneToOne: false
+            referencedRelation: "organization_types"
+            referencedColumns: ["key"]
+          },
+        ]
       }
       participation_capacities: {
         Row: {
@@ -736,6 +975,15 @@ export type Database = {
       get_claimed_person_display_name: {
         Args: { p_person_id: string }
         Returns: string
+      }
+      get_organization: { Args: { p_organization_id: string }; Returns: Json }
+      get_organization_participation: {
+        Args: { p_organization_id: string }
+        Returns: Json
+      }
+      get_organization_timeline: {
+        Args: { p_organization_id: string }
+        Returns: Json
       }
       get_person_biography: { Args: { p_person_id: string }; Returns: Json }
       get_person_participation: { Args: { p_person_id: string }; Returns: Json }

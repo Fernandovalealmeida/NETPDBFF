@@ -182,6 +182,12 @@ test.describe("Approve workflow — claimant-visible outcome", () => {
     browser,
     claimablePerson,
   }) => {
+    // Setup-bound (not a flaky assertion): two full register+confirm flows
+    // (Mailpit) + submitClaim + grant + queue navigation precede the approval
+    // assertions. Under `next dev`, on-demand route compilation makes these
+    // navigations slow (the trace showed goto /member/claim ~10s, Select ~11s);
+    // extend the budget for the genuine setup cost without weakening any check.
+    test.slow();
     const claimantContext = await browser.newContext();
     const claimantPage = await claimantContext.newPage();
     const claimantEmail = await registerAndConfirm(claimantPage, uniqueEmailPrefix("claimant-approve"));

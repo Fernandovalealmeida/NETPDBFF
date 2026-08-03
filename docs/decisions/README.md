@@ -57,3 +57,4 @@ to those choices should be recorded here.
 - [0012](0012-timeline-engine.md) — Timeline Engine: canonical event model, temporal model, and the Many-Clocks read boundary
 - [0013](0013-participation-engine.md) — Participation Engine: bounded belonging, the minimal organization entity, and the shared temporal/provenance kernel
 - [0014](0014-relationship-engine.md) — Relationship Engine: bonds as historical narratives, one canonical record, and directionality with inverse labels
+- [0015](0015-institution-engine.md) — Institution Engine: institutions as historical actors, extended additively from organizations

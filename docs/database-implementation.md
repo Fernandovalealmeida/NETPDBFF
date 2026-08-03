@@ -703,3 +703,70 @@ Playwright fixtures. Flagged for review in ADR-0014.
 **Deferred**: polymorphic/other-entity endpoints, the Institution/Contribution
 engines, inference/suggestions, client relationship-editing, and any public
 (anon) path — see ADR-0014.
+
+## M6.5 — Institution Engine additions
+
+Migration: `supabase/migrations/20260807090000_add_institution_engine.sql`.
+See `docs/decisions/0015-institution-engine.md` and
+`docs/m6.5-institution-engine.md`. **Additive**: `organizations` is extended in
+place (new columns default), so every M6.3 row and Participation stays valid —
+no parallel identity table.
+
+**New table `public.organization_types`** — Node-neutral institution-type
+vocabulary (`key`, `label`, `description`, `sort_order`, `is_active`), 19 seeded
+(research programme, field station, university, museum, research institute,
+government agency, archive, library, laboratory, botanical garden, zoological
+institution, conservation NGO, community organization, Indigenous organization,
+scientific society, funding organization, collection-holding institution,
+consortium, other).
+
+**`ALTER public.organizations`** — adds `organization_type` (FK →
+organization_types), `status` (CHECK: active | historical | closed | dormant |
+merged | absorbed | succeeded | provisional | status_unknown — distinct from
+verification and from temporal precision), `founding_date`/`founding_precision`/
+`founding_is_approximate`, `closure_date`/`closure_precision`, `location`,
+`website`, and the record's own `source_type`/`verification_status`. New CHECKs:
+`organizations_status_valid`, founding/closure precision-valid + precision-
+matches-date, `organizations_founding_approx_requires_date`,
+`organizations_closure_after_founding`, source/verification valid. Indexes on
+type and status. A merged/closed/historical institution stays READABLE.
+
+**New table `public.organization_names`** — historically valid / former /
+alternative / acronym / Indigenous / local / translated names, each with form,
+`name_type` (CHECK), `language`, the period used (start/end + precision),
+provenance, verification. Not disposable synonyms; the canonical current name
+stays `organizations.name`.
+
+**New table `public.organization_external_identifiers`** — ROR / Wikidata /
+ISNI / VIAF / GRID / national_registry / archival_authority / other (`scheme`
+CHECK), `identifier_value`, `url`, provenance; `unique(scheme, identifier_value)`
+(one value → one institution; never auto-merges records).
+
+**New table `public.organization_narrative`** — curated history in facets
+(`kind` CHECK: introduction | overview | significance | legacy), `body`,
+provenance, `unique(organization_id, kind)`, `set_updated_at` trigger. Never
+auto-generated; a missing facet is honest absence.
+
+**New table `public.organization_events`** — projects a canonical Event onto an
+institution timeline WITHOUT duplication (`unique(organization_id, event_id)`;
+mirrors `person_events`; Many-Clocks).
+
+**New functions** — `get_organization(uuid)` (identity + names + external
+identifiers + narrative facets; returns historical/closed/merged institutions,
+null only for a nonexistent id), `get_organization_timeline(uuid)` (projected
+Events, same shape as `get_person_timeline`), `get_organization_participation(uuid)`
+(the SAME M6.3 `participations` rows from the institution's perspective, merged
+people omitted). All `SECURITY DEFINER`, `search_path` pinned, `auth.uid()`
+required, `EXECUTE` revoked from `PUBLIC` and granted to `authenticated`.
+
+**Deny-by-default + service_role grants.** All new tables are RLS-enabled with
+**no client GRANT/policy** — client read only via the three functions — plus
+explicit `grant ... to service_role` (M3.1 pattern). Flagged for review in
+ADR-0015.
+
+**pgTAP**: `supabase/tests/database/institution.test.sql`.
+
+**Deferred**: polymorphic/other-entity endpoints, institution↔institution
+Relationships, the Contribution Engine, Historical Records ingestion,
+external-registry reconciliation / duplicate merging, and any public (anon)
+path — see ADR-0015.

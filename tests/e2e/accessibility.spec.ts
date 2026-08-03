@@ -138,6 +138,11 @@ test.describe("Accessibility: /review/claims (reviewer, queue with content)", ()
 test.describe("Accessibility: /review/claims/[claimId] (reviewer, submitted-claim detail)", () => {
   for (const theme of THEMES) {
     test(`no critical/serious axe violations (${theme} theme)`, async ({ page, browser, claimablePerson }) => {
+      // Setup-bound (not a flaky assertion): two full register+confirm flows
+      // (Mailpit) + submitClaim + grant + queue nav + detail nav + an axe scan.
+      // Under `next dev`, on-demand route compilation makes each navigation
+      // slow; give the genuine setup cost budget instead of weakening any check.
+      test.slow();
       const claimantContext = await browser.newContext();
       const claimantPage = await claimantContext.newPage();
       const claimantEmail = await registerAndConfirm(claimantPage, uniqueEmailPrefix(`detail-claimant-${theme}`));

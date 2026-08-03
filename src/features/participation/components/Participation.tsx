@@ -33,6 +33,7 @@ export function Participation({ document }: { document: ParticipationDocument | 
           {view.affiliations.map((affiliation) => (
             <AffiliationGroup
               key={affiliation.key}
+              organizationId={affiliation.key}
               organizationName={affiliation.organizationName}
               organizationShortName={affiliation.organizationShortName}
               participations={affiliation.participations}

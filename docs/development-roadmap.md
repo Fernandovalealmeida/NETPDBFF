@@ -134,3 +134,26 @@ ownership, provenance, causation, or relationship). pgTAP/Vitest/Playwright
 coverage accompanies it. See `docs/m6.3-participation-engine.md` and
 `docs/decisions/0013-participation-engine.md`. The Institution, Relationship,
 and Legacy engines remain deferred and reserved as extension points.
+
+## Milestone status — M6.5 (Institution Engine: institutions as historical actors)
+
+**Implemented (pending local validation).** M6.5 turns the fifth constitutional
+primitive into software: the institution as a historical ACTOR. It extends the
+M6.3 `organizations` entity ADDITIVELY (institution type, historical status,
+founding/closure, location, website, provenance — no parallel table, M6.3
+Participation unchanged), and adds historical names (`organization_names`),
+external identifiers (`organization_external_identifiers`), curated narrative
+facets (`organization_narrative`), and an Event projection join
+(`organization_events`) that puts a canonical Event on an institution timeline
+without duplication. Three bounded reads (`get_organization`,
+`get_organization_timeline`, `get_organization_participation`) compose the
+Institution page at `/institutions/[organizationId]`: identity, introduction,
+names, the reused M6.2 timeline, people & participation (the SAME M6.3 records
+projected, grouped by capacity with equal dignity), and honest reserved
+Relationships/Contributions/Historical-records surfaces. The person biography's
+Participation now links each organization to its Institution page. Historical/
+closed institutions remain readable. pgTAP/Vitest/Playwright coverage
+accompanies it. See `docs/m6.5-institution-engine.md` and
+`docs/decisions/0015-institution-engine.md`. The universal Entity Engine,
+institution↔institution Relationships, the Contribution and Historical Records
+engines, the Knowledge Network, and any Node administration remain deferred.

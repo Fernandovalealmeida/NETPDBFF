@@ -82,3 +82,18 @@ singular and plural (`source_role_label(_plural)`, `target_role_label(_plural)`)
 inverse labels on both entities' pages. It is the relationship-type vocabulary
 anticipated above, and it is where a Node adds its own kinds as data; family and
 other ethically-sensitive kinds are deferred pending governance, not hardcoded.
+
+## Fourth realization: `organization_types` (M6.5)
+
+The Institution Engine's `public.organization_types` table (see
+`docs/database-implementation.md` and
+`docs/decisions/0015-institution-engine.md`) is the fourth controlled vocabulary
+implemented as data — the institution-type taxonomy referenced by
+`organizations.organization_type`, seeded with generic, Node-neutral types (not
+all institutions resemble universities or NGOs). M6.5 also introduces several
+small FIXED-state vocabularies as CHECK constraints rather than tables —
+institution `status`, historical-name `name_type`, external-identifier `scheme`,
+and narrative `kind` — following the established distinction: open domain
+taxonomies are lookup tables (`event_kinds`, `participation_capacities`,
+`relationship_kinds`, `organization_types`), while small stable state sets are
+CHECKs (like `source_type`/`verification_status`).

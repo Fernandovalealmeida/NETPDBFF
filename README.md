@@ -95,6 +95,12 @@ docs/           Product, architecture, and data-model documentation
   `relationship_kinds` vocabulary with directionality and inverse labels, the
   `get_person_relationships` both-side read boundary, ethics/governance notes,
   what it defers, and the required local validation sequence
+- `docs/m6.5-institution-engine.md` — M6.5 Institution Engine (institutions as
+  historical actors): the additive `organizations` extension, historical names,
+  external identifiers, narrative facets, the `organization_events` Event
+  projection, the three bounded `get_organization*` reads, the
+  `/institutions/[organizationId]` page, sovereignty/ethics notes, what it
+  defers, and the required local validation sequence
 - `docs/product-specification.md` — product scope and goals
 - `docs/architecture.md` — modular-monolith architecture and planned modules
 - `docs/database-model.md` — preliminary conceptual data model

@@ -386,3 +386,21 @@ connections; no graph, avatars grid, follower counts, or social features. The
 remaining reserved sections (Contributions, Historical Records, Legacy) stay
 honest "not yet recorded" placeholders; other-entity relationships (person ↔
 institution, ...) are deferred with the universal Entity/Institution engines.
+
+## M6.5 — Institution Engine additions
+
+**New route: `/institutions/[organizationId]`** (protected, authenticated
+authorized reading only) — the first-class Institution page. Nested in the
+existing `(protected)` shell, so the four audiences are unchanged; keyed by the
+organization UUID and named generically (Node-neutral), the `organizations`
+table is NOT renamed to match route copy. The reading flow: identity header
+(canonical name, type, historical status, operating period, place, external-
+identifier availability, provenance) → Introduction (+ Historical overview) →
+Names → Historical timeline (the reused M6.2 Timeline, projecting canonical
+Events) → People and participation (the SAME M6.3 Participation projected from
+the institution's perspective, grouped by capacity with equal dignity) → honest
+reserved Institutional-relationships / Scientific-contributions / Historical-
+records surfaces → Significance → Legacy. Historical/closed/merged institutions
+are readable (never hidden). **Discovery**: the person biography's Participation
+links each organization name to its Institution page; a directory/search and a
+public (unauthenticated) institution surface are deferred.
