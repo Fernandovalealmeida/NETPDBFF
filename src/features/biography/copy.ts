@@ -26,10 +26,6 @@ export const biographyCopy = {
       title: "Scientific contributions",
       description: "Contributions and publications will appear here as they are recorded.",
     },
-    relationships: {
-      title: "Relationships",
-      description: "Documented relationships will appear here as they are established and verified.",
-    },
     records: {
       title: "Historical records",
       description: "Photographs, documents, and other historical records will appear here as they are added.",
@@ -46,7 +42,6 @@ export type ReservedSectionKey = keyof typeof biographyCopy.reservedSections;
 
 export const RESERVED_SECTION_ORDER: readonly ReservedSectionKey[] = [
   "contributions",
-  "relationships",
   "records",
   "legacy",
 ];

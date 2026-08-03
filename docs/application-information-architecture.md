@@ -366,3 +366,23 @@ pattern used elsewhere. The remaining reserved sections (Contributions,
 Relationships, Historical Records, Legacy) stay honest "not yet recorded"
 placeholders. A dedicated organization (institution) read experience is
 deferred with the Institution Engine.
+
+## M6.4 — Relationship Engine additions
+
+**No new route.** M6.4 does not add a route; it fills the reserved Relationships
+section *inside* the existing `/people/[personId]` biography with the real
+Relationship Engine, after Participation, replacing the M6.1 "will appear here"
+placeholder. The reading flow becomes identity/narrative → Timeline ("what
+happened, when") → Participation ("where and how did this person belong") →
+Relationships ("who shaped this life, and whose lives did this person shape").
+Relationships are grouped by the **counterpart's role** ("Mentors", "Students",
+"Collaborators") — each a heading, with the counterpart's name, the period, an
+optional curated narrative, and a one-gesture provenance disclosure beneath it.
+Because the read model resolves each bond to the viewed person's perspective
+(with inverse labels for directional kinds), the SAME canonical record appears
+correctly on both people's pages without duplication. An empty state is a
+dignified honest absence — never suggested, inferred, or fabricated
+connections; no graph, avatars grid, follower counts, or social features. The
+remaining reserved sections (Contributions, Historical Records, Legacy) stay
+honest "not yet recorded" placeholders; other-entity relationships (person ↔
+institution, ...) are deferred with the universal Entity/Institution engines.

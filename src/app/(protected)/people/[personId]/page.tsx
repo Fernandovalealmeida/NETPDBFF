@@ -12,6 +12,8 @@ import { biographyCopy, RESERVED_SECTION_ORDER } from "@/features/biography/copy
 import { getPersonBiography } from "@/features/biography/read";
 import { Participation } from "@/features/participation/components/Participation";
 import { getPersonParticipation } from "@/features/participation/read";
+import { Relationships } from "@/features/relationships/components/Relationships";
+import { getPersonRelationships } from "@/features/relationships/read";
 import { Timeline } from "@/features/timeline/components/Timeline";
 import { getPersonTimeline } from "@/features/timeline/read";
 
@@ -45,6 +47,7 @@ export default async function BiographyPage({ params }: BiographyPageProps) {
 
   const timeline = await getPersonTimeline(personId);
   const participation = await getPersonParticipation(personId);
+  const relationships = await getPersonRelationships(personId);
 
   return (
     <main id="main-content" tabIndex={-1} className="py-16">
@@ -63,6 +66,10 @@ export default async function BiographyPage({ params }: BiographyPageProps) {
 
         <div className="mt-10">
           <Participation document={participation} />
+        </div>
+
+        <div className="mt-10">
+          <Relationships document={relationships} />
         </div>
 
         <div className="mt-10 flex flex-col gap-8">

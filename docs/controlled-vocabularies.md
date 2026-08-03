@@ -69,3 +69,16 @@ vocabulary implemented as data: a lookup table referenced by
 exactly the participation-role vocabulary anticipated above — and it is where a
 Node adds its own capacities (for example a PDBFF *mateiro*) as data, with no
 code change and no PDBFF-specific value hardcoded in generic code.
+
+## Third realization: `relationship_kinds` (M6.4)
+
+The Relationship Engine's `public.relationship_kinds` table (see
+`docs/database-implementation.md` and
+`docs/decisions/0014-relationship-engine.md`) is the third controlled
+vocabulary implemented as data. Beyond a key and label, each kind carries
+directionality (`is_directional`) and the role each end of the bond plays, in
+singular and plural (`source_role_label(_plural)`, `target_role_label(_plural)`)
+— the data that lets one canonical relationship record read with correct
+inverse labels on both entities' pages. It is the relationship-type vocabulary
+anticipated above, and it is where a Node adds its own kinds as data; family and
+other ethically-sensitive kinds are deferred pending governance, not hardcoded.

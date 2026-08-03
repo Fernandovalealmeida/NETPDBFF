@@ -473,6 +473,133 @@ export type Database = {
           },
         ]
       }
+      relationship_kinds: {
+        Row: {
+          description: string | null
+          is_active: boolean
+          is_directional: boolean
+          key: string
+          label: string
+          sort_order: number
+          source_role_label: string
+          source_role_label_plural: string
+          target_role_label: string
+          target_role_label_plural: string
+        }
+        Insert: {
+          description?: string | null
+          is_active?: boolean
+          is_directional: boolean
+          key: string
+          label: string
+          sort_order?: number
+          source_role_label: string
+          source_role_label_plural: string
+          target_role_label: string
+          target_role_label_plural: string
+        }
+        Update: {
+          description?: string | null
+          is_active?: boolean
+          is_directional?: boolean
+          key?: string
+          label?: string
+          sort_order?: number
+          source_role_label?: string
+          source_role_label_plural?: string
+          target_role_label?: string
+          target_role_label_plural?: string
+        }
+        Relationships: []
+      }
+      relationships: {
+        Row: {
+          created_at: string
+          created_by_user_id: string | null
+          date_is_uncertain: boolean
+          date_is_unknown: boolean
+          end_date: string | null
+          end_precision: string | null
+          id: string
+          is_approximate: boolean
+          is_directional: boolean
+          is_ongoing: boolean
+          kind: string
+          narrative: string | null
+          source_person_id: string
+          source_type: string
+          start_date: string | null
+          start_precision: string | null
+          target_person_id: string
+          updated_at: string
+          verification_status: string
+        }
+        Insert: {
+          created_at?: string
+          created_by_user_id?: string | null
+          date_is_uncertain?: boolean
+          date_is_unknown?: boolean
+          end_date?: string | null
+          end_precision?: string | null
+          id?: string
+          is_approximate?: boolean
+          is_directional: boolean
+          is_ongoing?: boolean
+          kind: string
+          narrative?: string | null
+          source_person_id: string
+          source_type: string
+          start_date?: string | null
+          start_precision?: string | null
+          target_person_id: string
+          updated_at?: string
+          verification_status?: string
+        }
+        Update: {
+          created_at?: string
+          created_by_user_id?: string | null
+          date_is_uncertain?: boolean
+          date_is_unknown?: boolean
+          end_date?: string | null
+          end_precision?: string | null
+          id?: string
+          is_approximate?: boolean
+          is_directional?: boolean
+          is_ongoing?: boolean
+          kind?: string
+          narrative?: string | null
+          source_person_id?: string
+          source_type?: string
+          start_date?: string | null
+          start_precision?: string | null
+          target_person_id?: string
+          updated_at?: string
+          verification_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relationships_kind_fkey"
+            columns: ["kind", "is_directional"]
+            isOneToOne: false
+            referencedRelation: "relationship_kinds"
+            referencedColumns: ["key", "is_directional"]
+          },
+          {
+            foreignKeyName: "relationships_source_person_id_fkey"
+            columns: ["source_person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationships_target_person_id_fkey"
+            columns: ["target_person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reviewers: {
         Row: {
           created_at: string
@@ -612,6 +739,7 @@ export type Database = {
       }
       get_person_biography: { Args: { p_person_id: string }; Returns: Json }
       get_person_participation: { Args: { p_person_id: string }; Returns: Json }
+      get_person_relationships: { Args: { p_person_id: string }; Returns: Json }
       get_person_timeline: { Args: { p_person_id: string }; Returns: Json }
       is_active_reviewer: { Args: { p_user_id: string }; Returns: boolean }
       is_person_claimable: { Args: { p_person_id: string }; Returns: boolean }

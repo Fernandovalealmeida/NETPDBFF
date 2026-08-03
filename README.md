@@ -90,6 +90,11 @@ docs/           Product, architecture, and data-model documentation
   entity, the `participation_capacities` vocabulary, the shared temporal/
   provenance kernel, the `get_person_participation` read boundary, what it
   defers, and the required local validation sequence
+- `docs/m6.4-relationship-engine.md` — M6.4 Relationship Engine (relationships
+  as historical narratives): the one-canonical-record `relationships` model, the
+  `relationship_kinds` vocabulary with directionality and inverse labels, the
+  `get_person_relationships` both-side read boundary, ethics/governance notes,
+  what it defers, and the required local validation sequence
 - `docs/product-specification.md` — product scope and goals
 - `docs/architecture.md` — modular-monolith architecture and planned modules
 - `docs/database-model.md` — preliminary conceptual data model

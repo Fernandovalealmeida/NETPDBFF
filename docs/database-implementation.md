@@ -645,3 +645,61 @@ Playwright fixtures. Flagged for review in ADR-0013.
 **Deferred**: the Institution Engine, other subject rosters
 (`get_organization_participation`, …), client participation-editing,
 participation revision/history, and any public (anon) path — see ADR-0013.
+
+## M6.4 — Relationship Engine additions
+
+Migration: `supabase/migrations/20260806090000_add_relationship_engine.sql`.
+See `docs/decisions/0014-relationship-engine.md` and
+`docs/m6.4-relationship-engine.md`.
+
+**New table `public.relationship_kinds`** — the relationship-kind controlled
+vocabulary as data. Columns: `key` (PK), `label`, `is_directional`,
+`source_role_label`, `source_role_label_plural`, `target_role_label`,
+`target_role_label_plural`, `description`, `sort_order`, `is_active`.
+Constraints: key/label/role labels not blank; `relationship_kinds_symmetric_
+roles_match` (a symmetric kind's source and target role labels must be
+identical); and `unique (key, is_directional)` — the target of the composite FK
+below. Seeded with 11 generic, Node-neutral kinds (mentorship, advising,
+interview, succession, collaboration, co-research, field partnership, community
+collaboration, technical collaboration, correspondence, other). Node-specific,
+institution/project, and family kinds are added as data / deferred.
+
+**New table `public.relationships`** — ONE canonical record per bond between two
+people (CC1: a bond, not Participation and not an Event). Columns: `kind`, a
+denormalized `is_directional`, `source_person_id`/`target_person_id` (FK →
+`people` cascade), optional `narrative`, the SHARED Many-Clocks temporal model
+(identical columns/CHECKs to events/participations, `relationships_*` names),
+`source_type`, `verification_status`, `created_by_user_id`, timestamps.
+Integrity: composite FK `relationships_kind_fkey (kind, is_directional) →
+relationship_kinds(key, is_directional)` forces the denormalized directionality
+to match the kind; `relationships_no_self` forbids self-relationships;
+`relationships_symmetric_canonical` requires symmetric bonds to have
+`source_person_id < target_person_id` (canonical reciprocal storage, so `(A,B)`
+and `(B,A)` cannot both exist); `relationships_unique (kind, source, target)`
+blocks exact duplicates; `relationships_narrative_not_blank`. Indexes on
+source/target person, kind, verification_status, start_date; `set_updated_at`
+trigger.
+
+**New function `public.get_person_relationships(uuid) returns jsonb`** — the
+canonical read model. `SECURITY DEFINER`, `search_path` pinned, `auth.uid()`
+required, `EXECUTE` revoked from `PUBLIC` and granted only to `authenticated`.
+Returns `{ person_id, relationships: [...] }`, projecting each canonical record
+from the viewed person's PERSPECTIVE: their role, the counterpart's role and
+its INVERSE label (singular + plural), and the direction
+(outgoing/incoming/symmetric), so one record reads correctly on both entities'
+pages without duplication. Merged counterparts omitted; ordered `start_date asc
+nulls last, created_at asc`; provisional/disputed bonds returned (rendered
+calmly); null for a merged/nonexistent subject.
+
+**Deny-by-default + service_role grants.** Both tables are RLS-enabled with **no
+client GRANT/policy** — client read access is only through
+`get_person_relationships`. They additionally carry explicit `grant select,
+insert, update, delete ... to service_role` (M3.1 pattern), enabling the trusted
+server-side write path (no client authoring path in M6.4) and per-test
+Playwright fixtures. Flagged for review in ADR-0014.
+
+**pgTAP**: `supabase/tests/database/relationships.test.sql`.
+
+**Deferred**: polymorphic/other-entity endpoints, the Institution/Contribution
+engines, inference/suggestions, client relationship-editing, and any public
+(anon) path — see ADR-0014.

@@ -94,6 +94,27 @@ same model later serves institution/project/station/expedition/collection/
 record/species clocks unchanged; the Participation, Relationship, Institution,
 and Legacy engines remain deferred and reserved as extension points.
 
+## Milestone status — M6.4 (Relationship Engine: relationships as historical narratives)
+
+**Implemented (pending local validation).** M6.4 turns the fourth
+constitutional primitive into software: historically meaningful bonds between
+entities. It adds the relationship-kind vocabulary (`relationship_kinds`, with
+directionality and per-end role labels), the `relationships` table (ONE
+canonical record per bond, with canonical reciprocal storage so a symmetric
+bond is never duplicated and directional bonds keep source/target meaning, the
+shared Many-Clocks temporal model, provenance, and an optional curated
+narrative), and the `get_person_relationships` read model, which projects the
+same record onto both entities' pages with correct INVERSE labels. Relationships
+render inside `/people/[personId]` after Participation, grouped by the
+counterpart's role ("Mentors", "Students", "Collaborators") with equal dignity
+across roles, replacing the M6.1 reserved Relationships placeholder (CC1: a bond
+between entities, not Participation and not an Event; never inferred).
+pgTAP/Vitest/Playwright coverage accompanies it. See
+`docs/m6.4-relationship-engine.md` and
+`docs/decisions/0014-relationship-engine.md`. The universal Entity/Institution/
+Contribution engines, Knowledge Network visualization, and any inference/AI
+librarian remain deferred and reserved as extension points.
+
 ## Milestone status — M6.3 (Participation Engine: bounded belonging)
 
 **Implemented (pending local validation).** M6.3 turns the second
