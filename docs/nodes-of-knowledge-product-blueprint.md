@@ -4,6 +4,8 @@
 >
 > ### First Constitutional Edition
 >
+> **Version 1.1**
+>
 > *The bridge between the Design Bible and the built platform — Product Architecture, not software architecture.*
 
 ---
@@ -38,7 +40,7 @@ test the authors held themselves to: describe the product so clearly that
 implementation is nearly mechanical, while leaving every genuinely technical
 decision open.
 
-The Design Bible is treated here as settled. Its sixteen principles are not
+The Design Bible is treated here as settled. Its seventeen principles are not
 reopened, softened, reframed, or traded for a tidier framework. They are assumed,
 cited, and *implemented conceptually.* Where this blueprint adds structure the
 Bible did not — the product primitives, the engines, the capability roadmap — that
@@ -456,10 +458,15 @@ constitutional sentence becomes a set of product commitments. The engines and
 experiences designed in later parts are the elaboration of what is decided here.
 
 The principles are grouped by the constitutional themes the brief named, rather
-than marched through one to sixteen, because several principles act together and
+than marched through one by one, because several principles act together and
 are best translated together. Each treatment answers, in order: how it becomes
 software conceptually; the primary experiences; the secondary experiences; what
 information must exist; what may arrive later; and what must never exist.
+
+One principle stands apart from this translation by its nature. The seventeenth — the
+benchmarking discipline — describes how the platform is *designed* rather than what it
+*is*, and so it does not resolve into product commitments through the six-question lens;
+its translation into operational method is given its own treatment in Part XIV.
 
 ---
 
@@ -1867,6 +1874,213 @@ each milestone, when it comes, finds its foundation already poured.
 
 ---
 
+# Part XIV — The Benchmarking Discipline
+
+The Design Bible's seventeenth principle commits the platform to a particular
+intellectual method: to learn from the best of every relevant discipline, to benchmark
+for *problems* rather than *solutions,* and to hold that benchmarking always beneath the
+Constitution, never above it. This part translates the principle from philosophy into
+operational governance — the place benchmarking occupies in the platform's chain of
+authority, the disciplined workflow performed at each major milestone, and the
+safeguards that keep the discipline from drifting into imitation or scope creep. It is
+performed before every major architectural milestone, so that each capability on the
+roadmap of Part XIII is approached by understanding the field deeply and then designing
+past it, never by importing what already exists. The method is neither optional nor
+occasional; it is the standing discipline by which the platform advances — and, precisely
+because it is powerful, it is fenced.
+
+## The governance hierarchy
+
+Every design decision in Nodes of Knowledge answers to a chain of authority, and
+benchmarking has a fixed and deliberately modest place within it:
+
+```
+        Constitution               —  the Design Bible; why the platform exists
+             |
+             v
+        Architectural Vision       —  the conceptual model and product primitives
+             |
+             v
+        Ratified Milestone Goals   —  what this milestone must build, and its bounds
+             |
+             v
+        Benchmarking               —  understanding the problem landscape
+             |
+             v
+        Original Design Synthesis  —  the platform's own answer
+             |
+             v
+        Implementation             —  the software of the year
+```
+
+Authority flows downward. Each layer is governed by the ones above it and governs the
+ones below. The Constitution answers to nothing; the Architectural Vision serves the
+Constitution; the ratified goals of a milestone serve the vision; and only then does
+benchmarking begin its work — in service of a milestone whose purpose and boundaries are
+already settled.
+
+Benchmarking sits **below ratified milestone goals on purpose.** It is not a peer of the
+milestone that can renegotiate what the milestone is for; it is a servant of the
+milestone that deepens the team's understanding of the problem the milestone already
+exists to solve. A benchmarking exercise may reveal that a problem is harder, richer, or
+more connected than first understood — and that is its value. It may not conclude that
+the milestone should therefore aim at a different goal, adopt a different conceptual
+model, or abandon a constitutional commitment, because those decisions were made above it
+by authorities it does not outrank. What benchmarking discovers flows *upward only as
+understanding,* never as a mandate; if a discovery genuinely seems to challenge a ratified
+goal, that is a matter to be raised with the authorities that own the goal, through
+whatever amendment process governs them — never resolved inside the benchmarking step by
+the person performing it.
+
+## What benchmarking may never redefine
+
+Because the discipline reaches out toward systems often larger and older than this one,
+the boundary of its authority is stated explicitly. Benchmarking may refine *design* and
+*implementation* — it may sharpen a mechanism, improve a workflow, clarify a model,
+deepen the understanding of a problem. It may **never** redefine, reopen, or override any
+of the following:
+
+- the constitutional architecture;
+- the conceptual model;
+- the accepted product primitives;
+- the ratified goals of a milestone;
+- Node Independence;
+- the provenance-first model;
+- historical and temporal honesty;
+- institutional sovereignty;
+- equal dignity across roles;
+- the separation of Narrative from evidence;
+- the long-term vision of Nodes of Knowledge.
+
+These are first principles, not implementation hypotheses awaiting a competitor's better
+idea. No quantity of evidence that another platform does otherwise reopens them, because
+they were never claims about what merely works — they are decisions about what this
+platform *is.* A benchmarking finding that appears to argue against one of them has not
+discovered a flaw in the Constitution; it has discovered the edge of benchmarking's
+authority, and must stop there.
+
+## When the discipline applies
+
+The discipline is triggered by scale, not by frequency, and by sequence, not by whim. It
+is performed before every *major architectural milestone* — the design of a new
+capability, a new primitive, a new engine, or any decision large enough to shape what the
+platform fundamentally is — but only *after* that milestone's constitutional purpose and
+major goal have already been established. Benchmarking does not open a milestone; it
+serves one already opened. Small, local, reversible decisions do not require it at all;
+the machinery is reserved for decisions whose consequences are hard to undo and long to
+live with.
+
+One rule protects the milestone from the discipline meant to serve it: **benchmarking
+must not delay or reopen an already ratified milestone merely because another product
+uses a different model.** The existence of a different approach elsewhere is information
+about the problem, not an instruction to change course. A ratified milestone proceeds;
+what benchmarking learns informs the design *within* it, and is carried to the milestone's
+owners only if it rises to a genuine constitutional question — which is rare, and is their
+decision, not the benchmarker's.
+
+## The milestone workflow
+
+At each major milestone, the discipline proceeds in nine steps, always in this order,
+because each depends on the one before it:
+
+1. **Re-read the Constitution and the ratified architecture** — begin by restoring the
+   destination and the vision to memory, so that everything studied afterward is weighed
+   against them.
+2. **Establish the milestone's accepted purpose and boundaries** — state plainly what
+   this milestone is for and where it ends, before any outside system is consulted.
+3. **Study relevant disciplines and infrastructures to discover the problem landscape** —
+   benchmark broadly across science and software engineering, archives, museums,
+   libraries, biodiversity informatics, the digital humanities, knowledge graphs,
+   research infrastructures, scientific cyberinfrastructure, and any other mature
+   knowledge infrastructure that has faced something like the problem.
+4. **Extract the underlying principles and trade-offs** — for each system, look past what
+   it built to the problem it recognised, the principle it used, and the trade-off it
+   accepted.
+5. **Evaluate them against the Constitution** — hold every extracted principle up to the
+   Design Bible and the architecture, and keep only what is compatible.
+6. **Deliberately reject incompatible patterns** — record what is rejected and why, as a
+   first-class outcome of the work rather than a failure of it.
+7. **Synthesise an original design** — from the understood problems and the compatible
+   principles, create the platform's own answer, one that advances beyond the state of
+   the art rather than merely matching it.
+8. **Document what was learned, rejected, and created** — leave a durable record of the
+   problems discovered, the principles refused, and the synthesis reached, so the
+   reasoning outlives the milestone.
+9. **Implement only after the synthesis is complete** — build once the design is settled,
+   never in parallel with a benchmarking exercise still deciding what the design should
+   be.
+
+The order is itself the safeguard. Steps one and two anchor the work to the Constitution
+and the milestone before a single external system is opened; steps three through six are
+the study; steps seven and eight are the original synthesis and its record; step nine is
+the software. Sequenced this way, it becomes structurally difficult to reach
+implementation by way of imitation, because imitation has no place to enter a process
+that studies problems, judges them against first principles, and only then designs.
+
+## Problem discovery, not solution discovery
+
+The maxim the Constitution fixes — *use benchmarking to discover problems, never to
+discover solutions* — resolves, in practice, into a specific discipline of attention:
+
+- study what problems other disciplines recognised;
+- understand why those problems mattered to them;
+- extract the principles they used and the trade-offs they accepted;
+- then deliberately forget their implementations;
+- and create an original Nodes of Knowledge solution from the Constitution.
+
+The forgetting is the crucial and counter-intuitive step. Once the principle and its
+trade-off are understood, the other system's actual schema, interface, or workflow is set
+aside on purpose, so that the synthesis is built from the understood problem and the
+platform's own first principles rather than from a remembered answer. The guiding
+question is the test of whether attention has been placed correctly. It is never *"How
+did they solve this?"* It is always *"What problem did they recognise that we should also
+understand?"* A benchmarking exercise that ends with a catalogue of other platforms'
+solutions has failed, however thorough it looks; one that ends with a clear statement of
+the problems they recognised, a judgment of which principles this Constitution can accept,
+and an original design, has succeeded.
+
+## What this discipline must never become
+
+The negative space of this method is as load-bearing as its steps. The discipline must
+never become imitation. Nodes of Knowledge does not copy — not interfaces, not
+workflows, not schemas, not database structures, not products, not implementation
+patterns, not visual design, not the shape of a user experience — merely because another
+platform already does it and appears to succeed. It does not adopt a feature to reach
+parity with a system it is not trying to become. And it does not treat the existence of
+a solution elsewhere as evidence that the same solution belongs here, because the
+platforms it studies were built for purposes that are not its own. The moment
+benchmarking produces a solution to copy rather than a problem to understand, it has
+inverted into the very thing this discipline exists to prevent.
+
+From this it follows that Nodes of Knowledge must never become any of the things
+imitation produces:
+
+- a composite of existing platforms;
+- a prettier version of existing infrastructure;
+- a feature-by-feature response to competitors;
+- an architecture chosen by consensus or popularity;
+- product management by imitation.
+
+Popularity is not evidence of fitness, and prevalence is not best practice; that many
+systems solve a problem a certain way is a fact about them and their purposes, never an
+argument about this platform and its own. Held correctly, benchmarking is not a threat to
+originality but its richest source: intellectual humility made operational — the
+recognition that others have understood real problems worth learning from, and the
+discipline to learn the problems without inheriting the answers. The platform becomes more
+original the more deeply it understands the field, not less, because originality here is
+understanding carried far enough to transcend what it understood.
+
+> **Benchmarking Principle** — Place benchmarking beneath the Constitution, the
+> architecture, and the ratified goals of the milestone it serves; perform it only after
+> a milestone's purpose is set, never to reopen it; study the field to discover the
+> *problems* others recognised, extract and judge their principles against the
+> Constitution, reject what is incompatible, forget their implementations, and synthesise
+> an original design that advances the state of the art — so that benchmarking refines the
+> path without ever redefining the destination, and increases the platform's originality
+> rather than eroding it into imitation.
+
+---
+
 # Coda — The Negative Space, and What This Document Is
 
 Two things remain to be said plainly, because the platform depends on both.
@@ -1884,9 +2098,13 @@ account seizing a life it did not live, no automated decision about a person's m
 There must be no premature platform machinery — no multi-tenancy, institution tables,
 or federation built before a real second Node makes them concrete. And there must be
 no decoration against truth — no ornament, imagery, or flourish that makes the record
-look more certain, complete, or finished than it honestly is. These refusals are not
-limitations on the platform; they are the shape of the platform, the discipline that
-keeps it an archive and not a feed.
+look more certain, complete, or finished than it honestly is. And there must be no
+imitation — no interface, workflow, schema, database structure, product, or pattern
+copied from another platform merely because it exists and appears to work, for the
+systems this one studies were built for purposes that are not its own; benchmarking
+serves to discover the problems others recognised, never to borrow the solutions they
+chose. These refusals are not limitations on the platform; they are the shape of the
+platform, the discipline that keeps it an archive and not a feed.
 
 The second is what this document *is.* It is the First Constitutional Edition of the
 Product Blueprint: the faithful translation of the Design Bible into Product
@@ -1900,6 +2118,7 @@ institutions reading it many years from now can understand not only how Nodes of
 Knowledge works, but what it is, and why it was built to be nothing less than a
 faithful memory of how scientific knowledge is made.
 
-*The Nodes of Knowledge Product Blueprint — First Constitutional Edition. The bridge
-between philosophy and implementation. To be deepened as the platform grows, and never
-quietly overwritten.*
+*The Nodes of Knowledge Product Blueprint — First Constitutional Edition, Version 1.1.
+The bridge between philosophy and implementation. To be deepened as the platform grows,
+and never quietly overwritten. Version 1.1 adds Part XIV, the benchmarking discipline,
+translating Design Principle 17 into operational governance; Parts I–XIII are unchanged.*

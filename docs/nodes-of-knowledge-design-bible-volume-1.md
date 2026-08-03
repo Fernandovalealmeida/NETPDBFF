@@ -4,7 +4,7 @@
 >
 > ### Volume I — Scientific Identities & Institutional Memory
 >
-> **Version 1.0**
+> **Version 1.1**
 >
 > *A book about why the platform exists, written for the people who will keep it true.*
 
@@ -1107,15 +1107,140 @@ most powerful tool on the shelf — is permitted to stand above it.
 
 ---
 
+# Part VI — The Discipline of Design
+
+---
+
+## Chapter 17. Originality by Understanding
+
+No platform is built in an empty field, and this one least of all. Nodes of Knowledge
+arrives late into a world already crowded with serious attempts to hold knowledge and
+its history: the great scientific databases and identifier registries; the standards
+and ontologies of the museum world; the descriptive traditions of archives and
+libraries; the vast aggregations of biodiversity informatics; the patient,
+interpretive labor of the digital humanities; the knowledge graphs that try to render
+a whole domain as connected fact; and the research infrastructures and scientific
+cyberinfrastructures built, at great cost and over decades, to make science findable
+and durable. Each of these was made by people who thought hard about problems that
+overlap with ours. To design as though the field were empty — as though every
+difficulty were ours to discover for the first time — would not be originality. It
+would be arrogance, and it would waste the one resource a founding platform can least
+afford to squander: the hard-won understanding of those who came before.
+
+So this platform commits, as a matter of method and not merely of courtesy, to learn
+from the best of what already exists. Before every major turn in its design it should
+go out into the neighbouring disciplines — science and software engineering, archives
+and museums and libraries, biodiversity informatics and the digital humanities,
+knowledge graphs and research infrastructures and scientific cyberinfrastructure, and
+whatever other mature knowledge infrastructure bears on the problem at hand — and study
+them closely, without defensiveness and without haste. This is **benchmarking**, and it
+is a discipline the platform embraces rather than avoids.
+
+But one rule governs all of it, and getting it wrong would quietly undo everything else
+this book argues for: **Use benchmarking to discover problems, never to discover
+solutions.** The purpose of studying another system is to understand what problem its
+makers recognised, why that problem mattered, which principle they extracted from it,
+and which trade-offs they were willing to accept. The purpose is emphatically not to
+see how they solved it and do likewise. A schema that works elsewhere, an interface the
+world has been trained to expect, a workflow another platform has refined over years —
+none of these is a reason for Nodes of Knowledge to adopt the same, because none of them
+was designed for what this platform is. The question to carry into every act of
+benchmarking is never *how did they solve this?* It is always *what problem did they
+recognise that we should also understand?* Only once the problem is understood — deeply,
+in its own terms — does the platform turn to design its own answer.
+
+Because benchmarking sends the platform out among systems older and more established than
+itself, one boundary must be fixed before the first comparison is ever made:
+**benchmarking is subordinate to the Constitution, and never superior to it.** This book
+is the destination. The architecture the platform has adopted, and the goals ratified for
+each milestone, are the account of what must be built to reach it. Benchmarking holds a
+narrower and humbler office than any of these: it helps the platform understand the
+terrain it is crossing and improve the path it walks, and it does nothing more. It cannot
+choose a different destination. A discipline whose whole work is to study where other
+people arrived must never be mistaken for a licence to arrive somewhere this Constitution
+did not send us.
+
+The distinction that keeps this safe is the distinction between refining a path and
+redefining a destination. Benchmarking may refine how a thing is designed and how it is
+built — it may sharpen a mechanism, improve a workflow, deepen the understanding of a
+problem. It may never redefine what this book and the architecture have already settled:
+the trusted, provenance-bearing record; the honesty owed to time and to uncertainty; the
+sovereignty of the Node; the equal dignity of every role; the separation of narrative
+from the evidence beneath it; the long mission the platform was built to serve. These are
+first principles, not implementation hypotheses awaiting a better idea from a competitor.
+No quantity of evidence that another system does otherwise reopens them, because they were
+never claims about what merely works; they were decisions about what this platform *is.*
+Benchmarking that reaches for them has exceeded its authority, and is to be stopped at the
+boundary rather than followed past it.
+
+There is a further boundary, close to this one but not the same, and it concerns time
+rather than authority: **benchmarking shall never reopen a constitutional question that
+has already been settled.** To forbid it from *redefining* a first principle guards the
+principle from being overwritten; to forbid it from *reopening* one guards the platform
+from a subtler erosion — the endless relitigation of foundations every time some other
+system is found to have chosen differently. Benchmarking may improve an implementation,
+deepen an understanding, and strengthen a synthesis without limit; it may never become a
+standing invitation to revisit what the Constitution and the ratified milestones have
+already adopted. A settled decision is not reheard because another system decided
+otherwise. It is a foundation to build on, and the whole value of a foundation is that one
+stops digging beneath it.
+
+This is why the platform will never become the systems it admires. It is not trying to be
+any of the scientific, archival, museum, library, biodiversity, or knowledge
+infrastructures it studies, nor any combination of them. It has already, in these pages,
+stood beside such systems again and again — an identifier registry's record here, a
+museum's exhibit label there, an encyclopaedia article, a critical edition, the reading
+room of a great archive — and each time to say the same thing: *resembling none of them
+exactly.* Those comparisons were never shopping. They were the platform locating itself:
+understanding what each neighbour got right, what problem each was really answering, and
+then going its own way. The comparison is the beginning of the design, never the end of
+it.
+
+The refusals that follow are strict, and they are refusals of imitation, not of
+learning. Nodes of Knowledge does not copy an interface because another platform has
+trained the world to expect it; it does not copy a workflow, a schema, a database
+structure, a product, an implementation pattern, a visual language, or a way of moving
+through a screen, merely because it already exists and appears to work. Each of those,
+adopted uncritically, would smuggle in a set of assumptions about what the thing *is* —
+assumptions made for someone else's purpose — and this platform's purpose is its own.
+Every principle extracted from the field must be held up against this Constitution, and
+the ones incompatible with it must be rejected deliberately and consciously, however
+elegant they are elsewhere. What survives that test is not a borrowed solution but an
+understood problem, and from understood problems the platform synthesises answers that
+are genuinely its own — and, where it can, that advance beyond the current state of the
+art rather than merely matching it.
+
+There is a humility in all of this that is easy to miss, because imitation is so often
+mistaken for humility and originality for pride. It is the other way around. To copy is
+to assume the problem has already been solved and needs only to be reproduced; to
+benchmark for problems is to assume there is more to understand than any single prior
+system captured, and that the understanding is worth the work. Benchmarking, practised
+this way, is an act of intellectual humility — and its purpose is to *increase* the
+platform's originality, not to reduce it. Originality here is not the refusal to look at
+what others have done. It is the discipline of understanding what others have done
+deeply enough to see past it.
+
+> **Design Principle 17** — Learn from the best of every relevant discipline, but hold
+> benchmarking beneath the Constitution, never above it: benchmark to discover problems,
+> never to copy solutions; ask always what problem others recognised rather than how they
+> solved it; reject every borrowed principle incompatible with these principles; and
+> synthesise original answers that improve the path without ever redefining or reopening
+> the destination — because originality is not ignorance of prior work but the
+> understanding of it deeply enough to transcend it.
+
+---
+
 # Coda — A Book for Twenty Years From Now
 
 This is Volume I, and it is deliberately the first of several. It has taken up
 Scientific Identities and Institutional Memory — the person, the institution, time,
-relationship, evidence, legacy, the experience of reading a life, and the place of
-intelligence within the archive — because these are the foundation everything else
-will stand on. It has not taken up much that a complete platform will need: the deep
-mechanics of nomination and duplicate resolution; the full workflows of verification
-and dispute; search and network visualisation across the whole fabric of connected
+relationship, evidence, legacy, the experience of reading a life, the place of
+intelligence within the archive, and the discipline by which the platform learns from
+the whole field without imitating any of it — because these are the foundation
+everything else will stand on. It has not taken up much that a complete platform will
+need: the deep mechanics of nomination and duplicate resolution; the full workflows of
+verification and dispute; search and network visualisation across the whole fabric of
+connected
 memory; the forum and the living conversation of a community; the governance and
 economics by which institutions come aboard as Nodes; the specific, careful design of
 how sovereign Nodes actually connect. Those are the matter of later volumes, to be
@@ -1129,12 +1254,13 @@ unrecognisable. The database will have been migrated a dozen times. The visual
 language will have been remade by people not yet born into the field. If this book has
 done its work, none of that will matter, because what they will find here is not how
 the software of 2026 was built but *why the platform exists* — and that should still be
-true. They should be able to hold a proposed feature against these sixteen principles
+true. They should be able to hold a proposed feature against these seventeen principles
 and feel immediately whether it belongs: whether it protects the record or merely
 decorates it, whether it honours the *mateiro* beside the professor, whether it tells
 the truth about what is unknown, whether it remembers the dead with dignity, whether
-it keeps the librarian in its place. A book that can still answer those questions in
-2046 will have justified itself.
+it keeps the librarian in its place, and whether it earned its design by understanding
+the field deeply enough to transcend it rather than by copying what already exists. A
+book that can still answer those questions in 2046 will have justified itself.
 
 Everything in these pages reduces, in the end, to a single conviction, and it is the
 sentence the book opened with. *Nodes of Knowledge preserves not only scientific
@@ -1214,6 +1340,14 @@ record's claim to be trusted, never as fine print.
 **Librarian (of AI)** — the bounded role of artificial intelligence: powerful in
 discovery, never the author of the record, never above the evidence.
 
+**Benchmarking** — the disciplined study of other knowledge infrastructures to
+discover the *problems* they recognised, never to copy the *solutions* they chose;
+subordinate to the Constitution and never superior to it, it refines the path without
+ever redefining the destination. An act of intellectual humility whose purpose is to
+increase originality, not reduce it. *Do not confuse with:* imitation, feature-parity, or
+the adoption of another platform's interface, schema, workflow, or user experience
+because it already exists.
+
 ---
 
 # Appendix B — The Design Principles, Collected
@@ -1290,7 +1424,17 @@ discovery, invisible in authority — and never as its author; history belongs t
 and institutions, and machine inference enters the record only as a labelled
 suggestion the evidence and a human still govern.
 
+17. Learn from the best of every relevant discipline, but hold benchmarking beneath the
+Constitution, never above it: benchmark to discover problems, never to copy solutions;
+ask always what problem others recognised rather than how they solved it; reject every
+borrowed principle incompatible with these principles; and synthesise original answers
+that improve the path without ever redefining or reopening the destination — because
+originality is not ignorance of prior work but the understanding of it deeply enough to
+transcend it.
+
 ---
 
 *The Nodes of Knowledge Design Bible, Volume I — Scientific Identities & Institutional
-Memory. Version 1.0. A living foundation: to be deepened, never quietly overwritten.*
+Memory. Version 1.1. A living foundation: to be deepened, never quietly overwritten.
+Version 1.1 adds Part VI, the discipline of design, and its Design Principle 17;
+Principles 1–16 are unchanged.*
