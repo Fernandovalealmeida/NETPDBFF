@@ -118,6 +118,47 @@ export type Database = {
         }
         Relationships: []
       }
+      person_narrative: {
+        Row: {
+          authored_by_user_id: string | null
+          body: string
+          created_at: string
+          id: string
+          person_id: string
+          source_type: string
+          updated_at: string
+          verification_status: string
+        }
+        Insert: {
+          authored_by_user_id?: string | null
+          body: string
+          created_at?: string
+          id?: string
+          person_id: string
+          source_type: string
+          updated_at?: string
+          verification_status?: string
+        }
+        Update: {
+          authored_by_user_id?: string | null
+          body?: string
+          created_at?: string
+          id?: string
+          person_id?: string
+          source_type?: string
+          updated_at?: string
+          verification_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "person_narrative_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: true
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profile_claims: {
         Row: {
           claimant_user_id: string
@@ -263,17 +304,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      am_i_a_reviewer: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      am_i_a_reviewer: { Args: never; Returns: boolean }
       approve_profile_claim: {
         Args: { p_claim_id: string }
         Returns: {
-          id: string
-          status: string
           decided_at: string
+          id: string
           link_id: string
+          status: string
         }[]
       }
       begin_claim_review: {
@@ -286,67 +324,62 @@ export type Database = {
       get_claim_review_detail: {
         Args: { p_claim_id: string }
         Returns: {
-          id: string
-          status: string
-          claimant_email: string | null
-          person_id: string
-          person_display_name: string
-          person_given_name: string
-          person_family_name: string
-          person_verification_status: string
-          person_source_type: string
-          person_created_at: string
-          supporting_evidence: string | null
-          submitted_at: string
-          decided_at: string | null
-          reviewer_email: string | null
-          decision_notes: string | null
           active_link_exists: boolean
+          claimant_email: string
+          decided_at: string
+          decision_notes: string
+          id: string
+          person_created_at: string
+          person_display_name: string
+          person_family_name: string
+          person_given_name: string
+          person_id: string
+          person_source_type: string
+          person_verification_status: string
+          reviewer_email: string
+          status: string
+          submitted_at: string
+          supporting_evidence: string
         }[]
       }
       get_claimed_person_display_name: {
         Args: { p_person_id: string }
-        Returns: string | null
+        Returns: string
       }
-      is_person_claimable: {
-        Args: { p_person_id: string }
-        Returns: boolean
-      }
+      get_person_biography: { Args: { p_person_id: string }; Returns: Json }
+      is_active_reviewer: { Args: { p_user_id: string }; Returns: boolean }
+      is_person_claimable: { Args: { p_person_id: string }; Returns: boolean }
       list_claims_for_review: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
+          claimant_email: string
           id: string
-          status: string
-          claimant_email: string | null
-          person_id: string
           person_display_name: string
+          person_id: string
           person_verification_status: string
+          status: string
           submitted_at: string
         }[]
       }
       reject_profile_claim: {
-        Args: { p_claim_id: string; p_decision_notes?: string | null }
+        Args: { p_claim_id: string; p_decision_notes?: string }
         Returns: {
+          decided_at: string
           id: string
           status: string
-          decided_at: string
         }[]
       }
       search_claimable_people: {
-        Args: { p_query?: string | null }
+        Args: { p_query?: string }
         Returns: {
-          id: string
           display_name: string
+          id: string
         }[]
-        SetofOptions: {
-          from: "*"
-          to: "people"
-          isOneToOne: false
-          isSetofReturn: true
-        }
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
       submit_profile_claim: {
-        Args: { p_person_id: string; p_supporting_evidence?: string | null }
+        Args: { p_person_id: string; p_supporting_evidence?: string }
         Returns: {
           id: string
           status: string

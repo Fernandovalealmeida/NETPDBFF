@@ -60,3 +60,17 @@ language, building on the i18n-readiness described in
 - Tests accompanying each new feature (per `CLAUDE.md`).
 - Accessibility and responsiveness review.
 - Architecture decision records for significant choices (`docs/decisions/`).
+
+## Milestone status — M6.1 (Scientific Biography Foundation)
+
+**Implemented (pending local validation).** M6 begins turning the M1–M5
+application foundation into institutional memory. M6.1 delivers the first
+production, database-backed vertical slice of the Digital Scientific
+Biography: the `person_narrative` assertion, the `get_person_biography`
+canonical read model, and the authenticated `/people/[personId]` read
+experience (identity, introductory narrative or honest absence, provenance
+surface, reserved section architecture), with pgTAP/Vitest/Playwright
+coverage. See `docs/m6.1-scientific-biography-foundation.md` and
+`docs/decisions/0011-scientific-biography-read-model.md`. The Timeline,
+Participation, Relationship, Institution, Historical Records, and Legacy
+engines are deferred to later M6 milestones and reserved as extension points.

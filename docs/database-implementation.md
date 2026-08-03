@@ -493,3 +493,41 @@ Two things worth double-checking when you do:
 - Everything explicitly out of scope for M3.1 per the brief:
   authentication pages, profile forms, institutions, participation,
   projects, publications, forum, media.
+
+---
+
+## M6.1 — Scientific Biography Foundation additions
+
+Migration: `supabase/migrations/20260803090000_add_scientific_biography_foundation.sql`.
+See `docs/decisions/0011-scientific-biography-read-model.md` and
+`docs/m6.1-scientific-biography-foundation.md`.
+
+**New table `public.person_narrative`** — a person's curated biographical
+narrative as a first-class *authored* assertion, distinct from the factual
+`people` record (which keeps its bare `biography` column, now superseded and
+not surfaced). Columns: `id`, `person_id` (FK -> `people`, `on delete
+cascade`), `body`, `source_type`, `verification_status` (default
+`provisional`), `authored_by_user_id` (FK -> `auth.users`, `on delete set
+null`), `created_at`, `updated_at`. Constraints: `body` not blank;
+`source_type` in the people vocabulary; `verification_status` in
+(`provisional`,`verified_self`,`verified_admin`,`disputed`); **unique
+`person_id`** (one current narrative per person in M6.1). Index on
+`person_id`; `set_updated_at` trigger. **RLS enabled, no client GRANT/policy**
+(deny-by-default, exactly like `people`); no client write path — narrative is
+created only via a trusted service-role/admin connection in M6.1.
+
+**New function `public.get_person_biography(uuid) returns jsonb`** — the
+canonical Scientific Biography read model. `SECURITY DEFINER`, `search_path`
+pinned, `auth.uid()` required, `EXECUTE` revoked from `PUBLIC` and granted
+only to `authenticated`. Returns a provenance-bearing biography document
+(identity + its provenance, `is_claimed`, a fixed `withheld` policy list,
+narrative-or-json-null). Conservative M6.1 visibility: withholds exact
+`date_of_birth`/`date_of_death` and every internal column; a nonexistent or
+`merged` person returns SQL null. `people` and `person_narrative` remain fully
+locked at the table level — this function is the only new read path.
+
+**pgTAP**: `supabase/tests/database/scientific_biography.test.sql`.
+
+**Deferred**: `profile_visibility_settings` / per-field visibility, any public
+(anon) read path, and client narrative editing — see ADR-0011 and the M6.V
+open questions (G1, G2).

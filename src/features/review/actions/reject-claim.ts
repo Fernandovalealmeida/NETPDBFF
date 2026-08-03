@@ -28,7 +28,9 @@ export async function rejectClaimAction(
 
   const { error } = await supabase.rpc("reject_profile_claim", {
     p_claim_id: validation.value.claimId,
-    p_decision_notes: validation.value.decisionNotes,
+    // p_decision_notes has SQL DEFAULT NULL: omit (undefined) when absent so
+    // the default applies and absent notes remain null in the database.
+    p_decision_notes: validation.value.decisionNotes ?? undefined,
   });
 
   if (error) {

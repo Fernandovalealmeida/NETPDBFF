@@ -23,7 +23,9 @@ export async function searchPeopleAction(
   // authentication and eligibility filtering; this action does not
   // duplicate that logic.
   const { data, error } = await supabase.rpc("search_claimable_people", {
-    p_query: query.length > 0 ? query : null,
+    // p_query has SQL DEFAULT NULL: pass undefined (omit) when there is no
+    // search term, so PostgreSQL applies that default (== no filter, browse).
+    p_query: query.length > 0 ? query : undefined,
   });
 
   if (error) {

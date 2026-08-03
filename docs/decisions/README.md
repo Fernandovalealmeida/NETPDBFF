@@ -53,3 +53,4 @@ to those choices should be recorded here.
 - [0008](0008-claim-discovery-security-definer-function.md) — Claim discovery via `SECURITY DEFINER` function
 - [0009](0009-reviewer-authorization-table.md) — Reviewer authorization table
 - [0010](0010-platform-vision-nodes-of-knowledge.md) — Platform Vision: Nodes of Knowledge
+- [0011](0011-scientific-biography-read-model.md) — Scientific Biography read model, narrative-as-assertion, and the M6.1 route boundary

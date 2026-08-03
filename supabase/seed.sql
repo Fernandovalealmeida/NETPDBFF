@@ -26,3 +26,26 @@ insert into public.people (given_name, family_name, display_name, verification_s
 values
   ('Ada', 'Lovelace', 'Ada Lovelace', 'provisional', 'imported_historical'),
   ('Grace', 'Hopper', 'Grace Hopper', 'provisional', 'imported_historical');
+
+-- Scientific Biography read fixture (M6.1) for
+-- tests/e2e/scientific-biography.spec.ts: a person WITH a curated narrative.
+--
+-- person_narrative is deny-by-default like people, and -- unlike people --
+-- has no service_role table grant, so the service-role test client (used
+-- for disposable people-only fixtures) cannot create narrative rows. This
+-- superuser seed is the supported privileged path for narrative test data,
+-- exactly as the two people above are the supported path for discoverable
+-- people. Read-only in the e2e suite (biography reading never mutates the
+-- subject), so a single shared row is safe under parallel workers. The name
+-- is a distinctive test token that no claim-discovery search term matches.
+with seeded_biography_person as (
+  insert into public.people (given_name, family_name, display_name, verification_status, source_type)
+  values ('Seed', 'Narrative', 'Seed Narrative Subject', 'provisional', 'imported_historical')
+  returning id
+)
+insert into public.person_narrative (person_id, body, source_type, verification_status)
+select id,
+       'A tropical-forest ecologist, documented from historical records.',
+       'admin_entered',
+       'provisional'
+from seeded_biography_person;

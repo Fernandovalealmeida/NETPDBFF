@@ -42,7 +42,9 @@ export async function submitClaimAction(
   // there is nothing here to validate on that front either.
   const { error } = await supabase.rpc("submit_profile_claim", {
     p_person_id: validation.value.personId,
-    p_supporting_evidence: validation.value.evidence,
+    // p_supporting_evidence has SQL DEFAULT NULL: omit (undefined) when absent
+    // so the default applies; the function still normalizes blank -> null.
+    p_supporting_evidence: validation.value.evidence ?? undefined,
   });
 
   if (error) {

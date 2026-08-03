@@ -308,3 +308,28 @@ current and future page needs a consistent version of each:
   is defined now — a calm, specific explanation, never a bare "403" or a
   generic error page — so it's ready when partial-visibility content
   (per `docs/privacy-model.md`) starts rendering.
+
+---
+
+## M6.1 — Scientific Biography Foundation additions
+
+**New route (built in M6.1):**
+
+| Route | Status | Purpose |
+|---|---|---|
+| `/people/[personId]` | **Built in M6.1.** Authenticated. | The Scientific Biography read experience for one person — identity header, introductory narrative (or honest absence), provenance surface, and reserved section architecture. Authenticated authorized reading only; a public route is deferred with the public-record policy (M6.V/G1). |
+
+This is a **protected** route (nested in the existing `(protected)` shell), so
+the four audiences of "Four audiences, not two" are unchanged — no public or
+new shell variant is introduced. The route is keyed by the person-entity UUID
+and named generically (`/people/[personId]`), Node-neutral, per the Node
+Independence discipline; it is not a PDBFF-specific "profile" route. The
+`/[person]` future public route noted under "Route hierarchy" remains future
+and distinct from this authenticated read route.
+
+The page follows the standard page hierarchy (header + content region) and the
+reserved-section pattern anticipates the later Timeline, Participation,
+Scientific Contributions, Relationships, Historical Records, and Legacy
+engines as honest "not yet recorded" states — never fabricated modules. Its
+not-found state uses the calm, specific empty-state pattern defined under
+"Empty, loading, error, and permission-denied states."

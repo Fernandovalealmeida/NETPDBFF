@@ -78,6 +78,9 @@ docs/           Product, architecture, and data-model documentation
   Product Blueprint end-to-end against one real scientific life (G. Bruce
   Williamson at PDBFF); records the verdict that M6.1 may begin, and the
   provenance, participation, and knowledge-history findings behind it
+- `docs/m6.1-scientific-biography-foundation.md` — M6.1 Scientific Biography
+  Foundation: what the first production biography slice implements, defers, and
+  reserves as extension points, plus the required local validation sequence
 - `docs/product-specification.md` — product scope and goals
 - `docs/architecture.md` — modular-monolith architecture and planned modules
 - `docs/database-model.md` — preliminary conceptual data model
