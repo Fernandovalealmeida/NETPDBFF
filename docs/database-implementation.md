@@ -588,3 +588,60 @@ ADR-0012 and `docs/m6.2-timeline-engine.md`.
 **Deferred**: a client event-authoring/editorial workflow, event
 revision/history, other subject-clock read functions, any public (anon)
 timeline path, and a general Participation model — see ADR-0012.
+
+## M6.3 — Participation Engine additions
+
+Migration: `supabase/migrations/20260805090000_add_participation_engine.sql`.
+See `docs/decisions/0013-participation-engine.md` and
+`docs/m6.3-participation-engine.md`.
+
+**New table `public.participation_capacities`** — the capacity controlled
+vocabulary as data (`docs/controlled-vocabularies.md`). Columns: `key` (PK),
+`label`, `description`, `sort_order`, `is_active`. Seeded with 13 generic,
+Node-neutral capacities (researcher, principal investigator, director,
+coordinator, technician, field assistant, student, collaborator, volunteer,
+visiting researcher, staff, intern, other). Node-specific capacities (e.g. a
+PDBFF *mateiro*) are added as data rows, never hardcoded.
+
+**New table `public.organizations`** — the minimal belonging-target entity a
+participation points at: identity only (`id`, `name`, `short_name`,
+timestamps), `organizations_name_not_blank`, `set_updated_at` trigger.
+Deliberately NOT the Institution Engine (organization timelines, hierarchy,
+provenance, enrichment, and an institution read experience are deferred) — the
+smallest durable entity that makes "where did this person belong?" answerable.
+
+**New table `public.participations`** — bounded belonging through time (CC1:
+not authorship/ownership/provenance/causation/relationship). Columns:
+`person_id` (FK → `people` cascade), `organization_id` (FK → `organizations`
+cascade), `capacity` (FK → `participation_capacities`), `summary`, the SHARED
+Many-Clocks temporal model (identical columns and CHECK constraints to
+`public.events`: precision / approximation / uncertainty / missing + intervals
++ open-ended), `source_type`, `verification_status`, `created_by_user_id`,
+timestamps. Constraint names are `participations_*` (start_precision_valid,
+start_precision_matches_date, unknown_iff_no_start, unknown_excludes_qualifiers,
+end_after_start, ongoing_requires_open_start, verification_status_valid,
+source_type_valid, …). **No uniqueness constraint** — sequential AND concurrent
+appointments at one organization are first-class (CLAUDE.md). Indexes on
+person_id, organization_id, capacity, start_date, verification_status;
+`set_updated_at` trigger.
+
+**New function `public.get_person_participation(uuid) returns jsonb`** — the
+canonical per-subject participation read model. `SECURITY DEFINER`,
+`search_path` pinned, `auth.uid()` required, `EXECUTE` revoked from `PUBLIC`
+and granted only to `authenticated`. Returns `{ person_id, participations: [...] }`
+with organization and capacity resolved from their vocabularies, each
+provenance-bearing, ordered `start_date asc nulls last, created_at asc` (undated
+last). Presentation grouping (by organization) is the client's job.
+
+**Deny-by-default + service_role grants.** All three tables are RLS-enabled
+with **no client GRANT/policy** — client read access is only through
+`get_person_participation`. They additionally carry explicit `grant select,
+insert, update, delete ... to service_role` (M3.1 pattern), enabling the
+trusted server-side write path (no client authoring path in M6.3) and per-test
+Playwright fixtures. Flagged for review in ADR-0013.
+
+**pgTAP**: `supabase/tests/database/participation.test.sql`.
+
+**Deferred**: the Institution Engine, other subject rosters
+(`get_organization_participation`, …), client participation-editing,
+participation revision/history, and any public (anon) path — see ADR-0013.

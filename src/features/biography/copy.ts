@@ -22,10 +22,6 @@ export const biographyCopy = {
   // Reserved sections for later capabilities. Honest "not yet recorded"
   // states -- never fabricated data or decorative modules.
   reservedSections: {
-    participation: {
-      title: "Participation",
-      description: "Institutional participation will appear here as it is documented.",
-    },
     contributions: {
       title: "Scientific contributions",
       description: "Contributions and publications will appear here as they are recorded.",
@@ -49,7 +45,6 @@ export const biographyCopy = {
 export type ReservedSectionKey = keyof typeof biographyCopy.reservedSections;
 
 export const RESERVED_SECTION_ORDER: readonly ReservedSectionKey[] = [
-  "participation",
   "contributions",
   "relationships",
   "records",

@@ -85,6 +85,11 @@ docs/           Product, architecture, and data-model documentation
   Spine): the canonical event model, the nine-state temporal model, the
   `get_person_timeline` per-subject read boundary, what it defers, and the
   required local validation sequence
+- `docs/m6.3-participation-engine.md` — M6.3 Participation Engine (bounded
+  belonging): the `participations` assertion, the minimal `organizations`
+  entity, the `participation_capacities` vocabulary, the shared temporal/
+  provenance kernel, the `get_person_participation` read boundary, what it
+  defers, and the required local validation sequence
 - `docs/product-specification.md` — product scope and goals
 - `docs/architecture.md` — modular-monolith architecture and planned modules
 - `docs/database-model.md` — preliminary conceptual data model

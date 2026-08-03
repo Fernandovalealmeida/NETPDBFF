@@ -4,54 +4,32 @@
 // projection of events onto one person (Many-Clocks). Every event is an
 // Assertion carrying its own provenance + verification -- an event row never
 // implies truth. No Participation/Relationship types here (CC1): later engines.
+//
+// The temporal model and the provenance/verification vocabulary are the
+// platform-shared kernels (src/features/shared): re-exported here under the
+// Timeline's historical names so this module's public surface is unchanged
+// while a single kernel is shared with the Participation Engine (M6.3) and
+// every later clock.
 
-export type SourceType =
-  | "self_reported"
-  | "nominated_by_other"
-  | "admin_entered"
-  | "imported_historical";
+import type { ProvenanceInfo } from "@/features/shared/provenance";
+import type { TemporalValue } from "@/features/shared/temporal";
 
-export const SOURCE_TYPES: readonly SourceType[] = [
-  "self_reported",
-  "nominated_by_other",
-  "admin_entered",
-  "imported_historical",
-];
+export {
+  SOURCE_TYPES,
+  VERIFICATION_STATUSES as EVENT_VERIFICATION_STATUSES,
+} from "@/features/shared/provenance";
+export type {
+  SourceType,
+  VerificationStatus as EventVerificationStatus,
+  ProvenanceInfo as EventProvenanceInfo,
+} from "@/features/shared/provenance";
 
-export type EventVerificationStatus = "provisional" | "verified_self" | "verified_admin" | "disputed";
-
-export const EVENT_VERIFICATION_STATUSES: readonly EventVerificationStatus[] = [
-  "provisional",
-  "verified_self",
-  "verified_admin",
-  "disputed",
-];
-
-export type DatePrecision = "day" | "month" | "year" | "decade";
-
-export const DATE_PRECISIONS: readonly DatePrecision[] = ["day", "month", "year", "decade"];
+export { DATE_PRECISIONS } from "@/features/shared/temporal";
+export type { DatePrecision, TemporalValue as EventTemporal } from "@/features/shared/temporal";
 
 export interface EventKindRef {
   key: string;
   label: string;
-}
-
-/** The four non-conflated temporal concepts (precision, approximation,
- * uncertainty, missing) plus intervals and open-ended periods. */
-export interface EventTemporal {
-  startDate: string | null;
-  startPrecision: DatePrecision | null;
-  endDate: string | null;
-  endPrecision: DatePrecision | null;
-  isApproximate: boolean;
-  isOngoing: boolean;
-  dateIsUnknown: boolean;
-  dateIsUncertain: boolean;
-}
-
-export interface EventProvenanceInfo {
-  sourceType: SourceType;
-  verificationStatus: EventVerificationStatus;
 }
 
 export interface TimelineEvent {
@@ -60,8 +38,8 @@ export interface TimelineEvent {
   title: string;
   summary: string | null;
   place: string | null;
-  temporal: EventTemporal;
-  provenance: EventProvenanceInfo;
+  temporal: TemporalValue;
+  provenance: ProvenanceInfo;
 }
 
 /** Canonical person-timeline read document (from get_person_timeline). Events

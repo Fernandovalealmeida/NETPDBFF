@@ -162,6 +162,139 @@ export type Database = {
           },
         ]
       }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          short_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          short_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          short_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      participation_capacities: {
+        Row: {
+          description: string | null
+          is_active: boolean
+          key: string
+          label: string
+          sort_order: number
+        }
+        Insert: {
+          description?: string | null
+          is_active?: boolean
+          key: string
+          label: string
+          sort_order?: number
+        }
+        Update: {
+          description?: string | null
+          is_active?: boolean
+          key?: string
+          label?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      participations: {
+        Row: {
+          capacity: string
+          created_at: string
+          created_by_user_id: string | null
+          date_is_uncertain: boolean
+          date_is_unknown: boolean
+          end_date: string | null
+          end_precision: string | null
+          id: string
+          is_approximate: boolean
+          is_ongoing: boolean
+          organization_id: string
+          person_id: string
+          source_type: string
+          start_date: string | null
+          start_precision: string | null
+          summary: string | null
+          updated_at: string
+          verification_status: string
+        }
+        Insert: {
+          capacity: string
+          created_at?: string
+          created_by_user_id?: string | null
+          date_is_uncertain?: boolean
+          date_is_unknown?: boolean
+          end_date?: string | null
+          end_precision?: string | null
+          id?: string
+          is_approximate?: boolean
+          is_ongoing?: boolean
+          organization_id: string
+          person_id: string
+          source_type: string
+          start_date?: string | null
+          start_precision?: string | null
+          summary?: string | null
+          updated_at?: string
+          verification_status?: string
+        }
+        Update: {
+          capacity?: string
+          created_at?: string
+          created_by_user_id?: string | null
+          date_is_uncertain?: boolean
+          date_is_unknown?: boolean
+          end_date?: string | null
+          end_precision?: string | null
+          id?: string
+          is_approximate?: boolean
+          is_ongoing?: boolean
+          organization_id?: string
+          person_id?: string
+          source_type?: string
+          start_date?: string | null
+          start_precision?: string | null
+          summary?: string | null
+          updated_at?: string
+          verification_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "participations_capacity_fkey"
+            columns: ["capacity"]
+            isOneToOne: false
+            referencedRelation: "participation_capacities"
+            referencedColumns: ["key"]
+          },
+          {
+            foreignKeyName: "participations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "participations_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       people: {
         Row: {
           biography: string | null
@@ -478,6 +611,7 @@ export type Database = {
         Returns: string
       }
       get_person_biography: { Args: { p_person_id: string }; Returns: Json }
+      get_person_participation: { Args: { p_person_id: string }; Returns: Json }
       get_person_timeline: { Args: { p_person_id: string }; Returns: Json }
       is_active_reviewer: { Args: { p_user_id: string }; Returns: boolean }
       is_person_claimable: { Args: { p_person_id: string }; Returns: boolean }

@@ -6,14 +6,16 @@
 // distinct decades -- a short timeline is not burdened with anchors, a long
 // one stays orientable. Undated events are never dropped: they appear in a
 // final "Date unknown" group, in order, without falsifying chronology.
+//
+// Provenance labelling is the platform-shared kernel
+// (src/features/shared/provenance.ts), re-exported here under the Timeline's
+// historical names so provenance reads identically across every engine.
 
 import { timelineCopy } from "./copy";
-import type {
-  EventVerificationStatus,
-  SourceType,
-  TimelineDocument,
-  TimelineEvent,
-} from "./types";
+import type { TimelineDocument, TimelineEvent } from "./types";
+
+export { describeProvenance as describeEventProvenance } from "@/features/shared/provenance";
+export type { ProvenanceDescriptor as EventProvenanceDescriptor } from "@/features/shared/provenance";
 
 export interface TimelinePeriodGroup {
   /** Stable key for React and anchors. */
@@ -89,30 +91,4 @@ export function buildTimelineView(document: TimelineDocument): TimelineView {
   }
 
   return { isEmpty: false, grouped, periods, eventCount: events.length };
-}
-
-const SOURCE_LABEL: Record<SourceType, string> = {
-  self_reported: "Self-provided",
-  nominated_by_other: "Submitted by another member",
-  admin_entered: "Entered by an administrator",
-  imported_historical: "Imported from historical records",
-};
-
-const VERIFICATION_LABEL: Record<EventVerificationStatus, string> = {
-  provisional: "Awaiting review",
-  verified_self: "Verified by the person",
-  verified_admin: "Verified by an administrator",
-  disputed: "Disputed",
-};
-
-export interface EventProvenanceDescriptor {
-  sourceLabel: string;
-  statusLabel: string;
-}
-
-export function describeEventProvenance(
-  sourceType: SourceType,
-  verificationStatus: EventVerificationStatus,
-): EventProvenanceDescriptor {
-  return { sourceLabel: SOURCE_LABEL[sourceType], statusLabel: VERIFICATION_LABEL[verificationStatus] };
 }

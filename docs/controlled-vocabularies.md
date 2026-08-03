@@ -58,3 +58,14 @@ without a code change, and no PDBFF-specific category is embedded in interface
 components — exactly the discipline this document describes. It is the template
 for the participation-role, institution-type, and relationship-type
 vocabularies still to come.
+
+## Second realization: `participation_capacities` (M6.3)
+
+The Participation Engine's `public.participation_capacities` table (see
+`docs/database-implementation.md` and
+`docs/decisions/0013-participation-engine.md`) is the second controlled
+vocabulary implemented as data: a lookup table referenced by
+`participations.capacity`, seeded with generic, Node-neutral capacities. It is
+exactly the participation-role vocabulary anticipated above — and it is where a
+Node adds its own capacities (for example a PDBFF *mateiro*) as data, with no
+code change and no PDBFF-specific value hardcoded in generic code.

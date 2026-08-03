@@ -93,3 +93,23 @@ two or more decades. pgTAP/Vitest/Playwright coverage accompanies it. See
 same model later serves institution/project/station/expedition/collection/
 record/species clocks unchanged; the Participation, Relationship, Institution,
 and Legacy engines remain deferred and reserved as extension points.
+
+## Milestone status — M6.3 (Participation Engine: bounded belonging)
+
+**Implemented (pending local validation).** M6.3 turns the second
+constitutional primitive into software: bounded belonging through time. It adds
+the capacity vocabulary (`participation_capacities`), a minimal belonging-target
+entity (`organizations`, deliberately NOT the Institution Engine), the
+`participations` assertion (person + organization + capacity + the shared
+Many-Clocks temporal model + provenance, with no uniqueness so concurrent and
+sequential appointments are first-class), and the `get_person_participation`
+canonical read model, then renders a calm, provenance-aware record of belonging
+inside `/people/[personId]` — grouped by organization (a map of belonging),
+distinct from the Timeline's grouping by decade (a spine through time) —
+replacing the M6.1 reserved Participation placeholder. M6.3 also extracts the
+temporal and provenance kernels into `src/features/shared`, shared by Timeline
+and Participation and every later engine (CC1: Participation is not authorship,
+ownership, provenance, causation, or relationship). pgTAP/Vitest/Playwright
+coverage accompanies it. See `docs/m6.3-participation-engine.md` and
+`docs/decisions/0013-participation-engine.md`. The Institution, Relationship,
+and Legacy engines remain deferred and reserved as extension points.

@@ -349,3 +349,20 @@ neutral by construction, so the later institution/project/station/expedition/
 collection/record/species clocks reuse this pattern at their own routes as
 they are built; the remaining reserved sections (Participation, Relationships,
 Historical Records, Legacy) stay honest "not yet recorded" placeholders.
+
+## M6.3 — Participation Engine additions
+
+**No new route.** M6.3 does not add a route; it fills the reserved
+Participation section *inside* the existing `/people/[personId]` biography with
+the real Participation Engine, after the Timeline, replacing the M6.1 "will
+appear here" placeholder. The reading flow becomes identity/narrative →
+Timeline ("what happened, when") → Participation ("where and how did this
+person belong"). Participation is grouped by **organization** (each a heading,
+with the capacities and periods held there beneath it), which reads visibly
+differently from the Timeline's decade grouping — the distinction between the
+two engines is immediate on the page. Each belonging carries a one-gesture
+provenance disclosure; an empty record is the same dignified empty-state
+pattern used elsewhere. The remaining reserved sections (Contributions,
+Relationships, Historical Records, Legacy) stay honest "not yet recorded"
+placeholders. A dedicated organization (institution) read experience is
+deferred with the Institution Engine.

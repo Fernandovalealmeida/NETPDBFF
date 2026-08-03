@@ -55,3 +55,4 @@ to those choices should be recorded here.
 - [0010](0010-platform-vision-nodes-of-knowledge.md) — Platform Vision: Nodes of Knowledge
 - [0011](0011-scientific-biography-read-model.md) — Scientific Biography read model, narrative-as-assertion, and the M6.1 route boundary
 - [0012](0012-timeline-engine.md) — Timeline Engine: canonical event model, temporal model, and the Many-Clocks read boundary
+- [0013](0013-participation-engine.md) — Participation Engine: bounded belonging, the minimal organization entity, and the shared temporal/provenance kernel
