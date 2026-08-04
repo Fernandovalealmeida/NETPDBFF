@@ -10,6 +10,13 @@
 // lets the nav communicate "this exists in the product's structure" without
 // ever rendering a functional link to a page that 404s. See NavLink for how
 // `planned` renders.
+//
+// M7 refinement (ADR-0017): the Knowledge Network is internal historical
+// INFRASTRUCTURE, not a destination. It deliberately has NO primary-navigation
+// entry — a reader never "enters the Network". Documented connections are read
+// inline on the canonical People / Institutions / Contributions pages
+// (institutional lineage now reads on the Institution page); the network read
+// models simply enrich that reading.
 
 import type { NavItem } from "./types";
 

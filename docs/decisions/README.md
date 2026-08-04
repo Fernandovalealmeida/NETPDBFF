@@ -59,3 +59,5 @@ to those choices should be recorded here.
 - [0014](0014-relationship-engine.md) — Relationship Engine: bonds as historical narratives, one canonical record, and directionality with inverse labels
 - [0015](0015-institution-engine.md) — Institution Engine: institutions as historical actors, extended additively from organizations
 - [0016](0016-contribution-engine.md) — Contribution Engine: contribution as a first-class historical object, explicit typed attribution, kind distinct from capacity
+
+- [ADR-0017 — Knowledge Network Engine](0017-knowledge-network-engine.md): the network as a derived, provenance-preserving read model (not a source of truth, not a generic edge store, not a graph database); direct vs projected vs inferred (only direct/projected presented); the institution-to-institution canonical relation; the one-hop boundary; bounded `SECURITY DEFINER` reads; provenance/temporal contracts; Node sovereignty and community-governance boundary; visualization deferred as an honest reserved surface; performance boundary; M8 discovery and M9 interpretation boundaries.

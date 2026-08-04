@@ -43,7 +43,7 @@ describe("exhibition copy", () => {
 
 describe("exhibition inspects; it never duplicates the production browse", () => {
   it("documents the six engines it draws deterministic examples from", () => {
-    expect(EXHIBITION_ENGINES).toHaveLength(6);
+    expect(EXHIBITION_ENGINES).toHaveLength(7);
   });
 
   it("is organized by concept/state to inspect, not as a generic entity browse", () => {

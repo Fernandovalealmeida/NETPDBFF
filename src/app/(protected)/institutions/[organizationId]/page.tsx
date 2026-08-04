@@ -15,6 +15,8 @@ import { InstitutionParticipation } from "@/features/institution/components/Inst
 import { InstitutionReservedSection } from "@/features/institution/components/InstitutionReservedSection";
 import { narrativeFacet } from "@/features/institution/derive";
 import { getOrganization, getOrganizationParticipation, getOrganizationTimeline } from "@/features/institution/read";
+import { InstitutionLineage } from "@/features/network/components/InstitutionLineage";
+import { getOrganizationNetwork } from "@/features/network/read";
 import { Timeline } from "@/features/timeline/components/Timeline";
 
 // The Institution page -- a first-class historical reading experience for an
@@ -22,11 +24,16 @@ import { Timeline } from "@/features/timeline/components/Timeline";
 // reading); the (protected) layout enforces auth and get_organization re-checks
 // it. Keyed by the organization UUID and named generically
 // (/institutions/[organizationId]) -- Node-neutral. Historical/closed/merged
-// institutions are readable (never hidden). The title is generic (no
-// institution name in <title>/history). Server Component; the reads happen
-// server-side and are composed here, each independently evolving. As of M6.6
-// the Scientific-contributions surface is a live canonical projection (the SAME
-// records that drive each dedicated Contribution page), no longer reserved.
+// institutions are readable (never hidden). The title is generic. Server
+// Component; the reads happen server-side and are composed here.
+//
+// M7 refinement (ADR-0017): the Knowledge Network is invisible infrastructure
+// that enriches this canonical reading, not a separate destination. The M6.5
+// reserved "Relationships" slot is now a LIVE inline "Institutional
+// relationships" section, projected from the canonical organization_relationships
+// rows via get_organization_network -- the one genuinely new documented
+// connection M7 adds to the reading experience. There is no "enter the network"
+// link; reading simply flows on through the connections.
 export const metadata: Metadata = {
   title: pageTitle("Institution"),
 };
@@ -46,6 +53,7 @@ export default async function InstitutionPage({ params }: InstitutionPageProps) 
   const timeline = await getOrganizationTimeline(organizationId);
   const participation = await getOrganizationParticipation(organizationId);
   const contributions = await getOrganizationContributions(organizationId);
+  const network = await getOrganizationNetwork(organizationId);
 
   const introduction = narrativeFacet(organization, "introduction");
   const overview = narrativeFacet(organization, "overview");
@@ -98,12 +106,7 @@ export default async function InstitutionPage({ params }: InstitutionPageProps) 
         </div>
 
         <div className="mt-10">
-          <InstitutionReservedSection
-            id="relationships"
-            heading={institutionCopy.relationships.heading}
-            title={institutionCopy.relationships.deferred.title}
-            description={institutionCopy.relationships.deferred.description}
-          />
+          <InstitutionLineage document={network} />
         </div>
 
         <div className="mt-10">

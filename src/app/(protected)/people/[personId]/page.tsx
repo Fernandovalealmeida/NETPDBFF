@@ -23,15 +23,19 @@ import { getPersonTimeline } from "@/features/timeline/read";
 // Digital Scientific Biography. Protected (authenticated authorized reading);
 // the (protected) layout enforces auth and public.get_person_biography
 // re-checks it. Keyed by the person-entity UUID and named generically
-// (/people/[personId]) -- Node-neutral, no PDBFF-specific route, no public
-// route yet (deferred with the public-record policy, M6.V/G1). The title is
+// (/people/[personId]) -- Node-neutral, no PDBFF-specific route. The title is
 // intentionally generic (no personal name in <title>/history).
 //
 // Reading order (Blueprint's Biography Engine): identity band, then the
 // introductory narrative (or honest absence), then the historical engines
-// (timeline, participation, relationships, contributions), then the remaining
-// reserved section architecture, then the honest withheld-note. Server
-// Component; the reads happen server-side and are composed here.
+// (timeline, participation, relationships, contributions), then the reserved
+// section architecture, then the honest withheld-note. These engines ARE this
+// person's documented connections: the timeline projects their events,
+// participation their institutions, relationships their people, contributions
+// their contributions. The M7 Knowledge Network is the invisible infrastructure
+// behind those links (ADR-0017) -- there is no separate person-network page and
+// no "enter the network" step; reading simply flows on through the connections.
+// Server Component; the reads happen server-side and are composed here.
 export const metadata: Metadata = {
   title: pageTitle("Scientific biography"),
 };

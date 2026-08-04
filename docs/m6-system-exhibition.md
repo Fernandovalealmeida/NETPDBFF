@@ -202,3 +202,7 @@ parallel ones:
 3. Extend `supabase/tests/database/exhibition.test.sql` with assertions for
    the new canonical associations, and add coverage to
    `tests/e2e/exhibition.spec.ts`.
+
+## M7 — Knowledge Network inspection states
+
+After the production Network experience, the exhibition adds a "Knowledge Network neighbourhoods" section and Journey 4 linking `/network/...` neighbourhoods for the seeded world, plus two seeded `organization_relationships` (a succession and an affiliation) that demonstrate institutional lineage from both ends. `EXHIBITION_ENGINES` gains `network`. The exhibition remains dev-only and never becomes the primary way to reach M7.

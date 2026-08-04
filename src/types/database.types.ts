@@ -593,6 +593,133 @@ export type Database = {
           },
         ]
       }
+      organization_relationship_kinds: {
+        Row: {
+          description: string | null
+          is_active: boolean
+          is_directional: boolean
+          key: string
+          label: string
+          sort_order: number
+          source_role_label: string
+          source_role_label_plural: string
+          target_role_label: string
+          target_role_label_plural: string
+        }
+        Insert: {
+          description?: string | null
+          is_active?: boolean
+          is_directional: boolean
+          key: string
+          label: string
+          sort_order?: number
+          source_role_label: string
+          source_role_label_plural: string
+          target_role_label: string
+          target_role_label_plural: string
+        }
+        Update: {
+          description?: string | null
+          is_active?: boolean
+          is_directional?: boolean
+          key?: string
+          label?: string
+          sort_order?: number
+          source_role_label?: string
+          source_role_label_plural?: string
+          target_role_label?: string
+          target_role_label_plural?: string
+        }
+        Relationships: []
+      }
+      organization_relationships: {
+        Row: {
+          created_at: string
+          created_by_user_id: string | null
+          date_is_uncertain: boolean
+          date_is_unknown: boolean
+          end_date: string | null
+          end_precision: string | null
+          id: string
+          is_approximate: boolean
+          is_directional: boolean
+          is_ongoing: boolean
+          kind: string
+          note: string | null
+          source_organization_id: string
+          source_type: string
+          start_date: string | null
+          start_precision: string | null
+          target_organization_id: string
+          updated_at: string
+          verification_status: string
+        }
+        Insert: {
+          created_at?: string
+          created_by_user_id?: string | null
+          date_is_uncertain?: boolean
+          date_is_unknown?: boolean
+          end_date?: string | null
+          end_precision?: string | null
+          id?: string
+          is_approximate?: boolean
+          is_directional: boolean
+          is_ongoing?: boolean
+          kind: string
+          note?: string | null
+          source_organization_id: string
+          source_type: string
+          start_date?: string | null
+          start_precision?: string | null
+          target_organization_id: string
+          updated_at?: string
+          verification_status?: string
+        }
+        Update: {
+          created_at?: string
+          created_by_user_id?: string | null
+          date_is_uncertain?: boolean
+          date_is_unknown?: boolean
+          end_date?: string | null
+          end_precision?: string | null
+          id?: string
+          is_approximate?: boolean
+          is_directional?: boolean
+          is_ongoing?: boolean
+          kind?: string
+          note?: string | null
+          source_organization_id?: string
+          source_type?: string
+          start_date?: string | null
+          start_precision?: string | null
+          target_organization_id?: string
+          updated_at?: string
+          verification_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_relationships_kind_fkey"
+            columns: ["kind", "is_directional"]
+            isOneToOne: false
+            referencedRelation: "organization_relationship_kinds"
+            referencedColumns: ["key", "is_directional"]
+          },
+          {
+            foreignKeyName: "organization_relationships_source_organization_id_fkey"
+            columns: ["source_organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_relationships_target_organization_id_fkey"
+            columns: ["target_organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_types: {
         Row: {
           description: string | null
@@ -1292,16 +1419,29 @@ export type Database = {
         Returns: string
       }
       get_contribution: { Args: { p_contribution_id: string }; Returns: Json }
+      get_contribution_network: {
+        Args: { p_contribution_id: string }
+        Returns: Json
+      }
       get_contribution_timeline: {
         Args: { p_contribution_id: string }
         Returns: Json
       }
+      get_event_network: { Args: { p_event_id: string }; Returns: Json }
       get_organization: { Args: { p_organization_id: string }; Returns: Json }
       get_organization_contributions: {
         Args: { p_organization_id: string }
         Returns: Json
       }
+      get_organization_network: {
+        Args: { p_organization_id: string }
+        Returns: Json
+      }
       get_organization_participation: {
+        Args: { p_organization_id: string }
+        Returns: Json
+      }
+      get_organization_relationships: {
         Args: { p_organization_id: string }
         Returns: Json
       }
@@ -1311,6 +1451,7 @@ export type Database = {
       }
       get_person_biography: { Args: { p_person_id: string }; Returns: Json }
       get_person_contributions: { Args: { p_person_id: string }; Returns: Json }
+      get_person_network: { Args: { p_person_id: string }; Returns: Json }
       get_person_participation: { Args: { p_person_id: string }; Returns: Json }
       get_person_relationships: { Args: { p_person_id: string }; Returns: Json }
       get_person_timeline: { Args: { p_person_id: string }; Returns: Json }

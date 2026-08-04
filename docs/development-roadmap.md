@@ -182,3 +182,7 @@ deferred extension points. See `docs/decisions/0016-contribution-engine.md`,
 `docs/m6.6-contribution-engine-engineering-report.md`. The universal Entity
 Engine, generalized polymorphic attribution, outputs/records ingestion, impact
 scoring, and M6.7 remain deferred.
+
+## M7 — Knowledge Network Engine (implemented, pending local validation)
+
+Connects already-preserved records as a bounded one-hop, provenance-preserving read model over canonical assertions; adds the institution-to-institution `organization_relationships` canonical relation; ships production `/network` routes. No inference and no metrics (those belong to M8 discovery and M9 interpretation). See `docs/m7-knowledge-network-engine.md`.

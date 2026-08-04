@@ -22,8 +22,13 @@ import { Timeline } from "@/features/timeline/components/Timeline";
 // impact dashboard, or leaderboard. Protected (the (protected) layout enforces
 // auth and get_contribution re-checks it). Keyed by the contribution UUID and
 // named generically (/contributions/[contributionId]) -- Node-neutral. The
-// title is generic (no contribution title in <title>/history). Server
-// Component; bounded reads composed here, each evolving independently.
+// title is generic. Server Component; bounded reads composed here.
+//
+// The contributors, institutional context, and related events ARE this
+// contribution's documented connections. The M7 Knowledge Network is the
+// invisible infrastructure behind those links (ADR-0017) -- there is no separate
+// contribution-network page and no "enter the network" step; reading flows on
+// through the connections.
 export const metadata: Metadata = {
   title: pageTitle("Contribution"),
 };

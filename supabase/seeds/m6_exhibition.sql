@@ -433,3 +433,21 @@ insert into public.contribution_events (id, contribution_id, event_id) values
   ('e6330c00-0000-4000-8000-000000000002', 'e6660000-0000-4000-8000-000000000002', 'e6330000-0000-4000-8000-000000000003'),
   ('e6330c00-0000-4000-8000-000000000003', 'e6660000-0000-4000-8000-000000000003', 'e6330000-0000-4000-8000-000000000006')
 on conflict (id) do nothing;
+
+-- ---------------------------------------------------------------------
+-- organization_relationships (M7 Knowledge Network) — institutional lineage
+--   AET → IHFA succession (directional); IHFA ↔ EBRV affiliation (symmetric).
+--   Fixed e677… namespace so /dev/exhibition and the DB test stay stable.
+-- ---------------------------------------------------------------------
+insert into public.organization_relationships
+  (id, kind, is_directional, source_organization_id, target_organization_id, note, start_date, start_precision, source_type, verification_status)
+values
+  ('e6770000-0000-4000-8000-000000000001', 'succession', true,
+   'e6220000-0000-4000-8000-000000000003', 'e6220000-0000-4000-8000-000000000001',
+   'IHFA carried forward the archival mission of AET — Development Exhibition.',
+   '1984-01-01', 'year', 'imported_historical', 'verified_admin'),
+  ('e6770000-0000-4000-8000-000000000002', 'affiliation', false,
+   'e6220000-0000-4000-8000-000000000001', 'e6220000-0000-4000-8000-000000000002',
+   'A standing field-station affiliation — Development Exhibition.',
+   '1996-01-01', 'year', 'imported_historical', 'provisional')
+on conflict (id) do nothing;

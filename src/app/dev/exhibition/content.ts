@@ -1,18 +1,21 @@
-// Content model for the M6 System Exhibition dev route (see
+// Content model for the System Exhibition dev route (see
 // src/app/dev/exhibition/page.tsx and docs/m6-system-exhibition.md).
 //
-// The exhibition is a DETERMINISTIC DEVELOPER INSPECTION ENVIRONMENT — not a
+// The exhibition is a DETERMINISTIC DEVELOPER INSPECTION ENVIRONMENT -- not a
 // product surface and not a complement to one. It never duplicates
 // production functionality: general browsing of People, Institutions, and
 // Contributions lives only in the application (the /explore hub and the
-// /people, /institutions, /contributions directories). This environment
-// exists only to inspect deterministic examples, edge cases, canonical-
-// record reuse, reviewer demonstrations, architectural concepts, and
-// fictional showcase data, and to hold the reset instructions.
+// /people, /institutions, /contributions directories). The M7 Knowledge
+// Network is INFRASTRUCTURE the production application uses inline (documented
+// connections read on the canonical pages); this environment is where that
+// infrastructure is INSPECTED. This module exists only to inspect
+// deterministic examples, edge cases, canonical-record reuse, reviewer
+// demonstrations, architectural concepts, and fictional showcase data, and to
+// hold the reset instructions.
 //
 // This module is intentionally pure and framework-agnostic (no React, no
 // server-only imports) so it can be unit-tested directly. The deterministic
-// UUIDs below MIRROR the local seed at supabase/seeds/m6_exhibition.sql —
+// UUIDs below MIRROR the local seed at supabase/seeds/m6_exhibition.sql --
 // the exhibition never invents records; it only links to canonical seeded
 // ones. Keep the two files in sync (the DB showcase test asserts these ids
 // exist).
@@ -25,6 +28,7 @@ export const EXHIBITION_ENGINES = [
   "relationships",
   "institution",
   "contribution",
+  "network",
 ] as const;
 
 export type ExhibitionEngine = (typeof EXHIBITION_ENGINES)[number];
@@ -53,6 +57,7 @@ export const EXHIBITION_IDS = {
 const personHref = (id: string) => `/people/${id}`;
 const institutionHref = (id: string) => `/institutions/${id}`;
 const contributionHref = (id: string) => `/contributions/${id}`;
+const institutionNetworkHref = (id: string) => `/network/institutions/${id}`;
 
 export interface ExhibitionLink {
   label: string;
@@ -78,11 +83,11 @@ export interface ExhibitionJourney {
 export const exhibitionCopy = {
   title: "M6 — System Exhibition",
   intro:
-    "A deterministic developer inspection environment for the completed engines, built from one small, fictional world. It is not part of the product and never duplicates it — the normal reading experience lives in the application itself, so start at Explore. This environment exists only to inspect deterministic examples and edge cases, canonical-record reuse, reviewer demonstrations, and architectural concepts, and to hold the reset instructions.",
+    "A deterministic developer inspection environment for the completed engines, built from one small, fictional world. It is not part of the product and never duplicates it -- the normal reading experience lives in the application itself, so start at Explore. This environment exists only to inspect deterministic examples and edge cases, canonical-record reuse, reviewer demonstrations, and architectural concepts, and to hold the reset instructions.",
   fictionalNotice:
     "Every record linked from this page is fictional development-only material. The people, institutions, events, and claims do not describe any real person, organization, or history; they exist solely to inspect the reading surfaces of the system. Records carry a visible “— Development Exhibition” label. This route is served only when NODE_ENV=development and returns a real 404 otherwise; it is never part of a production deployment.",
   authNote:
-    "The person, institution, and contribution pages are authenticated reading surfaces — opening a link below requires being registered and signed in, exactly as in the product. Reviewer-only areas remain authorized separately: this environment never grants reviewer access or seeds an account.",
+    "The person, institution, and contribution pages are authenticated reading surfaces -- opening a link below requires being registered and signed in, exactly as in the product. Reviewer-only areas remain authorized separately: this environment never grants reviewer access or seeds an account.",
   resetIntro:
     "The fictional world is loaded by the local seed during a database reset. To (re)build it and open this environment:",
   resetCommands: ["npm run supabase:reset", "npm run dev"],
@@ -91,7 +96,7 @@ export const exhibitionCopy = {
   exploreHref: "/explore",
 } as const;
 
-// Sections are organized by the concept or state being inspected — never as
+// Sections are organized by the concept or state being inspected -- never as
 // a generic "all people / all institutions" browse (that is production's
 // job). Each links a few specific records chosen because they demonstrate
 // something particular.
@@ -100,7 +105,7 @@ export const exhibitionSections: ExhibitionSection[] = [
     id: "showcase-records",
     title: "Deterministic showcase records",
     description:
-      "The principal fictional records the demonstrations below draw on. A fixed inspection set, not a browse — the normal directory of records lives in the application.",
+      "The principal fictional records the demonstrations below draw on. A fixed inspection set, not a browse -- the normal directory of records lives in the application.",
     links: [
       {
         label: "Dr. Helena Arvoredo",
@@ -123,7 +128,7 @@ export const exhibitionSections: ExhibitionSection[] = [
     id: "temporal-states",
     title: "Temporal states",
     description:
-      "Every temporal state the Timeline engine can represent — exact, month, year, and decade precision; approximate and uncertain dates; a closed interval; an open-ended (ongoing) period; an unknown date — plus overlapping events and a single canonical Event reused across surfaces.",
+      "Every temporal state the Timeline engine can represent -- exact, month, year, and decade precision; approximate and uncertain dates; a closed interval; an open-ended (ongoing) period; an unknown date -- plus overlapping events and a single canonical Event reused across surfaces.",
     links: [
       {
         label: "Dr. Helena Arvoredo — the full temporal spectrum",
@@ -138,7 +143,7 @@ export const exhibitionSections: ExhibitionSection[] = [
       {
         label: "Oral-history preservation — reused canonical Event",
         href: contributionHref(EXHIBITION_IDS.contributions.oralHistory),
-        note: "The same interview Event appears here and on the person and archive timelines — never duplicated.",
+        note: "The same interview Event appears here and on the person and archive timelines -- never duplicated.",
       },
     ],
   },
@@ -146,7 +151,7 @@ export const exhibitionSections: ExhibitionSection[] = [
     id: "projections",
     title: "Projections without duplication",
     description:
-      "The same canonical Participation and Contribution rows, read from both the person side and the institution side — no record copied to appear on two surfaces. Affiliation never fabricates a contribution.",
+      "The same canonical Participation and Contribution rows, read from both the person side and the institution side -- no record copied to appear on two surfaces. Affiliation never fabricates a contribution.",
     links: [
       {
         label: "Dr. Helena Arvoredo — person-side projection",
@@ -192,7 +197,7 @@ export const exhibitionSections: ExhibitionSection[] = [
       {
         label: "Ana Yara — no narrative",
         href: personHref(EXHIBITION_IDS.people.anaYara),
-        note: "A biography rendered with an explicit absence, not a fabricated summary — and a disputed field partnership.",
+        note: "A biography rendered with an explicit absence, not a fabricated summary -- and a disputed field partnership.",
       },
       {
         label: "Arquivo de Ecologia Tropical (AET) — incomplete history",
@@ -208,6 +213,34 @@ export const exhibitionSections: ExhibitionSection[] = [
         label: "Dr. Helena Arvoredo — unknown and uncertain dates",
         href: personHref(EXHIBITION_IDS.people.helena),
         note: "A deposit with an unknown date and an interview with an uncertain one.",
+      },
+    ],
+  },
+  {
+    id: "knowledge-network",
+    title: "Knowledge Network (infrastructure, inspected here)",
+    description:
+      "The Knowledge Network is invisible historical infrastructure (ADR-0017): production reads its documented connections INLINE on the canonical pages, never as a separate destination. Institutional lineage now reads on the Institution page itself; this section is where the infrastructure is inspected, including the consolidated one-hop institution neighbourhood. Every connection is PROJECTED from a canonical assertion and never inferred.",
+    links: [
+      {
+        label: "IHFA — institutional lineage reads inline on the Institution page",
+        href: institutionHref(EXHIBITION_IDS.organizations.ihfa),
+        note: "The M6.5 reserved 'Relationships' slot is now a live inline section: a succession (AET as predecessor) and a symmetric affiliation.",
+      },
+      {
+        label: "IHFA — consolidated network neighbourhood (inspection)",
+        href: institutionNetworkHref(EXHIBITION_IDS.organizations.ihfa),
+        note: "The one-hop neighbourhood in one place: lineage, members, contributions, and events, each with provenance and source.",
+      },
+      {
+        label: "AET — the same succession, inverse role (inspection)",
+        href: institutionNetworkHref(EXHIBITION_IDS.organizations.aet),
+        note: "The one canonical succession record, read from the successor's side (IHFA as the Successor). No duplicate row.",
+      },
+      {
+        label: "Dr. Helena Arvoredo — her connections read inline on the biography",
+        href: personHref(EXHIBITION_IDS.people.helena),
+        note: "Timeline, participation, relationships, and contributions ARE her documented connections; no separate person-network page.",
       },
     ],
   },
@@ -274,6 +307,34 @@ export const exhibitionJourneys: ExhibitionJourney[] = [
         label: "An institution with incomplete history",
         href: institutionHref(EXHIBITION_IDS.organizations.aet),
         note: "Reserved/absent later facets.",
+      },
+    ],
+  },
+  {
+    id: "connecting-the-preserved-history",
+    title: "Journey 4 — Connecting the preserved history",
+    description:
+      "Inspect how the Knowledge Network connects already-preserved records as invisible infrastructure: documented connections read inline on the canonical pages, and an institutional lineage reads from both ends without any duplicated record.",
+    steps: [
+      {
+        label: "Read Helena's connections inline on her biography",
+        href: personHref(EXHIBITION_IDS.people.helena),
+        note: "Timeline, participation, relationships, contributions -- her documented connections, in the reading flow.",
+      },
+      {
+        label: "Read IHFA's institutional lineage inline on the Institution page",
+        href: institutionHref(EXHIBITION_IDS.organizations.ihfa),
+        note: "The live inline 'Institutional relationships' section.",
+      },
+      {
+        label: "Inspect the consolidated institution neighbourhood",
+        href: institutionNetworkHref(EXHIBITION_IDS.organizations.ihfa),
+        note: "The one-hop view in one place, for inspection.",
+      },
+      {
+        label: "See the same succession from the other side",
+        href: institutionNetworkHref(EXHIBITION_IDS.organizations.aet),
+        note: "The inverse role, one canonical record, no duplication.",
       },
     ],
   },

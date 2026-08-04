@@ -18,7 +18,7 @@ create extension if not exists pgtap;
 
 begin;
 
-select plan(31);
+select plan(34);
 
 \set helena 'e6110000-0000-4000-8000-000000000001'
 \set ana 'e6110000-0000-4000-8000-000000000003'
@@ -36,6 +36,9 @@ select is((select count(*)::int from public.events where id::text like 'e633%'),
 select is((select count(*)::int from public.participations where id::text like 'e644%'), 8, '8 exhibition participations');
 select is((select count(*)::int from public.relationships where id::text like 'e655%'), 6, '6 exhibition relationships');
 select is((select count(*)::int from public.contributions where id::text like 'e666%'), 3, '3 exhibition contributions');
+-- M7: institutional relationships (the one new canonical relation) seeded for
+-- Knowledge Network lineage inspection.
+select is((select count(*)::int from public.organization_relationships where id::text like 'e677%'), 2, '2 exhibition institutional relationships');
 
 set local role authenticated;
 set local request.jwt.claim.sub to '00000000-0000-4000-8000-0000000000aa';
@@ -81,6 +84,15 @@ select is(jsonb_array_length(public.get_organization(:'ihfa')->'external_identif
 select is(jsonb_array_length(public.get_organization(:'ihfa')->'narrative'), 3, 'active institution has narrative facets');
 select is((public.get_organization(:'aet')->>'status'), 'closed', 'closed institution surfaces closed status');
 select ok((public.get_organization(:'aet')->'closure') is not null, 'closed institution surfaces a closure period');
+
+-- Knowledge Network (M7): institutional lineage projects from both ends
+-- without duplication -- one canonical succession, inverse roles.
+select is(jsonb_array_length(public.get_organization_relationships(:'ihfa')->'relationships'), 2,
+  'IHFA has two institutional relationships (a succession and an affiliation)');
+select ok(
+  (select bool_or(r->'counterpart'->>'id' = :'ihfa' and r->'perspective'->>'counterpart_role_label' = 'Successor')
+   from jsonb_array_elements(public.get_organization_relationships(:'aet')->'relationships') r),
+  'the one canonical succession reads IHFA as the Successor from AET (inverse projection)');
 
 reset role;
 

@@ -815,3 +815,7 @@ dedicated Contribution page each compose these bounded reads and are consistent
 by construction — one canonical set of records, projected, never duplicated. The
 M6.6 additions do not weaken any prior migration and add no Contribution field
 to the Biography or Institution identity RPCs.
+
+## M7 — Knowledge Network Engine (migration 20260810090000)
+
+Adds `organization_relationship_kinds` (data-backed vocabulary) and `organization_relationships` (one canonical row per institutional bond: composite kind/directionality FK, canonical ordering for symmetric bonds, no self-link, uniqueness, the shared Many-Clocks temporal model, provenance/verification, an optional note, deny-by-default RLS, service-role writes, `set_updated_at` trigger). Adds bounded `SECURITY DEFINER` one-hop reads `get_person_network`, `get_organization_network`, `get_contribution_network`, `get_event_network`, and `get_organization_relationships` (search_path pinned, in-body `auth.uid()`, revoked from PUBLIC, granted to `authenticated`). No generic edge table; no universal Entity table. Every projected connection preserves its exact canonical source row (`source: { type, id }`), and provenance/temporal are reused from the shared kernels.

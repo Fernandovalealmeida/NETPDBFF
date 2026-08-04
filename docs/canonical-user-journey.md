@@ -90,3 +90,7 @@ product:
 - **Truthful representation.** The application should represent its current
   capabilities honestly: where a capability exists, expose it; where it does
   not, show an honest planned/empty state rather than a fabricated one.
+
+## M7 addition — into the Knowledge Network
+
+Landing → Register/Sign in → Explore → People/Institutions/Contributions → canonical entity page → Connections (the network entry link) → Knowledge Network neighbourhood → connected canonical record → continue reading.

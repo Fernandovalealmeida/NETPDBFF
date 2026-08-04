@@ -135,3 +135,7 @@ relevant. Never commit `.env.local` or any file containing real secrets.
 The interface language at launch is English. The codebase is structured to
 support Portuguese as a future addition without requiring a rewrite — see
 `docs/architecture.md`.
+
+## M7 — Knowledge Network Engine
+
+M7 connects the preserved records through a derived, provenance-preserving read model (no generic edge store, no universal Entity table, no graph database). See `docs/decisions/0017-knowledge-network-engine.md`, `docs/m7-knowledge-network-engine.md`, and `docs/m7-knowledge-network-engine-engineering-report.md`.

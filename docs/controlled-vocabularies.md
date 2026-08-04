@@ -123,3 +123,7 @@ distinction: open domain taxonomies are lookup tables (`event_kinds`,
 are CHECKs (like `source_type` / `verification_status` and narrative `kind`). A
 contribution↔event relation vocabulary is deliberately deferred rather than
 guessed at.
+
+## organization_relationship_kinds (M7)
+
+Institution-to-institution relationship kinds — data-backed and Node-neutral — each with key, label, directionality, source/target role labels (singular + plural, for inverse display on both institutions' pages), description, sort order, and `is_active`. Founding kinds: `succession` (Predecessor → Successor), `parent_body` (Parent body → Subordinate body), `administration` (Administering body → Administered body), `hosting` (Host → Hosted body), `merger` (Antecedent body → Merged-successor body), `affiliation` (symmetric), `partnership` (symmetric), `joint_operation` (symmetric), `other` (symmetric). A Node adds its own kinds as rows, never as code. Migration, TypeScript copy, tests, and this document are kept consistent.

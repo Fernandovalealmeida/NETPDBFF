@@ -434,3 +434,7 @@ consistent by construction. Empty, collective, undated, and disputed states are
 rendered honestly; contributions are never inferred from participation,
 affiliation, or authorship, and are never shown as counts, rankings, or credit
 shares.
+
+## M7 — Knowledge Network routes
+
+`/network` (landing), `/network/people/[personId]`, `/network/institutions/[organizationId]`, `/network/contributions/[contributionId]` — authenticated, reading-first one-hop neighbourhoods. "Network" is in the primary navigation, and each canonical Person/Institution/Contribution page links into its network neighbourhood.
