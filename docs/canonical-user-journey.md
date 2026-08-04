@@ -41,14 +41,19 @@ polished surface.
    Scientific Biography and the reader's main path outward: the Biography
    (with its provenance and verification, or an honest absence where no
    narrative exists), the Timeline (exact through unknown dates, shown
-   truthfully), Participation in institutions, and Relationships to other
-   people (directional and symmetric, verified through disputed).
+   truthfully), Participation in institutions (each institution a doorway to its page), and
+   Relationships to other people (directional and symmetric, verified through
+   disputed) — each counterpart a doorway to that person's own canonical page.
 
 5. **An institution through time (`/institutions/[id]`).** Opening an
    institution reveals its identity and name history, its founding period,
-   external identifiers, narrative facets, its timeline, and the people who
-   participated in it — including historical and closed institutions, shown
-   with honest reserved states where later facets are not yet recorded.
+   external identifiers, narrative facets, its timeline, the people who
+   participated in it (each a doorway to that person's page), its documented
+   institutional relationships read inline (predecessor/successor, parent,
+   affiliation, and the like — never a graph, never an "enter the network"
+   step), and the contributions associated with it — including historical and
+   closed institutions, shown with honest reserved states where later facets
+   are not yet recorded.
 
 6. **A contribution (`/contributions/[id]`).** Opening a contribution reveals
    it as a first-class historical object: the people and institutions
@@ -56,10 +61,13 @@ polished surface.
    percentages, or inferred credit.
 
 7. **Following curiosity.** From any of these, the reader follows the
-   connections — a person to their institution, an institution to a
-   participant, a contribution to everyone credited — and the same canonical
-   records reappear from new angles without ever being duplicated. Navigation
-   rewards curiosity; historical exploration feels natural.
+   connections — a person to their institution, a person to another person
+   through a documented relationship, an institution to any of its
+   participants, a contribution to everyone credited — and the same canonical
+   records reappear from new angles without ever being duplicated. Every onward
+   path arises from an explicit canonical assertion; there is no generic
+   "related content". Navigation rewards curiosity; historical exploration
+   feels natural.
 
 Throughout, the application's chrome (the authenticated navigation) keeps
 Explore, People, Institutions, and Contributions one click away on every
@@ -91,6 +99,24 @@ product:
   capabilities honestly: where a capability exists, expose it; where it does
   not, show an honest planned/empty state rather than a fabricated one.
 
-## M7 addition — into the Knowledge Network
+## The Knowledge Network is invisible infrastructure (ADR-0017)
 
-Landing → Register/Sign in → Explore → People/Institutions/Contributions → canonical entity page → Connections (the network entry link) → Knowledge Network neighbourhood → connected canonical record → continue reading.
+The Knowledge Network is not a destination and has no step of its own in this
+journey. A reader never "enters the network". Documented connections are read
+**inline** on the canonical pages — a person's timeline, participation,
+relationships, and contributions; an institution's participants, lineage, and
+contributions; a contribution's contributors and institutional context — and
+each is a doorway to another canonical record. The network read models simply
+make those doorways possible.
+
+## Production Experience Phase I — one continuous reading world
+
+Landing → Register / Sign in → Explore → People / Institutions / Contributions →
+a canonical record → its documented connections read inline → a doorway to
+another canonical record → continued reading. Every doorway states what the
+connected record is and why it is connected, and arises from an explicit
+canonical assertion. The doorways this phase completed: **relationship →
+person**, **institution participation → person**, and **approved claim → the
+reader's own canonical Person page**. The Member and Account areas are
+deliberately secondary to reading. See `docs/production-experience-phase-1.md`
+and `docs/production-experience-phase-1-engineering-report.md`.

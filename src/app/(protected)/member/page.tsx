@@ -36,6 +36,13 @@ interface MemberPageProps {
 // claim-scoped name lookup (get_claimed_person_display_name). See
 // docs/decisions/0008-claim-discovery-security-definer-function.md.
 //
+// Production Experience Phase I: the Member area is deliberately SECONDARY to
+// the reading experience. It stays account-focused — authentication status and
+// person-record claim state — and never becomes a dashboard or a second
+// Explore. The one reading doorway it now offers is the correct one: an
+// approved claimant can follow their linked record straight to its canonical
+// Person page.
+//
 // Single-column `Container` deliberately: nothing on this page has enough
 // content to justify a second column yet. `Section`/`Stack`/`Grid`
 // (src/components/ui) already exist for a future two-column workspace
@@ -88,11 +95,14 @@ export default async function MemberPage({ searchParams }: MemberPageProps) {
             </dl>
           </Card>
 
-          {/* 3. Identity-claim status — the real workflow, M5.3. Every
-              branch renders only real, currently-true state from
-              src/features/identity/status.ts; no participation, network,
-              or publication content appears anywhere here, at any status —
-              that remains a later milestone regardless of claim outcome. */}
+          {/* 3. Identity-claim status — the real workflow, M5.3. Every branch
+              renders only real, currently-true state from
+              src/features/identity/status.ts. The Member area stays
+              account-focused: participation, relationships, and the wider
+              network are read in the reading experience (People / Institutions
+              / Contributions), never re-created here — and an approved claim now
+              offers a doorway straight to the reader's own canonical Person
+              page. */}
           {identityStatus.kind === "no_claim" ? (
             <EmptyState
               title={statusCopy.title}
@@ -110,7 +120,18 @@ export default async function MemberPage({ searchParams }: MemberPageProps) {
               action={<WithdrawClaimButton claimId={identityStatus.claim.id} />}
             />
           ) : identityStatus.kind === "approved" ? (
-            <EmptyState title={statusCopy.title} description={statusCopy.description} />
+            <EmptyState
+              title={statusCopy.title}
+              description={statusCopy.description}
+              action={
+                <Link
+                  href={`/people/${identityStatus.claim.personId}`}
+                  className={buttonVariants({ emphasis: "secondary", size: "sm" })}
+                >
+                  Read your linked record
+                </Link>
+              }
+            />
           ) : identityStatus.kind === "rejected" ? (
             <EmptyState
               title={statusCopy.title}

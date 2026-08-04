@@ -186,3 +186,20 @@ scoring, and M6.7 remain deferred.
 ## M7 — Knowledge Network Engine (implemented, pending local validation)
 
 Connects already-preserved records as a bounded one-hop, provenance-preserving read model over canonical assertions; adds the institution-to-institution `organization_relationships` canonical relation; ships production `/network` routes. No inference and no metrics (those belong to M8 discovery and M9 interpretation). See `docs/m7-knowledge-network-engine.md`.
+
+
+## Production Experience Phase I — unifying M1–M7 into one product (implemented, pending local validation)
+
+An integration/refinement pass between M7 and M8. Introduces no new engine, AI,
+discovery, inference, ranking, metric, dashboard, or schema change. It makes the
+completed M1–M7 architecture read as one continuous scholarly environment:
+completes the onward reading doorways (relationship → person; institution
+participation → person; approved claim → the reader's own canonical Person page),
+unifies the canonical-page reading spine (identity → divider → narrative →
+engines) across People/Institutions/Contributions, corrects obsolete capability
+copy (claiming/participation/network are no longer described as future work), and
+locks provenance-affordance consistency across engines. The Knowledge Network
+stays invisible infrastructure; `/dev/exhibition` stays inspection-only (it keeps
+the one retained `/network/institutions/[id]` route as its inspection surface for
+the M7 read model). See `docs/production-experience-phase-1.md` and
+`docs/production-experience-phase-1-engineering-report.md`.

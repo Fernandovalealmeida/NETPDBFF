@@ -4,6 +4,12 @@
 // the claimant sees what their status means, not why a reviewer decided
 // it. No fabricated data (participation, network, publications) appears
 // in any of this copy.
+//
+// Production Experience Phase I: the no_claim copy states the truth of the
+// product TODAY — claiming a person record is a real, available workflow
+// (M5.3), reached by the "Claim a person record" action on /member. Earlier
+// wording that described claiming, participation, and the network as a "later
+// milestone" was obsolete once those engines shipped (M5.3–M7) and is removed.
 
 import type { IdentityStatus } from "./types";
 
@@ -18,7 +24,7 @@ export function getIdentityStatusCopy(status: IdentityStatus): IdentityStatusCop
       return {
         title: "Not yet connected to a NetPDBFF person record",
         description:
-          "Claiming a historical or existing person record — and everything about PDBFF participants, participation history, and the network — will be available in a later milestone.",
+          "You can search the record for an existing person that represents you and submit a claim to link it to your account. Claims are reviewed before a person record is linked.",
       };
     case "pending":
       return {
@@ -33,7 +39,8 @@ export function getIdentityStatusCopy(status: IdentityStatus): IdentityStatusCop
         title: status.personDisplayName
           ? `Your account is linked to ${status.personDisplayName}`
           : "Your account is linked to a person record",
-        description: "Your claim was approved and your account is now linked to this person record.",
+        description:
+          "Your claim was approved and your account is now linked to this person record. You can read its canonical page in the record.",
       };
     case "rejected":
       return {

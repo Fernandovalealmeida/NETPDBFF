@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Divider } from "@/components/ui/Divider";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ReadingSpine } from "@/components/ui/ReadingSpine";
 import { pageTitle } from "@/config/site";
 import { ContributionContributors } from "@/features/contribution/components/ContributionContributors";
 import { ContributionIdentityHeader } from "@/features/contribution/components/ContributionIdentityHeader";
@@ -23,6 +24,13 @@ import { Timeline } from "@/features/timeline/components/Timeline";
 // auth and get_contribution re-checks it). Keyed by the contribution UUID and
 // named generically (/contributions/[contributionId]) -- Node-neutral. The
 // title is generic. Server Component; bounded reads composed here.
+//
+// The reading spine is composed through <ReadingSpine>, the SAME primitive the
+// Person and Institution pages use, so the three canonical pages share one
+// continuous rhythm and a reader never feels they have crossed from one software
+// module into another (Production Experience Phase I). The sections are not
+// flattened: overview and context, the contributors, the institutional context,
+// and the contextualising events each keep their own meaning.
 //
 // The contributors, institutional context, and related events ARE this
 // contribution's documented connections. The M7 Knowledge Network is the
@@ -60,95 +68,85 @@ export default async function ContributionPage({ params }: ContributionPageProps
 
         <Divider />
 
-        <section className="mt-10" aria-labelledby="overview-heading">
-          <h2 id="overview-heading" className="text-sm font-medium text-foreground">
-            {contributionCopy.overview.heading}
-          </h2>
-          {overview ? (
-            <ContributionNarrative facet={overview} />
-          ) : (
-            <div className="mt-3">
-              <EmptyState
-                title={contributionCopy.overview.absent.title}
-                description={contributionCopy.overview.absent.description}
-              />
-            </div>
-          )}
-          {context ? (
-            <div className="mt-6">
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {NARRATIVE_FACET_LABELS.context}
-              </h3>
-              <ContributionNarrative facet={context} />
-            </div>
-          ) : null}
-        </section>
+        <ReadingSpine>
+          <section aria-labelledby="overview-heading">
+            <h2 id="overview-heading" className="text-sm font-medium text-foreground">
+              {contributionCopy.overview.heading}
+            </h2>
+            {overview ? (
+              <ContributionNarrative facet={overview} />
+            ) : (
+              <div className="mt-3">
+                <EmptyState
+                  title={contributionCopy.overview.absent.title}
+                  description={contributionCopy.overview.absent.description}
+                />
+              </div>
+            )}
+            {context ? (
+              <div className="mt-6">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {NARRATIVE_FACET_LABELS.context}
+                </h3>
+                <ContributionNarrative facet={context} />
+              </div>
+            ) : null}
+          </section>
 
-        <div className="mt-10">
           <ContributionContributors people={contribution.contributors.people} />
-        </div>
 
-        <div className="mt-10">
           <ContributionInstitutionalContext organizations={contribution.contributors.organizations} />
-        </div>
 
-        {hasRelatedEvents ? (
-          <div className="mt-10">
-            <Timeline document={timeline} />
-          </div>
-        ) : null}
+          {hasRelatedEvents ? <Timeline document={timeline} /> : null}
 
-        <section className="mt-10" aria-labelledby="significance-heading">
-          <h2 id="significance-heading" className="text-sm font-medium text-foreground">
-            {contributionCopy.significance.heading}
-          </h2>
-          {significance ? (
-            <ContributionNarrative facet={significance} />
-          ) : (
-            <div className="mt-3">
-              <EmptyState
-                title={contributionCopy.significance.absent.title}
-                description={contributionCopy.significance.absent.description}
-              />
-            </div>
-          )}
-        </section>
+          <section aria-labelledby="significance-heading">
+            <h2 id="significance-heading" className="text-sm font-medium text-foreground">
+              {contributionCopy.significance.heading}
+            </h2>
+            {significance ? (
+              <ContributionNarrative facet={significance} />
+            ) : (
+              <div className="mt-3">
+                <EmptyState
+                  title={contributionCopy.significance.absent.title}
+                  description={contributionCopy.significance.absent.description}
+                />
+              </div>
+            )}
+          </section>
 
-        <section className="mt-10" aria-labelledby="legacy-heading">
-          <h2 id="legacy-heading" className="text-sm font-medium text-foreground">
-            {contributionCopy.legacy.heading}
-          </h2>
-          {legacy ? (
-            <ContributionNarrative facet={legacy} />
-          ) : (
-            <div className="mt-3">
-              <EmptyState
-                title={contributionCopy.legacy.absent.title}
-                description={contributionCopy.legacy.absent.description}
-              />
-            </div>
-          )}
-        </section>
+          <section aria-labelledby="legacy-heading">
+            <h2 id="legacy-heading" className="text-sm font-medium text-foreground">
+              {contributionCopy.legacy.heading}
+            </h2>
+            {legacy ? (
+              <ContributionNarrative facet={legacy} />
+            ) : (
+              <div className="mt-3">
+                <EmptyState
+                  title={contributionCopy.legacy.absent.title}
+                  description={contributionCopy.legacy.absent.description}
+                />
+              </div>
+            )}
+          </section>
 
-        <div className="mt-10">
           <ContributionReservedSection
             id="records"
             heading={contributionCopy.records.heading}
             title={contributionCopy.records.reserved.title}
             description={contributionCopy.records.reserved.description}
           />
-        </div>
 
-        <div className="mt-10">
           <ContributionReservedSection
             id="consequences"
             heading={contributionCopy.consequences.heading}
             title={contributionCopy.consequences.reserved.title}
             description={contributionCopy.consequences.reserved.description}
           />
-        </div>
 
-        <p className="mt-10 text-xs text-muted-foreground">{contributionCopy.withheldNote}</p>
+          <p className="text-xs text-muted-foreground">{contributionCopy.withheldNote}</p>
+        </ReadingSpine>
       </Container>
     </main>
   );

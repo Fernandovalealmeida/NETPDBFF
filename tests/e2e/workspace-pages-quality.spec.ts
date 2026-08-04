@@ -84,14 +84,12 @@ test.describe("/member — accessible structure and honest empty state", () => {
     );
 
     // Core constraint is "no fabricated domain data," not "never mention
-    // future functionality" — the EmptyState's own description legitimately
-    // says "everything about PDBFF participants, participation history, and
-    // the network" to honestly explain what's deferred (see
-    // src/app/(protected)/member/page.tsx). Banning that vocabulary
-    // outright would fail on the page's own honest copy. What must never
-    // appear is a fabricated *record* or *metric*: a number attached to one
-    // of these domain nouns (e.g. "3 publications", "12 collaborators" — an
-    // implied count of data that doesn't exist) or list/table markup
+    // domain functionality." As of Production Experience Phase I the member
+    // no_claim copy is honest present-tense — it invites a real, available
+    // claim workflow and does not describe shipped engines as deferred. What
+    // must never appear is a fabricated *record* or *metric*: a number attached
+    // to one of these domain nouns (e.g. "3 publications", "12 collaborators" —
+    // an implied count of data that doesn't exist) or list/table markup
     // presenting example entries as if they were real records.
     const fabricatedMetricPattern =
       /\b\d[\d,]*\+?\s*(participations?|publications?|institutions?|projects?|relationships?|collaborators?|connections?|records?)\b/i;

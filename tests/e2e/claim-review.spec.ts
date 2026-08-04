@@ -247,6 +247,16 @@ test.describe("Approve workflow — claimant-visible outcome", () => {
       /\b\d[\d,]*\+?\s*(participations?|publications?|institutions?|projects?|relationships?|collaborators?|connections?|records?)\b/i;
     await expect(claimantPage.getByText(fabricatedMetricPattern)).toHaveCount(0);
 
+    // Production Experience Phase I: the approved claimant now has a doorway
+    // from the (deliberately secondary) Member area straight to their own
+    // canonical Person page — the one reading link the Member area offers, and
+    // never a dead end after approval.
+    const linkedRecord = claimantPage.getByRole("link", { name: "Read your linked record" });
+    await expect(linkedRecord).toHaveAttribute("href", `/people/${claimablePerson.id}`);
+    await linkedRecord.click();
+    await expect(claimantPage).toHaveURL(new RegExp(`/people/${claimablePerson.id}$`));
+    await expect(claimantPage.getByRole("heading", { level: 1 })).toHaveCount(1);
+
     await claimantPage.goto("/account");
     await expect(claimantPage.getByText(`Your account is linked to ${claimablePerson.displayName}`)).toBeVisible();
     // The claimant never sees who reviewed their claim.

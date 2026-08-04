@@ -144,7 +144,7 @@ test.describe("an institution with little recorded history stays dignified", () 
 });
 
 test.describe("one canonical participation is consistent from both perspectives", () => {
-  test("the same participation shows the institution on the person's page and the person on the institution's page, and the org name links to the institution", async ({ page }) => {
+  test("the same participation shows the institution on the person's page and the person on the institution's page; the person name links to their biography and the org name links to the institution", async ({ page }) => {
     await registerAndConfirm(page);
     const inst = await newInstitution({ name: "Delta Institute", type: "research_institute" });
     const person = await newPerson();
@@ -154,6 +154,15 @@ test.describe("one canonical participation is consistent from both perspectives"
     await page.goto(inst.url);
     await expect(page.getByRole("heading", { level: 3, name: "Director", exact: true })).toBeVisible();
     await expect(page.getByRole("heading", { level: 4, name: person.displayName, exact: true })).toBeVisible();
+
+    // Production Experience Phase I: the participant's name is a DOORWAY to
+    // their canonical Person page — meaningful link text (the person's name,
+    // never "View"), the mirror of the org-name link asserted below. No dead
+    // end from an institution's human history.
+    await expect(page.getByRole("link", { name: person.displayName, exact: true })).toHaveAttribute(
+      "href",
+      `/people/${person.id}`,
+    );
 
     // Person biography: the SAME participation appears as institutional belonging,
     // and the organization name links to the institution page (discovery).

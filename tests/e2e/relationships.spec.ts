@@ -87,6 +87,33 @@ test.describe("a directional relationship reads with inverse labels on both biog
   });
 });
 
+test.describe("a relationship counterpart is a doorway to their canonical Person page", () => {
+  test("the counterpart name links to the other person's biography and navigates there — no dead end", async ({ page }) => {
+    await registerAndConfirm(page);
+    const alice = await newPerson();
+    const bob = await newPerson();
+    await relate(alice.id, bob.id, {
+      kind: "mentorship",
+      isDirectional: true,
+      startDate: "1987-01-01",
+      startPrecision: "year",
+    });
+
+    // Production Experience Phase I: a documented bond is a doorway. On Alice's
+    // page, Bob's name is a link to his canonical biography (meaningful link
+    // text — the person's name, never "View"), justified by the canonical
+    // relationship assertion and reasoned by the surrounding role group.
+    await page.goto(alice.url);
+    const counterpart = page.getByRole("link", { name: bob.displayName, exact: true });
+    await expect(counterpart).toHaveAttribute("href", `/people/${bob.id}`);
+
+    // Following it lands on the counterpart's canonical Person page.
+    await counterpart.click();
+    await expect(page).toHaveURL(new RegExp(`/people/${bob.id}$`));
+    await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+  });
+});
+
 test.describe("a symmetric relationship reads on both biographies under the same role", () => {
   test("one canonical collaboration shows each counterpart under Collaborators on both pages", async ({ page }) => {
     await registerAndConfirm(page);

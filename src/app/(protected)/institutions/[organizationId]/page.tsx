@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Divider } from "@/components/ui/Divider";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ReadingSpine } from "@/components/ui/ReadingSpine";
 import { pageTitle } from "@/config/site";
 import { InstitutionContributions } from "@/features/contribution/components/InstitutionContributions";
 import { getOrganizationContributions } from "@/features/contribution/read";
@@ -26,6 +27,13 @@ import { Timeline } from "@/features/timeline/components/Timeline";
 // (/institutions/[organizationId]) -- Node-neutral. Historical/closed/merged
 // institutions are readable (never hidden). The title is generic. Server
 // Component; the reads happen server-side and are composed here.
+//
+// The reading spine is composed through <ReadingSpine>, the SAME primitive the
+// Person and Contribution pages use, so the three canonical pages share one
+// continuous rhythm and a reader never feels they have crossed from one software
+// module into another (Production Experience Phase I). The sections are not
+// flattened: identity and name history, the timeline, the human participation,
+// the institutional lineage, and the contributions each keep their own meaning.
 //
 // M7 refinement (ADR-0017): the Knowledge Network is invisible infrastructure
 // that enriches this canonical reading, not a separate destination. The M6.5
@@ -67,87 +75,77 @@ export default async function InstitutionPage({ params }: InstitutionPageProps) 
 
         <Divider />
 
-        <section className="mt-10" aria-labelledby="introduction-heading">
-          <h2 id="introduction-heading" className="text-sm font-medium text-foreground">
-            {institutionCopy.introduction.heading}
-          </h2>
-          {introduction ? (
-            <InstitutionNarrative facet={introduction} />
-          ) : (
-            <div className="mt-3">
-              <EmptyState
-                title={institutionCopy.introduction.absent.title}
-                description={institutionCopy.introduction.absent.description}
-              />
-            </div>
-          )}
-          {overview ? (
-            <div className="mt-6">
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {NARRATIVE_FACET_LABELS.overview}
-              </h3>
-              <InstitutionNarrative facet={overview} />
-            </div>
-          ) : null}
-        </section>
+        <ReadingSpine>
+          <section aria-labelledby="introduction-heading">
+            <h2 id="introduction-heading" className="text-sm font-medium text-foreground">
+              {institutionCopy.introduction.heading}
+            </h2>
+            {introduction ? (
+              <InstitutionNarrative facet={introduction} />
+            ) : (
+              <div className="mt-3">
+                <EmptyState
+                  title={institutionCopy.introduction.absent.title}
+                  description={institutionCopy.introduction.absent.description}
+                />
+              </div>
+            )}
+            {overview ? (
+              <div className="mt-6">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  {NARRATIVE_FACET_LABELS.overview}
+                </h3>
+                <InstitutionNarrative facet={overview} />
+              </div>
+            ) : null}
+          </section>
 
-        {organization.names.length > 0 ? (
-          <div className="mt-10">
+          {organization.names.length > 0 ? (
             <InstitutionalNameHistory names={organization.names} />
-          </div>
-        ) : null}
+          ) : null}
 
-        <div className="mt-10">
           <Timeline document={timeline} />
-        </div>
 
-        <div className="mt-10">
           <InstitutionParticipation document={participation} />
-        </div>
 
-        <div className="mt-10">
           <InstitutionLineage document={network} />
-        </div>
 
-        <div className="mt-10">
           <InstitutionContributions document={contributions} />
-        </div>
 
-        <div className="mt-10">
           <InstitutionReservedSection
             id="records"
             heading={institutionCopy.records.heading}
             title={institutionCopy.records.reserved.title}
             description={institutionCopy.records.reserved.description}
           />
-        </div>
 
-        {significance ? (
-          <section className="mt-10" aria-labelledby="significance-heading">
-            <h2 id="significance-heading" className="text-sm font-medium text-foreground">
-              {NARRATIVE_FACET_LABELS.significance}
+          {significance ? (
+            <section aria-labelledby="significance-heading">
+              <h2 id="significance-heading" className="text-sm font-medium text-foreground">
+                {NARRATIVE_FACET_LABELS.significance}
+              </h2>
+              <InstitutionNarrative facet={significance} />
+            </section>
+          ) : null}
+
+          <section aria-labelledby="legacy-heading">
+            <h2 id="legacy-heading" className="text-sm font-medium text-foreground">
+              {institutionCopy.legacy.heading}
             </h2>
-            <InstitutionNarrative facet={significance} />
+            {legacy ? (
+              <InstitutionNarrative facet={legacy} />
+            ) : (
+              <div className="mt-3">
+                <EmptyState
+                  title={institutionCopy.legacy.absent.title}
+                  description={institutionCopy.legacy.absent.description}
+                />
+              </div>
+            )}
           </section>
-        ) : null}
 
-        <section className="mt-10" aria-labelledby="legacy-heading">
-          <h2 id="legacy-heading" className="text-sm font-medium text-foreground">
-            {institutionCopy.legacy.heading}
-          </h2>
-          {legacy ? (
-            <InstitutionNarrative facet={legacy} />
-          ) : (
-            <div className="mt-3">
-              <EmptyState
-                title={institutionCopy.legacy.absent.title}
-                description={institutionCopy.legacy.absent.description}
-              />
-            </div>
-          )}
-        </section>
-
-        <p className="mt-10 text-xs text-muted-foreground">{institutionCopy.withheldNote}</p>
+          <p className="text-xs text-muted-foreground">{institutionCopy.withheldNote}</p>
+        </ReadingSpine>
       </Container>
     </main>
   );

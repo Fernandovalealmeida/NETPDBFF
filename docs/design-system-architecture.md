@@ -504,3 +504,31 @@ under deadline pressure, and so M5's own components (`Badge`, `Tooltip`,
   approximate date, and provenance, consistent with how "Imagery and
   iconography principles" in `docs/ui-vision.md` insists real historical
   photography be treated as archival material, not decoration.
+
+## Production Experience Phase I — two canonical presentational primitives
+
+Two primitives were added to make the completed engines read as one product
+(presentation only; no new dependency, no second design language):
+
+**`ReadingSpine` (`src/components/ui/ReadingSpine.tsx`).** The canonical
+reading-spine rhythm. Every canonical reading page — Person, Institution,
+Contribution — lays its sections out through this one primitive, so the vertical
+rhythm from the identity band down through the documented engines is identical on
+all three and a reader moving between records feels one continuous historical
+narrative rather than a stack of separate modules. It is pure vertical rhythm: it
+imposes no heading, card, border, or style, and it never flattens the sections it
+holds (each engine keeps its own `<section>`, quiet heading, semantics, and
+provenance). Consolidating the rhythm here means it can never drift between the
+three pages.
+
+**`ProvenanceAffordance` (`src/features/shared/ProvenanceAffordance.tsx`).** The
+canonical provenance affordance — the calm, keyboard-operable "Source"
+disclosure. Every engine reads provenance through this one presentation, so "how
+do we know this?" looks and behaves identically platform-wide and cannot drift.
+Each engine's `*Provenance` component is now a thin adapter that supplies only its
+subject phrase and delegates here. It owns all presentation and interaction; the
+full provenance is carried by the trigger's server-rendered accessible name
+(never hover-only), and it presents — but never derives, reshapes, or moves — the
+shared `describeProvenance` vocabulary. The optional `projectedFrom` prop carries
+the Knowledge Network "projected from a <record>" phrasing. Both primitives are
+guarded by `tests/unit/provenance-presentation-consistency.test.ts`.

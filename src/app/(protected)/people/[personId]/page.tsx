@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { Container } from "@/components/ui/Container";
 import { Divider } from "@/components/ui/Divider";
-import { Section } from "@/components/ui/Section";
+import { ReadingSpine } from "@/components/ui/ReadingSpine";
 import { pageTitle } from "@/config/site";
 import { BiographyNarrative } from "@/features/biography/components/BiographyNarrative";
 import { BiographySection } from "@/features/biography/components/BiographySection";
@@ -26,16 +26,20 @@ import { getPersonTimeline } from "@/features/timeline/read";
 // (/people/[personId]) -- Node-neutral, no PDBFF-specific route. The title is
 // intentionally generic (no personal name in <title>/history).
 //
-// Reading order (Blueprint's Biography Engine): identity band, then the
-// introductory narrative (or honest absence), then the historical engines
-// (timeline, participation, relationships, contributions), then the reserved
-// section architecture, then the honest withheld-note. These engines ARE this
-// person's documented connections: the timeline projects their events,
-// participation their institutions, relationships their people, contributions
-// their contributions. The M7 Knowledge Network is the invisible infrastructure
-// behind those links (ADR-0017) -- there is no separate person-network page and
-// no "enter the network" step; reading simply flows on through the connections.
-// Server Component; the reads happen server-side and are composed here.
+// Reading order (Blueprint's Biography Engine): identity band, a divider, then
+// the reading spine -- the introductory narrative (or honest absence), the
+// historical engines (timeline, participation, relationships, contributions),
+// the reserved section architecture, and the honest withheld-note. The spine is
+// composed through <ReadingSpine>, the SAME primitive the Institution and
+// Contribution pages use, so the three canonical pages share one continuous
+// rhythm and a reader never feels they have crossed from one software module
+// into another (Production Experience Phase I). The sections are NOT flattened:
+// each engine keeps its own narrative/chronology/belonging/assertion semantics.
+// These engines ARE this person's documented connections: the timeline projects
+// their events, participation their institutions, relationships their people,
+// contributions their contributions -- each a doorway onward. The M7 Knowledge
+// Network is the invisible infrastructure behind those links (ADR-0017); there
+// is no "enter the network" step. Server Component; reads composed server-side.
 export const metadata: Metadata = {
   title: pageTitle("Scientific biography"),
 };
@@ -62,38 +66,32 @@ export default async function BiographyPage({ params }: BiographyPageProps) {
       <Container width="content">
         <IdentityHeader document={document} />
 
-        <Section spacing="sm" className="mt-8" aria-label="Biographical narrative">
-          <BiographyNarrative document={document} />
-        </Section>
-
         <Divider />
 
-        <div className="mt-10">
+        <ReadingSpine>
+          <section aria-label="Biographical narrative">
+            <BiographyNarrative document={document} />
+          </section>
+
           <Timeline document={timeline} />
-        </div>
 
-        <div className="mt-10">
           <Participation document={participation} />
-        </div>
 
-        <div className="mt-10">
           <Relationships document={relationships} />
-        </div>
 
-        <div className="mt-10">
           <PersonContributions document={contributions} />
-        </div>
 
-        <div className="mt-10 flex flex-col gap-8">
-          {RESERVED_SECTION_ORDER.map((key) => {
-            const section = biographyCopy.reservedSections[key];
-            return (
-              <BiographySection key={key} id={key} title={section.title} description={section.description} />
-            );
-          })}
-        </div>
+          <div className="flex flex-col gap-8">
+            {RESERVED_SECTION_ORDER.map((key) => {
+              const section = biographyCopy.reservedSections[key];
+              return (
+                <BiographySection key={key} id={key} title={section.title} description={section.description} />
+              );
+            })}
+          </div>
 
-        <p className="mt-10 text-xs text-muted-foreground">{biographyCopy.withheldNote}</p>
+          <p className="text-xs text-muted-foreground">{biographyCopy.withheldNote}</p>
+        </ReadingSpine>
       </Container>
     </main>
   );

@@ -438,3 +438,29 @@ shares.
 ## M7 — Knowledge Network routes
 
 `/network` (landing), `/network/people/[personId]`, `/network/institutions/[organizationId]`, `/network/contributions/[contributionId]` — authenticated, reading-first one-hop neighbourhoods. "Network" is in the primary navigation, and each canonical Person/Institution/Contribution page links into its network neighbourhood.
+
+## Production Experience Phase I — cross-navigation contract & Member role
+
+An integration pass (between M7 and M8) refined how the completed engines read
+as one product; it added no route and no schema change. Two IA points are now
+fixed:
+
+**One cross-navigation contract.** Every onward link on a canonical reading
+surface (1) is justified by an explicit canonical assertion — never generic
+"related content" and never inferred; (2) *is* the connected entity's name
+(person, institution, or contribution), never a bare "View"/"Learn more"; (3)
+carries its reason through the surrounding context (the relationship role group,
+the participation capacity, the attribution capacity, the lineage relation);
+(4) targets that entity's canonical reading page (`/people/[id]`,
+`/institutions/[id]`, `/contributions/[id]`), with no UUID ever shown; and (5)
+uses the one shared link treatment. This closed the two remaining dead ends
+(relationship → person, institution participation → person) and matches the
+directions already linked (participation → institution, contribution →
+person/institution).
+
+**Member and Account are secondary to reading.** They present authentication
+status and person-record link state only — never a dashboard, never a second
+Explore. The single reading doorway they offer is the correct one: an approved
+claimant can follow "Read your linked record" to their own canonical Person
+page. Obsolete copy describing claiming/participation/the network as future work
+was corrected. See `docs/production-experience-phase-1.md`.

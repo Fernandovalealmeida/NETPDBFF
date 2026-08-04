@@ -73,14 +73,6 @@ export const institutionCopy = {
       description: "The people who sustained this institution have not yet been recorded.",
     },
   },
-  relationships: {
-    heading: "Institutional relationships",
-    deferred: {
-      title: "Institutional relationships are not yet available",
-      description:
-        "Relationships between institutions will appear here once the relationship model is extended beyond people. This is an honest deferred state, not an absence of history.",
-    },
-  },
   records: {
     heading: "Historical records",
     reserved: {

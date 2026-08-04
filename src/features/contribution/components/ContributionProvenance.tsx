@@ -1,13 +1,8 @@
-"use client";
+import { ProvenanceAffordance } from "@/features/shared/ProvenanceAffordance";
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/Tooltip";
-
-// The contribution provenance affordance: reading stays calm; "how do we know
-// this?" is one keyboard-operable gesture away. The full provenance is carried
-// by the trigger's ACCESSIBLE NAME (deterministic, server-rendered, unique per
-// subject) -- the visual tooltip is an enhancement, not the only accessible
-// source. Mirrors the Timeline/Participation/Relationship/Institution pattern.
-// Client Component.
+// Thin adapter over the canonical ProvenanceAffordance (Production Experience
+// Phase I). The Contribution engine supplies a subject phrase; presentation
+// lives in ProvenanceAffordance.
 export interface ContributionProvenanceProps {
   subject: string;
   sourceLabel: string;
@@ -15,23 +10,5 @@ export interface ContributionProvenanceProps {
 }
 
 export function ContributionProvenance({ subject, sourceLabel, statusLabel }: ContributionProvenanceProps) {
-  return (
-    <TooltipProvider delayDuration={150}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            type="button"
-            aria-label={`Provenance of ${subject}: ${sourceLabel}. ${statusLabel}.`}
-            className="inline-flex items-center gap-1 rounded-sm text-xs text-muted-foreground underline decoration-dotted underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-          >
-            Source
-          </button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <span className="block font-medium text-foreground">{sourceLabel}</span>
-          <span className="block text-muted-foreground">{statusLabel}</span>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
+  return <ProvenanceAffordance subject={subject} sourceLabel={sourceLabel} statusLabel={statusLabel} />;
 }
