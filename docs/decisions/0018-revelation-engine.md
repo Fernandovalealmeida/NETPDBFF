@@ -213,3 +213,50 @@ unchanged.
 **pgTAP contract lock** for the `ProjectedNode` projection shape is retained (the
 M8.1 projection-shape defect class cannot recur), and a diamond in the relation graph is
 de-duplicated so no canonical edge is emitted twice.
+
+## Amendment — M8.4: continuity & rupture (C3) (Accepted)
+
+- Date: 2026-08-05
+- Milestone: M8.4 — Revelation Engine (continuity & rupture)
+
+M8.4 extends this same decision (no new ADR: same Revelation Engine, a new pattern
+family) with the **continuity & rupture** capability C3. It adds one bounded
+`SECURITY DEFINER` read model — `reveal_organization_continuity(uuid)` — and **nothing
+else**: no table, no write path, no new route, no navigation, no metric. For one
+institution it composes a time-ordered series of already-dated `participations` per
+capacity into their entailed **coverage** (merged year-intervals via gaps-and-islands,
+and the silences between them), alongside the institution's own explicit `status` and
+`closure` from `organizations`. It reads inline on the institution page after the M8.3
+descent. Operator design ratified with the user: **per-capacity coverage + terminal
+status.**
+
+**The four honest states, never collapsed.** CONTINUATION requires explicit continuation
+evidence (a capacity whose latest interval is open-ended); RUPTURE requires explicit
+termination evidence (the institution's terminal status vocabulary
+closed/absorbed/succeeded/merged, with its closure date); an EVIDENTIARY GAP is a silence
+between two documented intervals, never a demonstrated end; an UNKNOWN OUTCOME is a record
+that merely stops ("the available record does not document what followed", not "the
+activity ended"). The read model returns only the raw decomposable structure and stores
+no verdict; the four states are read deterministically at the surface and held apart in
+copy. The institution-level status is never propagated to date the end of any particular
+capacity.
+
+**Schema-grounding (reported, not silent).** The gap-vs-rupture crux is resolved by
+grounding rupture in the explicit `organizations.status` vocabulary + `closure_date`
+(only closed/absorbed/succeeded/merged read as `ended`); a gap is only ever a whole-year
+silence between two dated participation intervals, never derived from status or from a
+missing record. Coverage is merged and summarised at **year** granularity (overlapping
+and adjacent years merge; only a whole-year silence is a gap) — the conservative choice
+for a year-level overview; each participation keeps its full stored temporal for
+decomposition.
+
+**Reuse (no harvest).** One lens does not demonstrate repetition, so no new shared
+primitive was extracted; `parse-continuity.ts` reuses the `parse-shared` primitives,
+`ProjectedNode`, the temporal/provenance kernels, `RevealedPeriod`, and
+`ProvenanceAffordance` unchanged. The **pgTAP `ProjectedNode` contract lock** is retained
+(person nodes in coverage assert `type`/`label`), and pgTAP proves the non-collapse
+directly (a closed institution's coverage ending 1990 is never back-filled to a 1998
+closure).
+
+**Comparison C5 / recurrence C4 / bounded pathway C6** remain deferred (not assigned to
+M8.4).

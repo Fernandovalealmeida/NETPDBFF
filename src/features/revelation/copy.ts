@@ -16,7 +16,13 @@
 // interpretation), the institution surface says "documented co-presence", never
 // "generation".
 
-import type { LineageStep, RevelationCapacityRef } from "./types";
+import type {
+  CoverageGap,
+  CoverageSpan,
+  DocumentedStatus,
+  LineageStep,
+  RevelationCapacityRef,
+} from "./types";
 
 export const revelationCopy = {
   // M8.1 -- person co-presence.
@@ -133,6 +139,39 @@ export const revelationCopy = {
     upstreamHeading: "Documented mentors",
     downstreamHeading: "Documented students",
   },
+
+  // M8.4 -- continuity & rupture.
+  organizationContinuity: {
+    title: "Documented continuity and rupture",
+    whatThisShows:
+      "For each capacity people are documented in here, the periods the record " +
+      "covers — and the silences between them. A period that runs to an open-ended " +
+      "record is documented as still current; a break between periods is a gap in " +
+      "the record, not a documented ending; a record that simply stops leaves what " +
+      "followed undocumented. The institution's own recorded status is shown as it " +
+      "stands, separately from the coverage.",
+    empty: {
+      title: "No documented continuity yet",
+      description:
+        "This institution carries no recorded terminal status and no dated " +
+        "participation records to trace over time. This is an honest absence, not a " +
+        "claim that nothing was sustained or that anything ended — it shows only " +
+        "what dated, explicit records support.",
+    },
+    limitsHeading: "Limits of this view",
+    limits:
+      "This shows the documented coverage, not the true one. It is composed only " +
+      "from dated, explicit participation records preserved on this platform, so " +
+      "periods that were real but never recorded — or recorded without dates — do " +
+      "not appear, and coverage is summarised by year. A gap between recorded " +
+      "periods is a silence in the record; it is never, by itself, proof that the " +
+      "capacity was interrupted or ended. Where the record stops, the honest reading " +
+      "is that what followed is not documented — not that the activity ended. The " +
+      "institution's recorded status is its own explicit assertion; it is never used " +
+      "to date the end of any particular capacity.",
+    statusHeading: "Recorded status of this institution",
+    coverageHeading: "Documented coverage by capacity",
+  },
 } as const;
 
 function lower(value: string): string {
@@ -182,4 +221,80 @@ export function revelationSourceRecordLabel(type: string): string {
 export function describeLineageStep(step: LineageStep): string {
   const role = lower(step.kind.sourceRole);
   return `${step.from.label} is a documented ${role} of ${step.to.label}.`;
+}
+
+/**
+ * Deterministic one-sentence reading of a single coverage span in a capacity
+ * (the capacity itself is the section heading, so it is not repeated here). An
+ * open-ended span states the record documents the capacity as still current --
+ * the ONE explicit continuation signal; a closed span states only the documented
+ * extent, and asserts nothing about what came after it.
+ */
+export function describeCoverageSpan(span: CoverageSpan): string {
+  if (span.isOpen) {
+    return `Documented from ${span.startYear}, open-ended in the latest record.`;
+  }
+  if (span.endYear === span.startYear) {
+    return `Documented in ${span.startYear}.`;
+  }
+  return `Documented from ${span.startYear} to ${span.endYear}.`;
+}
+
+/**
+ * Deterministic reading of a silence between two documented spans. It is stated
+ * as a gap in the record -- explicitly NOT a demonstrated interruption or end.
+ */
+export function describeCoverageGap(gap: CoverageGap): string {
+  return (
+    `No participation in this capacity is documented between ${gap.fromYear} and ` +
+    `${gap.toYear} — a gap in the record, not a documented ending.`
+  );
+}
+
+/**
+ * Deterministic per-capacity outcome sentence, read from the single explicit
+ * continuation signal. Open-ended latest record -> documented as still current
+ * (continuation). Otherwise -> the record does not document what followed
+ * (unknown outcome) -- NEVER "the capacity ended", which the record does not say.
+ */
+export function describeContinuityOutcome(latestIsOpen: boolean): string {
+  return latestIsOpen
+    ? "The latest documented participation is open-ended, so the record documents " +
+        "this capacity as still current here."
+    : "After the latest documented period, the record does not document what " +
+        "followed.";
+}
+
+/**
+ * Deterministic reading of the institution's OWN recorded status, from the
+ * explicit organizations.status vocabulary. Only the terminal keys (closed,
+ * absorbed, succeeded, merged) state a documented rupture, with the closure year
+ * when one is recorded. Provisional / unknown states say plainly that the record
+ * does not determine the current status. Never inferred from the coverage.
+ */
+export function describeDocumentedStatus(
+  status: DocumentedStatus,
+  closureYear: number | null,
+): string {
+  const since = closureYear === null ? "." : ` in ${closureYear}.`;
+  switch (status.key) {
+    case "active":
+      return "The record documents this institution as active.";
+    case "historical":
+      return "The record documents this institution as historical.";
+    case "dormant":
+      return "The record documents this institution as dormant.";
+    case "closed":
+      return `The record documents this institution as closed${since}`;
+    case "merged":
+      return `The record documents this institution as merged into another${since}`;
+    case "absorbed":
+      return `The record documents this institution as absorbed into another${since}`;
+    case "succeeded":
+      return `The record documents this institution as succeeded by another${since}`;
+    case "provisional":
+      return "The record does not yet determine this institution's current status.";
+    default:
+      return "The record does not determine this institution's current status.";
+  }
 }

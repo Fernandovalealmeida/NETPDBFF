@@ -166,3 +166,19 @@ vantage, composed from the same explicit directional records M7 connects one hop
 time, and decomposable back to them. It records what followed what — never what followed
 from what, which it leaves to the reader and to M9. See
 `docs/m8.3-lineage-institutional-evolution.md`.
+
+## M8.4 — Revelation (continuity & rupture) deepens institution reading, without a new step
+
+The institution page grows one further vantage, within the canonical journey and never
+beside it. Opening an institution, a reader now finds — after its people, contributions,
+documented co-presence, and documented descent — its **documented continuity and
+rupture**: for each capacity people were recorded in, the years the record covers and the
+silences between them, and the institution's own recorded status. A span that runs to an
+open-ended record reads as still current; a break between spans is shown as a gap in the
+record, never as an ending; where the record simply stops, the reader is told plainly
+that what followed is not documented — not that it ended; and where the institution's own
+record says it closed, merged, or was succeeded, that is shown as its own explicit status,
+never used to date the end of any one capacity. The reader never "enters discovery"; the
+page simply grows a further vantage, composed from the same dated participation records
+and decomposable back to them. It records what the record covers — never why it continued
+or ceased, which it leaves to the reader and to M9. See `docs/m8.4-continuity-rupture.md`.

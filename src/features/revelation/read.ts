@@ -8,6 +8,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 
+import { parseOrganizationContinuityDocument } from "./parse-continuity";
 import {
   parseOrganizationLineageDocument,
   parsePersonMentorshipLineageDocument,
@@ -15,6 +16,7 @@ import {
 import { parsePersonCohortsDocument } from "./parse";
 import { parseOrganizationGenerationsDocument } from "./parse-organization";
 import type {
+  OrganizationContinuityDocument,
   OrganizationGenerationsDocument,
   OrganizationLineageDocument,
   PersonCohortsDocument,
@@ -82,4 +84,22 @@ export async function getPersonMentorshipLineage(
   }
 
   return parsePersonMentorshipLineageDocument(data);
+}
+
+/** M8.4 -- continuity & rupture: for one institution, the documented coverage of
+ * each participation capacity over time (merged intervals and the silences
+ * between them) and the institution's own explicit terminal status and closure. */
+export async function getOrganizationContinuity(
+  organizationId: string,
+): Promise<OrganizationContinuityDocument | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("reveal_organization_continuity", {
+    p_organization_id: organizationId,
+  });
+
+  if (error || data === null || data === undefined) {
+    return null;
+  }
+
+  return parseOrganizationContinuityDocument(data);
 }

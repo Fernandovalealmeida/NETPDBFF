@@ -507,3 +507,18 @@ vantage that opens within it — not a destination: no discovery page, no dashbo
 graph, no metric. It records what came before what / who mentored whom, states its
 limits, and never claims transmission, a school, or causation. See
 `docs/m8.3-lineage-institutional-evolution.md` and `docs/decisions/0018-revelation-engine.md`.
+
+## M8.4 — Continuity & rupture reads inline; no new route
+
+**No new route, no navigation entry.** M8.4 adds the continuity & rupture revelation —
+the documented **coverage** of each participation capacity at an institution over time,
+and the institution's own recorded status — **inline** on the existing institution page,
+after the M8.3 descent, inside the same `ReadingSpine`. Each capacity's coverage reads as
+its year-summarised spans and the silences between them, every span decomposable to its
+participation records (each person a doorway). It is infrastructure that enriches reading,
+a vantage that opens within it — not a destination: no discovery page, no dashboard, no
+graph, no metric. It distinguishes four states and never collapses them — documented
+continuation, documented rupture (the institution's terminal status), an evidentiary gap
+(a silence, never an end), and an unknown outcome (a record that merely stops) — and
+states its limits. See `docs/m8.4-continuity-rupture.md` and
+`docs/decisions/0018-revelation-engine.md`.

@@ -7,12 +7,18 @@
 
 import type {
   Cohort,
+  CoverageGap,
+  CoverageSpan,
+  DocumentedStatus,
   GenerationAnchor,
   LineageStep,
+  OrganizationContinuityDocument,
   OrganizationGenerationsDocument,
   OrganizationLineageDocument,
+  Practice,
   PersonCohortsDocument,
   PersonMentorshipLineageDocument,
+  StatusCategory,
 } from "./types";
 
 // ---- M8.1: person co-presence ------------------------------------------
@@ -80,6 +86,86 @@ export function buildPersonMentorshipLineageView(
   document: PersonMentorshipLineageDocument | null,
 ): LineageView {
   return buildLineageView(document);
+}
+
+// ---- M8.4: continuity & rupture ---------------------------------------
+
+/** One capacity's coverage, read for presentation. `latestIsOpen` is the SINGLE
+ * explicit continuation signal: the latest documented span is open-ended (an
+ * ongoing participation). When it is false the practice's outcome is an UNKNOWN
+ * OUTCOME -- the record does not document what followed -- NEVER an ending. Gaps
+ * carried through are EVIDENTIARY GAPS (silences), never interruptions proven to
+ * be ends. Spans are already earliest-first from the read model, and an open
+ * span is always the last, so the latest span is simply the last one. */
+export interface ContinuityPracticeView {
+  capacity: Practice["capacity"];
+  spans: CoverageSpan[];
+  gaps: CoverageGap[];
+  latestIsOpen: boolean;
+}
+
+export interface OrganizationContinuityView {
+  isEmpty: boolean;
+  status: DocumentedStatus;
+  closure: OrganizationContinuityDocument["closure"];
+  /** The closure year, pre-computed for a year-level status sentence. */
+  closureYear: number | null;
+  /** True when the institution's own record says something beyond the default
+   * 'active' -- a terminal/dormant/historical status, or a recorded closure.
+   * This is why a document with no practices can still be a revelation. */
+  hasStatusSignal: boolean;
+  practices: ContinuityPracticeView[];
+}
+
+const SIGNALLING_CATEGORIES: readonly StatusCategory[] = ["historical", "ended", "paused"];
+
+function buildPracticeView(practice: Practice): ContinuityPracticeView {
+  const latest = practice.spans.length > 0 ? practice.spans[practice.spans.length - 1] : null;
+  return {
+    capacity: practice.capacity,
+    spans: practice.spans,
+    gaps: practice.gaps,
+    latestIsOpen: latest != null && latest.isOpen,
+  };
+}
+
+/** A null document, or an all-default institution with no coverage, both read as
+ * the same honest absence. But an explicit terminal/dormant/historical status or
+ * a recorded closure IS a revelation even with no coverage -- the record speaks
+ * to the institution's continuity directly -- so the view is not empty then. The
+ * four honest states are read from this structure; none is fabricated or filled. */
+export function buildOrganizationContinuityView(
+  document: OrganizationContinuityDocument | null,
+): OrganizationContinuityView {
+  if (document === null) {
+    return {
+      isEmpty: true,
+      status: { key: "status_unknown", category: "unknown" },
+      closure: null,
+      closureYear: null,
+      hasStatusSignal: false,
+      practices: [],
+    };
+  }
+
+  const closureYear =
+    document.closure !== null && /^\d{4}/.test(document.closure.date)
+      ? Number(document.closure.date.slice(0, 4))
+      : null;
+
+  const hasStatusSignal =
+    SIGNALLING_CATEGORIES.includes(document.status.category) || document.closure !== null;
+
+  const practices = document.practices.map(buildPracticeView);
+
+  return {
+    isEmpty: practices.length === 0 && !hasStatusSignal,
+    status: document.status,
+    closure: document.closure,
+    closureYear,
+    hasStatusSignal,
+    practices,
+  };
 }
 
 // Provenance labelling is the platform-shared kernel, re-exported so a revealed

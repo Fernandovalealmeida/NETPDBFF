@@ -96,9 +96,14 @@ test.describe("an institution reads as a historical actor", () => {
     await expect(page.getByText("Station established")).toBeVisible();
 
     // People and participation (projected from the institution's perspective).
+    // Scoped to the "People and participation" region: the M8.4 continuity
+    // section renders the same capacity label as an h3 ("Researcher") in a
+    // different region, so the capacity heading and the participant heading are
+    // asserted inside their own section.
+    const participation = page.locator('section[aria-labelledby="participation-heading"]');
     await expect(page.getByRole("heading", { level: 2, name: "People and participation" })).toBeVisible();
-    await expect(page.getByRole("heading", { level: 3, name: "Researcher", exact: true })).toBeVisible();
-    await expect(page.getByRole("heading", { level: 4, name: person.displayName, exact: true })).toBeVisible();
+    await expect(participation.getByRole("heading", { level: 3, name: "Researcher", exact: true })).toBeVisible();
+    await expect(participation.getByRole("heading", { level: 4, name: person.displayName, exact: true })).toBeVisible();
 
     // Honest reserved / deferred surfaces.
     await expect(page.getByRole("heading", { level: 2, name: "Institutional relationships" })).toBeVisible();
@@ -150,16 +155,21 @@ test.describe("one canonical participation is consistent from both perspectives"
     const person = await newPerson();
     await addParticipation(person.id, inst.id, { capacity: "director", startDate: "1990-01-01", startPrecision: "year" });
 
-    // Institution page: the person appears in its human history.
+    // Institution page: the person appears in its human history. Scoped to the
+    // "People and participation" region: the M8.4 continuity section renders the
+    // same capacity ("Director") as an h3 and the same participant as a doorway
+    // link in a different region, so the capacity heading, the participant
+    // heading, and the doorway link are asserted inside their own section.
     await page.goto(inst.url);
-    await expect(page.getByRole("heading", { level: 3, name: "Director", exact: true })).toBeVisible();
-    await expect(page.getByRole("heading", { level: 4, name: person.displayName, exact: true })).toBeVisible();
+    const participation = page.locator('section[aria-labelledby="participation-heading"]');
+    await expect(participation.getByRole("heading", { level: 3, name: "Director", exact: true })).toBeVisible();
+    await expect(participation.getByRole("heading", { level: 4, name: person.displayName, exact: true })).toBeVisible();
 
     // Production Experience Phase I: the participant's name is a DOORWAY to
     // their canonical Person page — meaningful link text (the person's name,
     // never "View"), the mirror of the org-name link asserted below. No dead
     // end from an institution's human history.
-    await expect(page.getByRole("link", { name: person.displayName, exact: true })).toHaveAttribute(
+    await expect(participation.getByRole("link", { name: person.displayName, exact: true })).toHaveAttribute(
       "href",
       `/people/${person.id}`,
     );

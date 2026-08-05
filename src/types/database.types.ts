@@ -1508,6 +1508,10 @@ export type Database = {
           status: string
         }[]
       }
+      reveal_organization_continuity: {
+        Args: { p_organization_id: string }
+        Returns: Json
+      }
       reveal_organization_generations: {
         Args: { p_organization_id: string }
         Returns: Json

@@ -271,3 +271,21 @@ rule). Comparison C5 is enabled by the lineage juxtaposition but not assigned to
 (deferred). M8.4+ (continuity/rupture, recurrence, bounded pathway) remain deferred.
 See `docs/m8.3-lineage-institutional-evolution.md` and
 `docs/decisions/0018-revelation-engine.md` (amended).
+
+**M8.4 — Revelation Engine: continuity & rupture (C3) (implemented, pending local validation).**
+The continuity family: one bounded `SECURITY DEFINER` read model —
+`reveal_organization_continuity(uuid)` — and **nothing else** (no table, no write). For
+one institution it composes each capacity's dated `participations` into their **coverage**
+over time (merged year-intervals via gaps-and-islands + the silences between them),
+alongside the institution's own explicit `status` and `closure`. It holds four honest
+states apart and never collapses them: CONTINUATION (an open-ended latest interval),
+RUPTURE (the terminal status vocabulary + closure date), an EVIDENTIARY GAP (a whole-year
+silence between intervals, never an end), and an UNKNOWN OUTCOME (a record that merely
+stops — "not documented what followed", never "ended"). Reads **inline** on the
+institution page after the M8.3 descent (no route, no navigation, no metric, no graph),
+with pgTAP/Vitest/Playwright coverage. Rupture is grounded only in the explicit
+`organizations.status` + `closure_date`, never inferred from the record's shape, and the
+institution's terminal status never dates a particular capacity's end. Recurrence (C4,
+M8.5), bounded pathway (C6, M8.6), and comparison (C5, enabled, not assigned) remain
+deferred. See `docs/m8.4-continuity-rupture.md` and
+`docs/decisions/0018-revelation-engine.md` (amended).

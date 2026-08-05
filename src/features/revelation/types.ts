@@ -21,7 +21,7 @@
 
 import type { ProjectedNode } from "@/features/network/types";
 import type { ProvenanceInfo } from "@/features/shared/provenance";
-import type { TemporalValue } from "@/features/shared/temporal";
+import type { DatePrecision, TemporalValue } from "@/features/shared/temporal";
 
 /** The generic, data-driven capacity of a participation (from
  * participation_capacities), resolved by the read model. */
@@ -161,4 +161,84 @@ export interface PersonMentorshipLineageDocument {
   person: ProjectedNode;
   upstream: LineageStep[];
   downstream: LineageStep[];
+}
+
+// ---- M8.4: continuity & rupture (documented coverage) --------------------
+
+/** One participation inside a coverage span: the person (a doorway), that
+ * participation's own dates and provenance, and the exact canonical
+ * `participations` row it decomposes to. This is what keeps a coverage span
+ * decomposable without remainder -- a span is only ever the union of these. */
+export interface CoverageParticipation {
+  person: ProjectedNode;
+  temporal: TemporalValue;
+  provenance: ProvenanceInfo;
+  source: RevelationSourceRef;
+}
+
+/** One documented coverage span in a capacity: the merged interval of a run of
+ * overlapping/touching dated participations, summarised by year for the
+ * overview, and `isOpen` when its latest participation is open-ended (an
+ * explicit CONTINUATION signal -- the only one). `endYear` is null exactly when
+ * `isOpen`. The `participations` decompose the span back to its records. */
+export interface CoverageSpan {
+  startYear: number;
+  /** Null exactly when isOpen (an open-ended participation has no documented end). */
+  endYear: number | null;
+  isOpen: boolean;
+  participations: CoverageParticipation[];
+}
+
+/** A silence BETWEEN two documented coverage spans in a capacity: the years
+ * during which the record documents no participation in that capacity. It is an
+ * EVIDENTIARY GAP -- a break in the record -- and is NEVER a demonstrated end. */
+export interface CoverageGap {
+  fromYear: number;
+  toYear: number;
+}
+
+/** The documented coverage of ONE participation capacity at the institution: its
+ * spans (in reading order, earliest first) and the gaps between them. */
+export interface Practice {
+  capacity: RevelationCapacityRef;
+  spans: CoverageSpan[];
+  gaps: CoverageGap[];
+}
+
+/** The neutral category the surface reads the institution's own documented
+ * status through. Only `ended` carries explicit termination evidence (a
+ * documented rupture -- closed/absorbed/succeeded/merged); `active` is
+ * continuation of the institution; `paused` is dormant; `historical` is a
+ * documented historical state; `unknown` is provisional/status_unknown (the
+ * record does not determine the current status). Never inferred from the
+ * participation record's shape. */
+export type StatusCategory = "active" | "historical" | "ended" | "paused" | "unknown";
+
+/** The institution's own documented status: the raw explicit key from the
+ * organizations.status vocabulary and its neutral reading category. */
+export interface DocumentedStatus {
+  key: string;
+  category: StatusCategory;
+}
+
+/** A documented closure moment -- a point in time (date + its precision), not an
+ * interval. Present only when the record carries a closure date. */
+export interface ClosureMoment {
+  date: string;
+  precision: DatePrecision | null;
+}
+
+/** The continuity & rupture revelation document for one institution (from
+ * reveal_organization_continuity): the institution, its own documented status
+ * and closure, and the documented coverage of each participation capacity over
+ * time. An empty practices array with a non-signalling status is an honest
+ * absence, not a claim that nothing was sustained. The four honest states
+ * (continuation / rupture / evidentiary gap / unknown outcome) are read
+ * deterministically from this structure at the surface and never collapsed. */
+export interface OrganizationContinuityDocument {
+  organizationId: string;
+  organization: ProjectedNode;
+  status: DocumentedStatus;
+  closure: ClosureMoment | null;
+  practices: Practice[];
 }

@@ -18,9 +18,14 @@ import { narrativeFacet } from "@/features/institution/derive";
 import { getOrganization, getOrganizationParticipation, getOrganizationTimeline } from "@/features/institution/read";
 import { InstitutionLineage } from "@/features/network/components/InstitutionLineage";
 import { getOrganizationNetwork } from "@/features/network/read";
+import { OrganizationContinuity } from "@/features/revelation/components/OrganizationContinuity";
 import { OrganizationGenerations } from "@/features/revelation/components/OrganizationGenerations";
 import { OrganizationLineage } from "@/features/revelation/components/OrganizationLineage";
-import { getOrganizationGenerations, getOrganizationLineage } from "@/features/revelation/read";
+import {
+  getOrganizationContinuity,
+  getOrganizationGenerations,
+  getOrganizationLineage,
+} from "@/features/revelation/read";
 import { Timeline } from "@/features/timeline/components/Timeline";
 
 // The Institution page -- a first-class historical reading experience for an
@@ -45,6 +50,12 @@ import { Timeline } from "@/features/timeline/components/Timeline";
 // rows via get_organization_network -- the one genuinely new documented
 // connection M7 adds to the reading experience. There is no "enter the network"
 // link; reading simply flows on through the connections.
+//
+// M8 refinement (ADR-0018): the Revelation Engine reads INLINE here, never as a
+// destination. M8.2 documented co-presence, M8.3 documented institutional
+// descent, and now M8.4 documented continuity & rupture (per-capacity coverage
+// over time + the institution's own recorded status), each a deterministic
+// composition of already-preserved Assertions, decomposable back to them.
 export const metadata: Metadata = {
   title: pageTitle("Institution"),
 };
@@ -67,6 +78,7 @@ export default async function InstitutionPage({ params }: InstitutionPageProps) 
   const network = await getOrganizationNetwork(organizationId);
   const generations = await getOrganizationGenerations(organizationId);
   const lineage = await getOrganizationLineage(organizationId);
+  const continuity = await getOrganizationContinuity(organizationId);
 
   const introduction = narrativeFacet(organization, "introduction");
   const overview = narrativeFacet(organization, "overview");
@@ -120,6 +132,8 @@ export default async function InstitutionPage({ params }: InstitutionPageProps) 
           <OrganizationGenerations document={generations} />
 
           <OrganizationLineage document={lineage} />
+
+          <OrganizationContinuity document={continuity} />
 
           <InstitutionReservedSection
             id="records"
