@@ -494,3 +494,16 @@ states plainly that it shows a documented co-presence (a record that people were
 here in the same years), not that they knew one another; and it marks its own
 limits. See `docs/m8.2-institution-co-presence-revelation.md` and
 `docs/decisions/0018-revelation-engine.md`.
+
+## M8.3 — Lineage reads inline; no new route
+
+**No new route, no navigation entry.** M8.3 adds the lineage revelation — the
+documented succession/formation **descent** of an institution and the documented
+**mentorship** descent of a person — **inline** on the existing institution and person
+pages, after their prior engines, inside the same `ReadingSpine`. Each step reads
+directionally ("X is a documented predecessor/mentor of Y"), and BOTH of its endpoints
+are doorways to their own canonical pages. It is infrastructure that enriches reading, a
+vantage that opens within it — not a destination: no discovery page, no dashboard, no
+graph, no metric. It records what came before what / who mentored whom, states its
+limits, and never claims transmission, a school, or causation. See
+`docs/m8.3-lineage-institutional-evolution.md` and `docs/decisions/0018-revelation-engine.md`.

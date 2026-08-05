@@ -19,7 +19,8 @@ import { getOrganization, getOrganizationParticipation, getOrganizationTimeline 
 import { InstitutionLineage } from "@/features/network/components/InstitutionLineage";
 import { getOrganizationNetwork } from "@/features/network/read";
 import { OrganizationGenerations } from "@/features/revelation/components/OrganizationGenerations";
-import { getOrganizationGenerations } from "@/features/revelation/read";
+import { OrganizationLineage } from "@/features/revelation/components/OrganizationLineage";
+import { getOrganizationGenerations, getOrganizationLineage } from "@/features/revelation/read";
 import { Timeline } from "@/features/timeline/components/Timeline";
 
 // The Institution page -- a first-class historical reading experience for an
@@ -65,6 +66,7 @@ export default async function InstitutionPage({ params }: InstitutionPageProps) 
   const contributions = await getOrganizationContributions(organizationId);
   const network = await getOrganizationNetwork(organizationId);
   const generations = await getOrganizationGenerations(organizationId);
+  const lineage = await getOrganizationLineage(organizationId);
 
   const introduction = narrativeFacet(organization, "introduction");
   const overview = narrativeFacet(organization, "overview");
@@ -116,6 +118,8 @@ export default async function InstitutionPage({ params }: InstitutionPageProps) 
           <InstitutionContributions document={contributions} />
 
           <OrganizationGenerations document={generations} />
+
+          <OrganizationLineage document={lineage} />
 
           <InstitutionReservedSection
             id="records"

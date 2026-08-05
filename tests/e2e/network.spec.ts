@@ -99,7 +99,8 @@ test.describe("Knowledge Network — institutional lineage reads inline on the I
     await page.goto(successor.url);
     await expect(page.getByRole("heading", { level: 2, name: "Institutional relationships" })).toBeVisible();
     await expect(page.getByText(`${predecessor.name} was ${successor.name}'s predecessor.`)).toBeVisible();
-    await expect(page.getByRole("link", { name: predecessor.name })).toHaveAttribute(
+    const institutionalRelationships = page.locator('section[aria-labelledby="institutional-relationships-heading"]');
+    await expect(institutionalRelationships.getByRole("link", { name: predecessor.name })).toHaveAttribute(
       "href",
       `/institutions/${predecessor.id}`,
     );

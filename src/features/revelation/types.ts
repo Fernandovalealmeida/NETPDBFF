@@ -111,3 +111,54 @@ export interface OrganizationGenerationsDocument {
   organization: ProjectedNode;
   anchors: GenerationAnchor[];
 }
+
+// ---- M8.3: lineage & institutional evolution (documented descent) --------
+
+/** A relationship-kind reference (mentorship, succession, merger, ...) resolved
+ * by the read model -- the structural kind of a lineage step, never a meaning. */
+export interface RelationshipKindRef {
+  key: string;
+  label: string;
+  /** The source end's role label from the kind vocabulary (e.g. "Predecessor",
+   * "Mentor", "Antecedent body"), used to read a step directionally without
+   * hard-coding role words in components. */
+  sourceRole: string;
+}
+
+/** One documented step in a lineage chain: a single directional relationship
+ * Assertion, projected as its two endpoints in the assertion's own direction
+ * (`from` = source, `to` = target), with its kind, temporal, provenance, the
+ * exact canonical row it decomposes to (`source`), and its position relative to
+ * the focal record (`direction` = upstream/downstream ancestor/descendant;
+ * `depth` = hop distance, shown for honesty, never as a rank). */
+export interface LineageStep {
+  source: RevelationSourceRef;
+  kind: RelationshipKindRef;
+  from: ProjectedNode;
+  to: ProjectedNode;
+  temporal: TemporalValue;
+  provenance: ProvenanceInfo;
+  direction: "upstream" | "downstream";
+  depth: number;
+}
+
+/** Institutional succession/formation descent (reveal_organization_lineage): the
+ * focal institution, its documented antecedents (upstream) and successors
+ * (downstream), each a decomposable LineageStep. Empty arrays are honest
+ * absence, not a claim that the institution had no predecessor or successor. */
+export interface OrganizationLineageDocument {
+  organizationId: string;
+  organization: ProjectedNode;
+  upstream: LineageStep[];
+  downstream: LineageStep[];
+}
+
+/** Documented mentorship descent (reveal_person_mentorship_lineage): the focal
+ * person, their documented mentors (upstream) and students (downstream), each a
+ * decomposable LineageStep. Empty arrays are honest absence. */
+export interface PersonMentorshipLineageDocument {
+  personId: string;
+  person: ProjectedNode;
+  upstream: LineageStep[];
+  downstream: LineageStep[];
+}

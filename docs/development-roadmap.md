@@ -252,3 +252,22 @@ company** (no event reading surface) and **comparison C5** (its M8.3 lineage hos
 are deferred; M8.3+ (lineage, continuity/rupture, recurrence, bounded pathway)
 remain deferred. See `docs/m8.2-institution-co-presence-revelation.md` and
 `docs/decisions/0018-revelation-engine.md` (amended).
+
+**M8.3 — Revelation Engine: lineage & institutional evolution (C2) (implemented, pending local validation).**
+The lineage family: two bounded recursive `SECURITY DEFINER` read models —
+`reveal_organization_lineage(uuid)` (institution succession/merger descent, deepening
+M7's one-hop institutional lineage to the full transitive chain) and
+`reveal_person_mentorship_lineage(uuid)` (person mentorship descent) — and **nothing
+else** (no table, no write). Each traverses explicit same-kind directional edges
+upstream and downstream, depth-capped (16) and cycle-safe, each canonical edge
+de-duplicated to min depth, each step decomposable to its relationship row with both
+endpoints as doorways. It shows what followed what, never what followed from what; no
+inference, similarity, ranking, centrality, or interpretation. Reads **inline** on the
+institution and person pages (no route, no navigation, no metric, no graph), with
+pgTAP/Vitest/Playwright coverage. Scope clarification: the evolution chain uses the
+temporal-descent kinds {succession, merger} only; governance kinds (administration,
+parent_body, hosting) stay in M7's one-hop section (same-kind / structural-naming
+rule). Comparison C5 is enabled by the lineage juxtaposition but not assigned to M8.3
+(deferred). M8.4+ (continuity/rupture, recurrence, bounded pathway) remain deferred.
+See `docs/m8.3-lineage-institutional-evolution.md` and
+`docs/decisions/0018-revelation-engine.md` (amended).

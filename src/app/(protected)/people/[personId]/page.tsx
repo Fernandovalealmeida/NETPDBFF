@@ -17,7 +17,8 @@ import { getPersonParticipation } from "@/features/participation/read";
 import { Relationships } from "@/features/relationships/components/Relationships";
 import { getPersonRelationships } from "@/features/relationships/read";
 import { PersonCohorts } from "@/features/revelation/components/PersonCohorts";
-import { getPersonCohorts } from "@/features/revelation/read";
+import { PersonMentorshipLineage } from "@/features/revelation/components/PersonMentorshipLineage";
+import { getPersonCohorts, getPersonMentorshipLineage } from "@/features/revelation/read";
 import { Timeline } from "@/features/timeline/components/Timeline";
 import { getPersonTimeline } from "@/features/timeline/read";
 
@@ -65,6 +66,7 @@ export default async function BiographyPage({ params }: BiographyPageProps) {
   const relationships = await getPersonRelationships(personId);
   const contributions = await getPersonContributions(personId);
   const cohorts = await getPersonCohorts(personId);
+  const mentorshipLineage = await getPersonMentorshipLineage(personId);
 
   return (
     <main id="main-content" tabIndex={-1} className="py-16">
@@ -87,6 +89,8 @@ export default async function BiographyPage({ params }: BiographyPageProps) {
           <PersonContributions document={contributions} />
 
           <PersonCohorts document={cohorts} />
+
+          <PersonMentorshipLineage document={mentorshipLineage} />
 
           <div className="flex flex-col gap-8">
             {RESERVED_SECTION_ORDER.map((key) => {

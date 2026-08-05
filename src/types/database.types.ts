@@ -1512,7 +1512,15 @@ export type Database = {
         Args: { p_organization_id: string }
         Returns: Json
       }
+      reveal_organization_lineage: {
+        Args: { p_organization_id: string }
+        Returns: Json
+      }
       reveal_person_cohorts: { Args: { p_person_id: string }; Returns: Json }
+      reveal_person_mentorship_lineage: {
+        Args: { p_person_id: string }
+        Returns: Json
+      }
       search_claimable_people: {
         Args: { p_query?: string }
         Returns: {

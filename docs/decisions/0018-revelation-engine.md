@@ -174,3 +174,42 @@ deferred until their surfaces exist; nothing about them is built here.
 **pgTAP contract lock retained and extended.** As with M8.1, the pgTAP asserts the
 exact `ProjectedNode` projection shape (`type`/`label`) the parser requires, so the
 M8.1 projection-shape defect class cannot recur.
+
+---
+
+## Amendment — M8.3: lineage & institutional evolution (C2) (Accepted)
+
+- Date: 2026-08-05
+- Milestone: M8.3 — Revelation Engine (lineage)
+
+M8.3 extends this same decision (no new ADR: same Revelation Engine, a new pattern
+family) with the **lineage** capability C2. It adds two bounded recursive read models —
+`reveal_organization_lineage(uuid)` and `reveal_person_mentorship_lineage(uuid)` — and
+**nothing else**: no table, no write path, no new route, no navigation, no metric. Each
+composes a chain of **same-kind directional** assertions (institution succession/merger;
+person mentorship) by a bounded (depth 16), cycle-safe recursive traversal, each
+canonical edge de-duplicated to its minimum depth, each step decomposable to its
+relationship row with both endpoints in the canonical `ProjectedNode` shape and the
+directional sentence driven by the kind vocabulary's `source_role_label`. It reads
+inline on the institution and person pages.
+
+**Scope clarification (reported, not silent).** The blueprint's C2 body lists
+"succession/merger/administration"; `administration`/`parent_body`/`hosting` are
+governance/structural relations, not temporal descent. Folding them into an evolution
+chain would violate the same-kind / structural-naming rule (Spec §1, §3.4). The chain
+therefore uses {succession, merger} only; governance kinds remain in M7's one-hop
+"Institutional relationships" section. Faithful narrowing to the constitutional rule,
+reversible if later wanted.
+
+**Comparison C5** is enabled by this lineage juxtaposition but **not assigned** to M8.3
+(the blueprint assigns C2 only; C5 is a deferred M8.2 capability). It is not built here.
+
+**Reuse (harvested).** With two lineage lenses demonstrating the identical need, a shared
+`LineageStep` type + `parseStep` (`parse-lineage.ts`) + a shared `LineageStepList`
+component were introduced; the M8.1/M8.2 primitives (`parse-shared`, `ProjectedNode`,
+temporal/provenance kernels, `RevealedPeriod`, `ProvenanceAffordance`) are reused
+unchanged.
+
+**pgTAP contract lock** for the `ProjectedNode` projection shape is retained (the
+M8.1 projection-shape defect class cannot recur), and a diamond in the relation graph is
+de-duplicated so no canonical edge is emitted twice.

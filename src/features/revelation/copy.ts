@@ -16,7 +16,7 @@
 // interpretation), the institution surface says "documented co-presence", never
 // "generation".
 
-import type { RevelationCapacityRef } from "./types";
+import type { LineageStep, RevelationCapacityRef } from "./types";
 
 export const revelationCopy = {
   // M8.1 -- person co-presence.
@@ -76,6 +76,63 @@ export const revelationCopy = {
     participationsHeading: "Documented here",
     coPresentHeading: "Documented here at the same time",
   },
+
+  // M8.3 -- institutional succession/formation descent.
+  organizationLineage: {
+    title: "Documented institutional descent",
+    whatThisShows:
+      "A documented chain of succession and formation records connecting this " +
+      "institution to others — those the record places before it, and those it " +
+      "places after it. It records what came before what, not what caused or gave " +
+      "rise to what; the meaning of a succession is left to a historian.",
+    empty: {
+      title: "No documented descent yet",
+      description:
+        "No succession or formation record yet connects this institution to " +
+        "another. This is an honest absence, not a claim that it had no predecessor " +
+        "or successor — it shows only descent supported by explicit, directional " +
+        "institutional records.",
+    },
+    limitsHeading: "Limits of this view",
+    limits:
+      "This shows the documented descent, not the true one. It is composed only " +
+      "from explicit succession and formation records preserved on this platform, " +
+      "and follows them only as far as they are recorded; a gap is a silence in the " +
+      "record, never proof that no link existed. It records the order the records " +
+      "document — never what followed from what, which is a matter of historical " +
+      "judgement.",
+    subjectLabel: "The institution you are reading",
+    upstreamHeading: "Documented antecedents",
+    downstreamHeading: "Documented successors",
+  },
+
+  // M8.3 -- documented mentorship descent.
+  personMentorshipLineage: {
+    title: "Documented mentorship lineage",
+    whatThisShows:
+      "A documented chain of mentorship records connecting this person to others — " +
+      "the mentors the record places before them, and the students it places after " +
+      "them. It records who mentored whom, and nothing about what a mentorship " +
+      "passed on or what it meant.",
+    empty: {
+      title: "No documented mentorship lineage yet",
+      description:
+        "No mentorship record yet connects this person to a mentor or a student. " +
+        "This is an honest absence, not a claim that there was none — it shows only " +
+        "mentorship supported by explicit, directional records.",
+    },
+    limitsHeading: "Limits of this view",
+    limits:
+      "This shows the documented mentorship lineage, not the true one. It is " +
+      "composed only from explicit mentorship records preserved on this platform, " +
+      "and follows them only as far as they are recorded; a gap is a silence in the " +
+      "record, never proof that no link existed. It records who mentored whom — " +
+      "never what a mentorship passed on or what it meant, which is a matter of " +
+      "historical judgement.",
+    subjectLabel: "The person you are reading",
+    upstreamHeading: "Documented mentors",
+    downstreamHeading: "Documented students",
+  },
 } as const;
 
 function lower(value: string): string {
@@ -106,7 +163,23 @@ export function revelationSourceRecordLabel(type: string): string {
   switch (type) {
     case "participations":
       return "participation record";
+    case "relationships":
+      return "relationship record";
+    case "organization_relationships":
+      return "institutional relationship record";
     default:
       return "documented record";
   }
+}
+
+/**
+ * Deterministic one-sentence reading of a lineage step, in the assertion's own
+ * direction, from the kind vocabulary's source-role label ("Predecessor",
+ * "Mentor", "Antecedent body", …). "{from} is a documented {role} of {to}."
+ * Asserts only the documented directional relation the record carries; nothing
+ * about transmission, cause, or meaning. Node-neutral (the role word is data).
+ */
+export function describeLineageStep(step: LineageStep): string {
+  const role = lower(step.kind.sourceRole);
+  return `${step.from.label} is a documented ${role} of ${step.to.label}.`;
 }

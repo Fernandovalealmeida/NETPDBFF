@@ -8,9 +8,18 @@
 
 import { createClient } from "@/lib/supabase/server";
 
+import {
+  parseOrganizationLineageDocument,
+  parsePersonMentorshipLineageDocument,
+} from "./parse-lineage";
 import { parsePersonCohortsDocument } from "./parse";
 import { parseOrganizationGenerationsDocument } from "./parse-organization";
-import type { OrganizationGenerationsDocument, PersonCohortsDocument } from "./types";
+import type {
+  OrganizationGenerationsDocument,
+  OrganizationLineageDocument,
+  PersonCohortsDocument,
+  PersonMentorshipLineageDocument,
+} from "./types";
 
 /** M8.1 -- person co-presence: the documented cohorts a person belonged to. */
 export async function getPersonCohorts(personId: string): Promise<PersonCohortsDocument | null> {
@@ -39,4 +48,38 @@ export async function getOrganizationGenerations(
   }
 
   return parseOrganizationGenerationsDocument(data);
+}
+
+/** M8.3 -- institutional succession/formation descent: the documented lineage of
+ * one institution (antecedents upstream, successors downstream). */
+export async function getOrganizationLineage(
+  organizationId: string,
+): Promise<OrganizationLineageDocument | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("reveal_organization_lineage", {
+    p_organization_id: organizationId,
+  });
+
+  if (error || data === null || data === undefined) {
+    return null;
+  }
+
+  return parseOrganizationLineageDocument(data);
+}
+
+/** M8.3 -- documented mentorship descent: the documented mentorship lineage of
+ * one person (mentors upstream, students downstream). */
+export async function getPersonMentorshipLineage(
+  personId: string,
+): Promise<PersonMentorshipLineageDocument | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("reveal_person_mentorship_lineage", {
+    p_person_id: personId,
+  });
+
+  if (error || data === null || data === undefined) {
+    return null;
+  }
+
+  return parsePersonMentorshipLineageDocument(data);
 }

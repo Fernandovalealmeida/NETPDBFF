@@ -70,11 +70,12 @@ test.describe("a directional relationship reads with inverse labels on both biog
 
     // Alice is the mentor (source): Bob appears under "Students".
     await page.goto(alice.url);
+    const relationships = page.locator('section[aria-labelledby="relationships-heading"]');
     await expect(page.getByRole("heading", { level: 2, name: "Relationships" })).toBeVisible();
     await expect(page.getByRole("heading", { level: 3, name: "Students", exact: true })).toBeVisible();
     await expect(page.getByRole("heading", { level: 4, name: bob.displayName, exact: true })).toBeVisible();
     await expect(page.getByText("They met during early fieldwork and worked closely for a decade.")).toBeVisible();
-    await expect(page.getByText(/1987\s*[–-]\s*1998/)).toBeVisible();
+    await expect(relationships.getByText(/1987\s*[–-]\s*1998/)).toBeVisible();
     await expect(page.getByRole("button", { name: /Provenance of the relationship with/i }).first()).toBeVisible();
 
     // Bob is the student (target): the SAME record shows Alice under "Mentors"
@@ -104,7 +105,8 @@ test.describe("a relationship counterpart is a doorway to their canonical Person
     // text — the person's name, never "View"), justified by the canonical
     // relationship assertion and reasoned by the surrounding role group.
     await page.goto(alice.url);
-    const counterpart = page.getByRole("link", { name: bob.displayName, exact: true });
+    const relationships = page.locator('section[aria-labelledby="relationships-heading"]');
+    const counterpart = relationships.getByRole("link", { name: bob.displayName, exact: true });
     await expect(counterpart).toHaveAttribute("href", `/people/${bob.id}`);
 
     // Following it lands on the counterpart's canonical Person page.

@@ -151,3 +151,18 @@ in the same years) and not that they knew one another; and it marks its limits. 
 the institution-vantage mirror of M8.1 — a reading, not a reckoning; the interpretation
 of what a co-presence meant is left to the reader and to M9. See
 `docs/m8.2-institution-co-presence-revelation.md`.
+
+## M8.3 — Revelation (lineage) deepens institution and person reading, without a new step
+
+The institution and person pages each grow a further vantage, within the canonical
+journey and never beside it. Opening an institution, a reader now finds — after its
+people, contributions, and documented co-presence — its **documented institutional
+descent**: the succession and formation records that place it after some institutions
+and before others, each a doorway onward. Opening a person, a reader finds — after their
+relationships, contributions, and cohorts — their **documented mentorship lineage**: the
+mentors the record places before them and the students it places after them, each a
+doorway onward. The reader never "enters discovery"; the page simply grows a further
+vantage, composed from the same explicit directional records M7 connects one hop at a
+time, and decomposable back to them. It records what followed what — never what followed
+from what, which it leaves to the reader and to M9. See
+`docs/m8.3-lineage-institutional-evolution.md`.
