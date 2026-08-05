@@ -233,3 +233,22 @@ entry, no metric, no visualization), with pgTAP/Vitest/Playwright coverage. See
 `docs/decisions/0018-revelation-engine.md`. M8.2+ (institution/event co-presence,
 lineage, continuity/rupture, recurrence, comparison, bounded pathway) remain
 deferred.
+
+**M8.2 — Revelation Engine: institution-surface co-presence (implemented, pending local validation).**
+The second revelation lens: the *documented co-presence* within one institution.
+One additive migration adds a single bounded `SECURITY DEFINER` read model
+`reveal_organization_generations(uuid)` and **nothing else** — no table, no write
+path; M8 creates no Assertion. For a focal institution it reveals, for each
+documented participant, the other people the record places there during an
+**overlapping** documented period, each decomposable back to its `participations`
+row and the anchor carrying all of their own participations there. Co-presence
+requires both the shared institution and a temporal overlap (pairwise; no
+clustering/windows); undated, merged, and different-institution are excluded. Reads
+**inline** on `/institutions/[organizationId]` (no route, no navigation, no metric,
+no visualization), with pgTAP/Vitest/Playwright coverage. The M8.1 parse primitives
+were harvested into a shared module (`parse-shared.ts`) once the second lens
+demonstrated the identical need. Per the ratified blueprint's M8.2, **event
+company** (no event reading surface) and **comparison C5** (its M8.3 lineage host)
+are deferred; M8.3+ (lineage, continuity/rupture, recurrence, bounded pathway)
+remain deferred. See `docs/m8.2-institution-co-presence-revelation.md` and
+`docs/decisions/0018-revelation-engine.md` (amended).

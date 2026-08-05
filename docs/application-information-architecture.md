@@ -479,3 +479,18 @@ contract above. The section states what it shows, holds an honest empty state
 where nothing is revealed, and carries the honest "Limits of this view" note when
 a cohort is revealed. See `docs/m8.1-co-presence-revelation.md` and
 `docs/decisions/0018-revelation-engine.md`.
+
+## M8.2 — Institution co-presence reads inline; no new route
+
+**No new route, no navigation entry.** M8.2 adds the institution-surface
+co-presence revelation — the **documented co-presence** within one institution —
+**inline** on the existing `/institutions/[organizationId]` page, after its
+Participation/Contributions engines, inside the same `ReadingSpine`. It is the
+institution-vantage mirror of the person page's documented cohorts (M8.1). Each
+participant and co-present person is a doorway to their own canonical page. It is
+infrastructure that enriches reading, a vantage that opens within it — not a
+destination: no discovery page, no dashboard, no visualization, no metric. It
+states plainly that it shows a documented co-presence (a record that people were
+here in the same years), not that they knew one another; and it marks its own
+limits. See `docs/m8.2-institution-co-presence-revelation.md` and
+`docs/decisions/0018-revelation-engine.md`.

@@ -133,3 +133,44 @@ equal dignity (no ranking/metric; neutral ordering); fail-closed security
 inline, no destination; M9 interpretation boundary respected. Consistent with
 the M8 Specification's invariants (§9.1) and the Engineering Blueprint's M8.1
 scope; no M1–M7 decision reopened.
+
+---
+
+## Amendment — M8.2: institution-surface co-presence (Accepted)
+
+- Date: 2026-08-05
+- Milestone: M8.2 — Revelation Engine (institution co-presence)
+
+M8.2 extends this same decision (no new ADR: it is the same revelation engine, one
+more lens) to the **institution surface**. It adds one bounded read model
+`reveal_organization_generations(uuid)` — the institution-vantage mirror of
+`reveal_person_cohorts` — and **nothing else**: no table, no write path, no new
+route, no navigation, no metric. It reveals the *documented co-presence* within an
+institution (for each participant, the others the record places there during an
+overlapping period), composed by the **same pairwise interval-overlap rule** over
+`participations`, decomposable to those rows, with each node in the canonical
+`ProjectedNode` shape. It reads inline on `/institutions/[organizationId]` after the
+Participation/Contributions engines.
+
+**Reuse (harvested, not speculated).** With a second co-presence lens now
+demonstrating the identical need, the shared fail-closed parse primitives were
+extracted into `src/features/revelation/parse-shared.ts` and M8.1's `parse.ts` was
+refactored to import them (public behaviour unchanged) — the M6.3 kernel-extraction
+precedent. `CohortAnchor`/`CohortMember` types and the `CohortMember`/`RevealedPeriod`
+components are reused directly.
+
+**Terminology.** The blueprint's shorthand "institution generations" is kept only as
+the internal capability name; per the Specification's structural-naming rule (calling
+a documented cohort "a generation" is *interpretation*), the reader-facing surface says
+**"documented co-presence," never "generation."**
+
+**Deferrals (approved as a scope resolution, not a silent narrowing).** The
+blueprint's M8.2 also names *event company* (C1 on events) and *comparison* (C5).
+Both are deferred on an architectural basis: events are not a canonical reading
+destination (M8 creates none), and C5 is explicitly "not a standalone page" whose
+ratified host — the M8.3 lineage juxtaposition — does not yet exist. They are
+deferred until their surfaces exist; nothing about them is built here.
+
+**pgTAP contract lock retained and extended.** As with M8.1, the pgTAP asserts the
+exact `ProjectedNode` projection shape (`type`/`label`) the parser requires, so the
+M8.1 projection-shape defect class cannot recur.

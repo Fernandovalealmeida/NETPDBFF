@@ -1508,6 +1508,10 @@ export type Database = {
           status: string
         }[]
       }
+      reveal_organization_generations: {
+        Args: { p_organization_id: string }
+        Returns: Json
+      }
       reveal_person_cohorts: { Args: { p_person_id: string }; Returns: Json }
       search_claimable_people: {
         Args: { p_query?: string }

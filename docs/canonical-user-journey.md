@@ -136,3 +136,18 @@ that people were there in the same years) and not that they knew one another; an
 it marks its own limits. This is revelation as the M8 Design Bible intends it: a
 reading, not a reckoning — the interpretation of what a cohort meant is left to
 the reader and to M9. See `docs/m8.1-co-presence-revelation.md`.
+
+## M8.2 — Revelation (institution co-presence) deepens institution reading, without a new step
+
+The institution page now grows a further vantage, within the canonical journey and
+never beside it. A reader opening an institution (`/institutions/[id]`) finds, after
+its people and contributions, the **documented co-presence** the record holds — which
+participants it places there at the same time as which others — each a doorway onward
+to that person's page. The reader never "enters discovery"; the institution simply
+grows a further vantage, composed from the same participation assertions M8.1 composes
+from the person's side, and decomposable back to them. It is offered, not injected; it
+states plainly that it shows a documented co-presence (a record that people were here
+in the same years) and not that they knew one another; and it marks its limits. This is
+the institution-vantage mirror of M8.1 — a reading, not a reckoning; the interpretation
+of what a co-presence meant is left to the reader and to M9. See
+`docs/m8.2-institution-co-presence-revelation.md`.
