@@ -464,3 +464,18 @@ Explore. The single reading doorway they offer is the correct one: an approved
 claimant can follow "Read your linked record" to their own canonical Person
 page. Obsolete copy describing claiming/participation/the network as future work
 was corrected. See `docs/production-experience-phase-1.md`.
+
+## M8.1 — Revelation (co-presence) reads inline; no new route
+
+**No new route, no navigation entry.** M8.1 adds the co-presence revelation — the
+**documented cohorts** a person belonged to — **inline** on the existing
+`/people/[personId]` biography, after the person's own engines, through the shared
+`ReadingSpine`. Revelation is infrastructure that enriches reading, a vantage that
+opens within the reading; it is not a destination. There is no `/discovery` route,
+no dashboard, and no visualization. Each cohort's institution and each member are
+doorways back into the canonical record (`/institutions/[id]`, `/people/[id]`),
+justified by explicit participation assertions, honouring the cross-navigation
+contract above. The section states what it shows, holds an honest empty state
+where nothing is revealed, and carries the honest "Limits of this view" note when
+a cohort is revealed. See `docs/m8.1-co-presence-revelation.md` and
+`docs/decisions/0018-revelation-engine.md`.

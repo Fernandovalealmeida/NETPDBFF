@@ -88,7 +88,7 @@ test.describe("direct links reach the seeded reading surfaces", () => {
       await expect(page.getByRole("heading", { level: 1, name: /Helena Arvoredo/ })).toBeVisible();
       await expect(page.getByText(/fictional tropical-forest ecologist/i)).toBeVisible();
       await expect(page.getByRole("heading", { name: "Timeline" })).toBeVisible();
-      await expect(page.getByRole("heading", { name: "Participation" })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 2, name: "Participation", exact: true })).toBeVisible();
       await expect(page.getByRole("heading", { name: "Relationships" })).toBeVisible();
 
       await assertPageQuality(page, issues);

@@ -1508,6 +1508,7 @@ export type Database = {
           status: string
         }[]
       }
+      reveal_person_cohorts: { Args: { p_person_id: string }; Returns: Json }
       search_claimable_people: {
         Args: { p_query?: string }
         Returns: {

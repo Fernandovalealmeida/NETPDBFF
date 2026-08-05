@@ -120,3 +120,19 @@ person**, **institution participation → person**, and **approved claim → the
 reader's own canonical Person page**. The Member and Account areas are
 deliberately secondary to reading. See `docs/production-experience-phase-1.md`
 and `docs/production-experience-phase-1-engineering-report.md`.
+
+## M8.1 — Revelation (co-presence) deepens the reading, without a new step
+
+The eighth milestone **reveals** what the preserved, connected record already
+demonstrates, and it does so **within** the canonical journey, never beside it. A
+reader opening a scientific life (`/people/[id]`) now finds, after the person's
+own engines, the **documented cohorts** that life belonged to — other people the
+record places at the same institution during overlapping years — each a doorway
+onward to that person's page and to the shared institution. The reader never
+"enters discovery"; the biography simply grows a further vantage, composed from
+the same participation assertions and decomposable back to them. It is offered,
+not injected; it states plainly that it shows a documented co-presence (a record
+that people were there in the same years) and not that they knew one another; and
+it marks its own limits. This is revelation as the M8 Design Bible intends it: a
+reading, not a reckoning — the interpretation of what a cohort meant is left to
+the reader and to M9. See `docs/m8.1-co-presence-revelation.md`.

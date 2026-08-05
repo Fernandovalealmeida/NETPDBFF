@@ -65,7 +65,7 @@ test.describe("a first-time reader browses by name (no UUIDs)", () => {
       await expect(page).toHaveURL(/\/people\/[0-9a-f-]+$/);
       await expect(page.getByRole("heading", { level: 1, name: /Helena Arvoredo/ })).toBeVisible();
       await expect(page.getByRole("heading", { name: "Timeline" })).toBeVisible();
-      await expect(page.getByRole("heading", { name: "Participation" })).toBeVisible();
+      await expect(page.getByRole("heading", { level: 2, name: "Participation", exact: true })).toBeVisible();
       await expect(page.getByRole("heading", { name: "Relationships" })).toBeVisible();
 
       await assertPageQuality(page, issues);

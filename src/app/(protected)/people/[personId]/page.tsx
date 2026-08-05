@@ -16,6 +16,8 @@ import { Participation } from "@/features/participation/components/Participation
 import { getPersonParticipation } from "@/features/participation/read";
 import { Relationships } from "@/features/relationships/components/Relationships";
 import { getPersonRelationships } from "@/features/relationships/read";
+import { PersonCohorts } from "@/features/revelation/components/PersonCohorts";
+import { getPersonCohorts } from "@/features/revelation/read";
 import { Timeline } from "@/features/timeline/components/Timeline";
 import { getPersonTimeline } from "@/features/timeline/read";
 
@@ -29,17 +31,19 @@ import { getPersonTimeline } from "@/features/timeline/read";
 // Reading order (Blueprint's Biography Engine): identity band, a divider, then
 // the reading spine -- the introductory narrative (or honest absence), the
 // historical engines (timeline, participation, relationships, contributions),
-// the reserved section architecture, and the honest withheld-note. The spine is
-// composed through <ReadingSpine>, the SAME primitive the Institution and
-// Contribution pages use, so the three canonical pages share one continuous
-// rhythm and a reader never feels they have crossed from one software module
-// into another (Production Experience Phase I). The sections are NOT flattened:
-// each engine keeps its own narrative/chronology/belonging/assertion semantics.
-// These engines ARE this person's documented connections: the timeline projects
-// their events, participation their institutions, relationships their people,
-// contributions their contributions -- each a doorway onward. The M7 Knowledge
-// Network is the invisible infrastructure behind those links (ADR-0017); there
-// is no "enter the network" step. Server Component; reads composed server-side.
+// then the M8 REVELATION (documented cohorts read INLINE -- a vantage that opens
+// within the reading, not a destination; the eighth milestone reveals what the
+// preserved, connected record already demonstrates), the reserved section
+// architecture, and the honest withheld-note. The spine is composed through
+// <ReadingSpine>, the SAME primitive the Institution and Contribution pages use,
+// so the three canonical pages share one continuous rhythm and a reader never
+// feels they have crossed from one software module into another (Production
+// Experience Phase I). The sections are NOT flattened: each engine keeps its own
+// narrative/chronology/belonging/assertion semantics. These engines ARE this
+// person's documented connections (M7, invisible infrastructure); M8 composes
+// several of them into the documented cohorts this person belonged to, each
+// decomposable back to its participation records. Server Component; reads
+// composed server-side.
 export const metadata: Metadata = {
   title: pageTitle("Scientific biography"),
 };
@@ -60,6 +64,7 @@ export default async function BiographyPage({ params }: BiographyPageProps) {
   const participation = await getPersonParticipation(personId);
   const relationships = await getPersonRelationships(personId);
   const contributions = await getPersonContributions(personId);
+  const cohorts = await getPersonCohorts(personId);
 
   return (
     <main id="main-content" tabIndex={-1} className="py-16">
@@ -80,6 +85,8 @@ export default async function BiographyPage({ params }: BiographyPageProps) {
           <Relationships document={relationships} />
 
           <PersonContributions document={contributions} />
+
+          <PersonCohorts document={cohorts} />
 
           <div className="flex flex-col gap-8">
             {RESERVED_SECTION_ORDER.map((key) => {

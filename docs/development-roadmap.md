@@ -203,3 +203,33 @@ stays invisible infrastructure; `/dev/exhibition` stays inspection-only (it keep
 the one retained `/network/institutions/[id]` route as its inspection surface for
 the M7 read model). See `docs/production-experience-phase-1.md` and
 `docs/production-experience-phase-1-engineering-report.md`.
+
+## M8 — Knowledge Revelation (design phase ratified; M8.1 implemented, pending local validation)
+
+M1–M6 preserve; M7 connects; **M8 reveals**; M9 interprets. M8 is deterministic
+**revelation**: it composes several already-preserved, already-connected explicit
+Assertions into the patterns their joint truth entails, each decomposable back to
+them. It performs no inference, similarity, recommendation, ranking, centrality,
+or interpretation (those are forbidden outright, deferred to a later
+human-confirmed Librarian, or reserved for M9). The design phase is ratified — the
+M8 Definitive Specification (the law), the M8 Design Bible (philosophy), the M8
+Benchmarking Report, the M8 Critical Review, and the M8 Engineering Blueprint
+(which decomposes M8 into sub-milestones M8.1–M8.6, ordered by dependency and
+ascending interpretive risk).
+
+**M8.1 — Revelation Engine: co-presence (implemented, pending local validation).**
+The kernel plus the first lens end-to-end. One additive migration adds a single
+bounded `SECURITY DEFINER` read model `reveal_person_cohorts(uuid)` and **nothing
+else** — no table, no write path; M8 creates no Assertion. It reveals the
+**documented cohorts** a person belonged to: other people documented at the same
+institution during an **overlapping** documented period, each decomposable back to
+its `participations` record. Co-presence requires both a shared institution and a
+temporal overlap (a shared institution alone, a non-overlapping period, or an
+undated participation is not a member — the boundary that keeps revelation from
+becoming inference); it is shown as a documented co-presence, never promoted to a
+relationship. Reads **inline** on `/people/[personId]` (no route, no navigation
+entry, no metric, no visualization), with pgTAP/Vitest/Playwright coverage. See
+`docs/m8.1-co-presence-revelation.md` and
+`docs/decisions/0018-revelation-engine.md`. M8.2+ (institution/event co-presence,
+lineage, continuity/rupture, recurrence, comparison, bounded pathway) remain
+deferred.

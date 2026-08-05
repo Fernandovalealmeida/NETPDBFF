@@ -139,3 +139,7 @@ support Portuguese as a future addition without requiring a rewrite — see
 ## M7 — Knowledge Network Engine
 
 M7 connects the preserved records through a derived, provenance-preserving read model (no generic edge store, no universal Entity table, no graph database). See `docs/decisions/0017-knowledge-network-engine.md`, `docs/m7-knowledge-network-engine.md`, and `docs/m7-knowledge-network-engine-engineering-report.md`.
+
+## M8 — Knowledge Revelation
+
+M8 **reveals** what the preserved, connected record already demonstrates: it composes several canonical Assertions into the deterministic patterns their joint truth entails, decomposable back to them — no inference, similarity, recommendation, ranking, centrality, or interpretation. The design phase is ratified (the M8 Definitive Specification, Design Bible, Benchmarking Report, Critical Review, and Engineering Blueprint). **M8.1** implements the first lens — co-presence: the documented cohorts a person belonged to (other people at the same institution during overlapping periods), read inline on the biography. See `docs/decisions/0018-revelation-engine.md` and `docs/m8.1-co-presence-revelation.md`.
