@@ -12,9 +12,9 @@ import {
   isRecord,
   asString,
   asNonBlankString,
-  asSourceType,
-  asVerification,
   parseNode,
+  parseProvenance,
+  parseSourceRef,
   parseTemporal,
 } from "./parse-shared";
 import type {
@@ -52,17 +52,11 @@ function parseStep(input: unknown, endpointType: "person" | "organization"): Lin
   const temporal = parseTemporal(input.temporal);
   if (temporal === null) return null;
 
-  const provenanceRaw = input.provenance;
-  if (!isRecord(provenanceRaw)) return null;
-  const sourceType = asSourceType(provenanceRaw.source_type);
-  const verificationStatus = asVerification(provenanceRaw.verification_status);
-  if (sourceType === null || verificationStatus === null) return null;
+  const provenance = parseProvenance(input.provenance);
+  if (provenance === null) return null;
 
-  const sourceRaw = input.source;
-  if (!isRecord(sourceRaw)) return null;
-  const sourceTypeName = asNonBlankString(sourceRaw.type);
-  const sourceId = asString(sourceRaw.id);
-  if (sourceTypeName === null || sourceId === null) return null;
+  const source = parseSourceRef(input.source);
+  if (source === null) return null;
 
   const direction =
     input.direction === "upstream" || input.direction === "downstream" ? input.direction : null;
@@ -72,12 +66,12 @@ function parseStep(input: unknown, endpointType: "person" | "organization"): Lin
   if (depth === null) return null;
 
   return {
-    source: { type: sourceTypeName, id: sourceId },
+    source,
     kind,
     from,
     to,
     temporal,
-    provenance: { sourceType, verificationStatus },
+    provenance,
     direction,
     depth,
   };

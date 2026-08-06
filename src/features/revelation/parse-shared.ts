@@ -121,6 +121,34 @@ export function parseCapacity(input: unknown): RevelationCapacityRef | null {
   return { key, label };
 }
 
+/** The provenance envelope shared by EVERY revealed element: {sourceType,
+ * verificationStatus}, both from controlled vocabularies. Fail-closed -- a
+ * missing envelope or an unrecognized source/verification value rejects it, so a
+ * revealed element is never shown without valid, decomposable provenance. This is
+ * the single evidence-envelope parser; every operator lens uses it, so the
+ * provenance contract can never drift between lenses. */
+export function parseProvenance(
+  input: unknown,
+): { sourceType: SourceType; verificationStatus: VerificationStatus } | null {
+  if (!isRecord(input)) return null;
+  const sourceType = asSourceType(input.source_type);
+  const verificationStatus = asVerification(input.verification_status);
+  if (sourceType === null || verificationStatus === null) return null;
+  return { sourceType, verificationStatus };
+}
+
+/** The decomposability pointer shared by EVERY revealed element: the exact
+ * canonical row {type, id} the element was projected from, so a reader can walk
+ * back to the record. Fail-closed -- a missing/blank type or a missing id rejects
+ * it. This is the single source-ref parser; every operator lens uses it. */
+export function parseSourceRef(input: unknown): { type: string; id: string } | null {
+  if (!isRecord(input)) return null;
+  const type = asNonBlankString(input.type);
+  const id = asString(input.id);
+  if (type === null || id === null) return null;
+  return { type, id };
+}
+
 /** A decomposable participation anchor: {id, capacity, temporal, provenance}. */
 export function parseAnchor(input: unknown): CohortAnchor | null {
   if (!isRecord(input)) return null;
@@ -133,13 +161,10 @@ export function parseAnchor(input: unknown): CohortAnchor | null {
   const temporal = parseTemporal(input.temporal);
   if (temporal === null) return null;
 
-  const provenanceRaw = input.provenance;
-  if (!isRecord(provenanceRaw)) return null;
-  const sourceType = asSourceType(provenanceRaw.source_type);
-  const verificationStatus = asVerification(provenanceRaw.verification_status);
-  if (sourceType === null || verificationStatus === null) return null;
+  const provenance = parseProvenance(input.provenance);
+  if (provenance === null) return null;
 
-  return { id, capacity, temporal, provenance: { sourceType, verificationStatus } };
+  return { id, capacity, temporal, provenance };
 }
 
 /** A co-present member: a person node, their participation's capacity/temporal/
@@ -157,23 +182,11 @@ export function parseMember(input: unknown): CohortMember | null {
   const temporal = parseTemporal(input.temporal);
   if (temporal === null) return null;
 
-  const provenanceRaw = input.provenance;
-  if (!isRecord(provenanceRaw)) return null;
-  const sourceType = asSourceType(provenanceRaw.source_type);
-  const verificationStatus = asVerification(provenanceRaw.verification_status);
-  if (sourceType === null || verificationStatus === null) return null;
+  const provenance = parseProvenance(input.provenance);
+  if (provenance === null) return null;
 
-  const sourceRaw = input.source;
-  if (!isRecord(sourceRaw)) return null;
-  const sourceTypeName = asNonBlankString(sourceRaw.type);
-  const sourceId = asString(sourceRaw.id);
-  if (sourceTypeName === null || sourceId === null) return null;
+  const source = parseSourceRef(input.source);
+  if (source === null) return null;
 
-  return {
-    person,
-    capacity,
-    temporal,
-    provenance: { sourceType, verificationStatus },
-    source: { type: sourceTypeName, id: sourceId },
-  };
+  return { person, capacity, temporal, provenance, source };
 }

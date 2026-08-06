@@ -1,13 +1,10 @@
 import Link from "next/link";
 
-import { Badge } from "@/components/ui/Badge";
-import type { ProjectedNode } from "@/features/network/types";
-import { ProvenanceAffordance } from "@/features/shared/ProvenanceAffordance";
-
 import { describeRecurrenceGroup, revelationSourceRecordLabel } from "../copy";
-import { describeRevelationProvenance } from "../derive";
 import type { RecurrenceGroup } from "../types";
+import { NodeDoorway } from "./NodeDoorway";
 import { RevealedPeriod } from "./RevealedPeriod";
+import { RevealedProvenanceFooter } from "./RevealedProvenanceFooter";
 
 // One list of documented recurrences (shared by the person and institution
 // surfaces). Each group is a structural phenomenon documented >= 2 times, headed
@@ -21,17 +18,6 @@ import { RevealedPeriod } from "./RevealedPeriod";
 // neutral order (category, then label), never ordered by count. The group heading
 // is an h3 (under the section's h2); occurrences are list items, so the outline
 // never skips a level. Server Component.
-
-function OccurrenceTitle({ node }: { node: ProjectedNode | null }) {
-  if (node === null) return null;
-  return node.href ? (
-    <Link href={node.href} className="underline underline-offset-2">
-      {node.label}
-    </Link>
-  ) : (
-    <span>{node.label}</span>
-  );
-}
 
 export interface RecurrenceGroupListProps {
   groups: RecurrenceGroup[];
@@ -62,13 +48,6 @@ export function RecurrenceGroupList({ groups, idPrefix }: RecurrenceGroupListPro
 
             <ul className="mt-2 flex flex-col gap-4">
               {group.occurrences.map((occ) => {
-                const provenance = describeRevelationProvenance(
-                  occ.provenance.sourceType,
-                  occ.provenance.verificationStatus,
-                );
-                const status = occ.provenance.verificationStatus;
-                const showBadge = status === "disputed" || status === "provisional";
-                const badgeTone: "danger" | "warning" = status === "disputed" ? "danger" : "warning";
                 const recordLabel = revelationSourceRecordLabel(occ.source.type);
                 const subject = occ.node ? `the record of ${occ.node.label}` : `this ${recordLabel}`;
 
@@ -76,23 +55,15 @@ export function RecurrenceGroupList({ groups, idPrefix }: RecurrenceGroupListPro
                   <li key={occ.source.id} className="border-l border-border-default pl-4">
                     {occ.node ? (
                       <p className="text-sm text-foreground">
-                        <OccurrenceTitle node={occ.node} />
+                        <NodeDoorway node={occ.node} />
                       </p>
                     ) : null}
                     <RevealedPeriod temporal={occ.temporal} />
-                    <div className="mt-2 flex flex-wrap items-center gap-2">
-                      {showBadge ? (
-                        <Badge tone={badgeTone} size="sm">
-                          {provenance.statusLabel}
-                        </Badge>
-                      ) : null}
-                      <ProvenanceAffordance
-                        subject={subject}
-                        projectedFrom={recordLabel}
-                        sourceLabel={provenance.sourceLabel}
-                        statusLabel={provenance.statusLabel}
-                      />
-                    </div>
+                    <RevealedProvenanceFooter
+                      provenance={occ.provenance}
+                      subject={subject}
+                      sourceRecordType={occ.source.type}
+                    />
                   </li>
                 );
               })}

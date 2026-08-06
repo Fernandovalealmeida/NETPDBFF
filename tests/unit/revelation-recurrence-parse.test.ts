@@ -143,6 +143,35 @@ describe("parsePersonRecurrenceDocument", () => {
     expect(role?.occurrences.length).toBe(2);
   });
 
+  it("deduplicates occurrences by canonical source id, so a duplicated record cannot fabricate a recurrence", () => {
+    const d = personDoc();
+    // The SAME participations row appears twice (an upstream JOIN fan-out). It is
+    // ONE distinct record, so the role group falls to a single distinct occurrence
+    // and is removed -- a duplicated row never manufactures a recurrence.
+    d.groups[0].count = 2;
+    d.groups[0].occurrences = [
+      occurrence("participations", "pa1", null),
+      occurrence("participations", "pa1", null),
+    ];
+    const doc = parsePersonRecurrenceDocument(d);
+    expect(doc?.groups.some((g) => g.category === "role")).toBe(false);
+  });
+
+  it("counts only DISTINCT sources when some occurrences are duplicates", () => {
+    const d = personDoc();
+    // Three rows, but two share a source id -> two distinct records -> count 2.
+    d.groups[1].count = 3;
+    d.groups[1].occurrences = [
+      occurrence("contributions", "c1", contributionNode("c1")),
+      occurrence("contributions", "c1", contributionNode("c1")),
+      occurrence("contributions", "c2", contributionNode("c2")),
+    ];
+    const doc = parsePersonRecurrenceDocument(d);
+    const contrib = doc?.groups.find((g) => g.category === "contribution");
+    expect(contrib?.count).toBe(2);
+    expect(contrib?.occurrences.length).toBe(2);
+  });
+
   it("requires a role group to carry an organization anchor", () => {
     const d = personDoc();
     d.groups[0].anchor = null;

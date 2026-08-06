@@ -354,3 +354,53 @@ Merged people excluded from the graph and as endpoints.
 
 **Comparison C5** remains a deferred, enabled affordance (never assigned). With M8.6, the
 M8 Revelation Engine (C1–C4, C6) is complete; interpretation is M9's.
+
+## Amendment — M8.7: consolidation and constitutional closure (Accepted)
+
+- Date: 2026-08-06
+- Milestone: M8.7 — Revelation Engine (consolidation and constitutional closure) — the FINAL milestone of M8
+
+M8.7 extends this same decision by **closing** the engine, not adding a lens. It
+treats M8.1–M8.6 as one Revelation Engine, re-audits every operator against the
+§9.1 invariants, and ships a small, deliberate set of concrete improvements.
+
+**One production correction.** `reveal_person_pathway` (C6) chose its minimal
+chain by a node-only `path_key`, which is non-total: two distinct assertions
+between the same node pair (e.g. a person with two documented participation
+periods at one institution) produced an identical ordering key, so the chosen
+chain — and the exact canonical row each step decomposed to — was plan-dependent,
+a **determinism + decomposability** violation. A new append-only migration
+(`20260817090000_close_revelation_engine.sql`) folds each edge's canonical source
+id into the path key, making the order total (reproduced-then-fixed in a real
+Postgres 16). The historical M8.6 migration is untouched.
+
+**One fail-closed hardening.** Recurrence groups are deduplicated by canonical
+source id before the ≥ 2 test, so a duplicated occurrence can never fabricate or
+inflate a recurrence — the one place a malformed revelation could have become a
+false claim rather than an honest absence.
+
+**Consolidations (integrity-relevant, not cosmetic).** The provenance envelope and
+source-ref pointer — the evidence contract — are now single `parseProvenance` /
+`parseSourceRef` primitives in `parse-shared` (six/five call sites unified), so the
+contract cannot drift between lenses; the identical provenance footer and node
+doorway every lens re-declared inline are now shared `RevealedProvenanceFooter` /
+`NodeDoorway` components with byte-identical output.
+
+**Constitutional closure test.** One total sweep asserts the whole engine's
+reader-facing surface (all of `revelationCopy` + every `describe*` output) is free
+of the forbidden interpretive frames, respecting the copy's honest negations
+("not a connection", "never ranked", "never scored by length") — replacing six
+divergent per-operator checks with one single-sourced guarantee.
+
+**Rejected (reviewed, not made).** A shared SQL node-projection helper (cosmetic,
+hot-path cost); a `person` node on `reveal_person_cohorts` (no consumer); a
+`RevelationSection` wrapper (would lose per-lens clarity; e2e/axe-certified only);
+institution-page re-ordering and heading-weight changes (aesthetic); an e2e
+page-quality helper (un-runnable in the authoring environment). See the M8.7
+engineering report.
+
+**Closure.** With M8.7 the M8 Revelation Engine (C1–C4, C6) is complete.
+Comparison (C5) remains a deferred, enabled affordance, never assigned.
+Interpretation is M9's. Two architectural milestones are ratified as the next work
+before M9 and are **not** built here: **Projects as First-Class Historical
+Actors** and the **Historical Operators Architecture**.

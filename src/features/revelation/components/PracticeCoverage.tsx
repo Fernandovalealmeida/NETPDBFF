@@ -1,19 +1,9 @@
-import Link from "next/link";
-
-import { Badge } from "@/components/ui/Badge";
-import type { ProjectedNode } from "@/features/network/types";
-import { ProvenanceAffordance } from "@/features/shared/ProvenanceAffordance";
-
-import {
-  describeContinuityOutcome,
-  describeCoverageGap,
-  describeCoverageSpan,
-  revelationSourceRecordLabel,
-} from "../copy";
-import { describeRevelationProvenance } from "../derive";
+import { describeContinuityOutcome, describeCoverageGap, describeCoverageSpan } from "../copy";
 import type { ContinuityPracticeView } from "../derive";
 import type { CoverageGap } from "../types";
+import { NodeDoorway } from "./NodeDoorway";
 import { RevealedPeriod } from "./RevealedPeriod";
+import { RevealedProvenanceFooter } from "./RevealedProvenanceFooter";
 
 // One participation capacity's DOCUMENTED COVERAGE at the institution: the
 // year-summarised spans the record covers, the evidentiary gaps between them,
@@ -26,16 +16,6 @@ import { RevealedPeriod } from "./RevealedPeriod";
 // (earliest first), never a ranking. The capacity is an h3 under the section's
 // h2; records are list items, so the outline never skips a level. Server
 // Component.
-
-function PersonDoorway({ node }: { node: ProjectedNode }) {
-  return node.href ? (
-    <Link href={node.href} className="underline underline-offset-2">
-      {node.label}
-    </Link>
-  ) : (
-    <span>{node.label}</span>
-  );
-}
 
 export interface PracticeCoverageProps {
   headingId: string;
@@ -67,38 +47,19 @@ export function PracticeCoverage({ headingId, practice }: PracticeCoverageProps)
               <div className="border-l-2 border-border-strong pl-4">
                 <p className="text-sm font-medium text-foreground">{describeCoverageSpan(span)}</p>
                 <ul className="mt-2 flex flex-col gap-3">
-                  {span.participations.map((p) => {
-                    const provenance = describeRevelationProvenance(
-                      p.provenance.sourceType,
-                      p.provenance.verificationStatus,
-                    );
-                    const status = p.provenance.verificationStatus;
-                    const showBadge = status === "disputed" || status === "provisional";
-                    const badgeTone: "danger" | "warning" =
-                      status === "disputed" ? "danger" : "warning";
-
-                    return (
-                      <li key={p.source.id} className="border-l border-border-default pl-3">
-                        <p className="text-sm text-foreground">
-                          <PersonDoorway node={p.person} />
-                        </p>
-                        <RevealedPeriod temporal={p.temporal} />
-                        <div className="mt-2 flex flex-wrap items-center gap-2">
-                          {showBadge ? (
-                            <Badge tone={badgeTone} size="sm">
-                              {provenance.statusLabel}
-                            </Badge>
-                          ) : null}
-                          <ProvenanceAffordance
-                            subject={`the participation record for ${p.person.label} here`}
-                            projectedFrom={revelationSourceRecordLabel(p.source.type)}
-                            sourceLabel={provenance.sourceLabel}
-                            statusLabel={provenance.statusLabel}
-                          />
-                        </div>
-                      </li>
-                    );
-                  })}
+                  {span.participations.map((p) => (
+                    <li key={p.source.id} className="border-l border-border-default pl-3">
+                      <p className="text-sm text-foreground">
+                        <NodeDoorway node={p.person} />
+                      </p>
+                      <RevealedPeriod temporal={p.temporal} />
+                      <RevealedProvenanceFooter
+                        provenance={p.provenance}
+                        subject={`the participation record for ${p.person.label} here`}
+                        sourceRecordType={p.source.type}
+                      />
+                    </li>
+                  ))}
                 </ul>
               </div>
               {gap ? (

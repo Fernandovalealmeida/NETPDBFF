@@ -57,23 +57,30 @@ test.describe("Revelation (co-presence) — documented cohorts read inline on th
 
     await page.goto(focal.url);
 
+    // Assertions about the revealed member are scoped to the cohorts section: on a
+    // person page the same name and the same "Limits of this view" heading can also
+    // appear in the mentorship / recurrence / pathway sections, so section-scoping
+    // (as every other revelation spec does) asserts the fact where it belongs
+    // rather than relying on there being exactly one match on the whole page.
+    const section = page.locator('section[aria-labelledby="cohorts-heading"]');
+
     // The revelation section reads inline, stating what it shows.
     await expect(page.getByRole("heading", { level: 2, name: "Documented cohorts" })).toBeVisible();
     // The institution is the cohort group heading and a doorway back into the record.
-    await expect(page.getByRole("heading", { level: 3, name: org.name, exact: true })).toBeVisible();
+    await expect(section.getByRole("heading", { level: 3, name: org.name, exact: true })).toBeVisible();
     // The member reads as documented at the same institution, linking to their page.
-    await expect(page.getByRole("link", { name: member.displayName })).toHaveAttribute(
+    await expect(section.getByRole("link", { name: member.displayName })).toHaveAttribute(
       "href",
       `/people/${member.id}`,
     );
-    await expect(page.getByText(`${member.displayName} participated here as a field assistant.`)).toBeVisible();
+    await expect(section.getByText(`${member.displayName} participated here as a field assistant.`)).toBeVisible();
     // Provenance is one keyboard-operable gesture away.
     await expect(
-      page.getByRole("button", { name: new RegExp(`Provenance of ${member.displayName}'s participation`, "i") }),
+      section.getByRole("button", { name: new RegExp(`Provenance of ${member.displayName}'s participation`, "i") }),
     ).toBeVisible();
     // The honest limits-of-this-view note is present when a cohort is revealed.
-    await expect(page.getByRole("heading", { level: 3, name: "Limits of this view" })).toBeVisible();
-    await expect(page.getByText(/documented cohort, not the true one/i)).toBeVisible();
+    await expect(section.getByRole("heading", { level: 3, name: "Limits of this view" })).toBeVisible();
+    await expect(section.getByText(/documented cohort, not the true one/i)).toBeVisible();
   });
 
   test("a person at a DIFFERENT institution is never revealed as a cohort member (no inference)", async ({ page }) => {
@@ -134,7 +141,8 @@ test.describe("Revelation (co-presence) — accessibility and responsive quality
     expect(errors).toEqual([]);
 
     // The member link and its provenance affordance are keyboard operable.
-    const link = page.getByRole("link", { name: member.displayName });
+    const cohorts = page.locator('section[aria-labelledby="cohorts-heading"]');
+    const link = cohorts.getByRole("link", { name: member.displayName });
     await link.focus();
     await expect(link).toBeFocused();
   });

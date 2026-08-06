@@ -218,3 +218,17 @@ the two are unconnected. It reveals THAT the record composes a chain, and which 
 leaving what the chain MEANS to the reader and to M9. With this, M8 reveals every documented
 collective pattern the specification named, and infers, ranks, and interprets nothing. See
 `docs/m8.6-bounded-pathway.md`.
+
+## M8.7 — Consolidation and constitutional closure; the reading is whole
+
+M8.7 adds no new step to the journey and no new vantage. It closes the Revelation
+Engine: it makes the bounded pathway's chosen chain deterministic (so the same
+record always yields the same decomposable chain), guarantees a duplicated record
+can never fabricate a recurrence, unifies the evidence-disclosure the reader
+gestures toward so it is identical across every lens, and proves — with one total
+sweep of the engine's whole reader-facing surface — that the reading never crosses
+from revealing into ranking, similarity, recommendation, or asserting a connection
+between a chain's ends. The reader's experience is unchanged and now provably
+whole: every documented pattern the specification named is revealed, and nothing
+is inferred, ranked, or interpreted. What a pattern *means* remains the reader's
+question, and M9's.

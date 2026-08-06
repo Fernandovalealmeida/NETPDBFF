@@ -555,3 +555,18 @@ doorway, under the ENDPOINT RULE: "a documented chain of N steps connects A and 
 absence, never "not connected". It is infrastructure that enriches reading, a vantage that
 opens within it — not a destination: no dashboard, no graph, no metric. See
 `docs/m8.6-bounded-pathway.md` and `docs/decisions/0018-revelation-engine.md`.
+
+## M8.7 — Consolidation and constitutional closure; the engine is complete
+
+**No new route, no navigation entry, no new surface.** M8.7 adds no reading
+destination. It closes the Revelation Engine: one production correction (a
+deterministic tie-break for the bounded pathway, via a new append-only migration),
+one fail-closed parser hardening (recurrence deduplicated by source id), two
+consolidations behind the existing surfaces (single evidence-contract parsers; the
+shared `RevealedProvenanceFooter`/`NodeDoorway` used by every lens), and one total
+constitutional-closure test over the whole engine's copy. The information
+architecture is unchanged — every revelation still reads inline on the person and
+institution pages, after the canonical engines, through the shared `ReadingSpine`,
+with no dashboard, console, or diagram. With M8.7 the reading surfaces the engine
+contributes (co-presence, lineage, continuity & rupture, recurrence, bounded
+pathway) are complete; comparison (C5) is deferred and interpretation is M9's.

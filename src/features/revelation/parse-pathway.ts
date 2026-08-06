@@ -12,9 +12,9 @@ import {
   isRecord,
   asString,
   asNonBlankString,
-  asSourceType,
-  asVerification,
   parseAnyNode,
+  parseProvenance,
+  parseSourceRef,
   parseTemporal,
 } from "./parse-shared";
 import type {
@@ -34,11 +34,8 @@ const CATEGORIES: readonly PathwayStepCategory[] = [
 function parseStep(input: unknown): PathwayStep | null {
   if (!isRecord(input)) return null;
 
-  const sourceRaw = input.source;
-  if (!isRecord(sourceRaw)) return null;
-  const sourceType = asNonBlankString(sourceRaw.type);
-  const sourceId = asString(sourceRaw.id);
-  if (sourceType === null || sourceId === null) return null;
+  const source = parseSourceRef(input.source);
+  if (source === null) return null;
 
   const category =
     typeof input.category === "string" && (CATEGORIES as readonly string[]).includes(input.category)
@@ -56,21 +53,10 @@ function parseStep(input: unknown): PathwayStep | null {
   const temporal = parseTemporal(input.temporal);
   if (temporal === null) return null;
 
-  const provenanceRaw = input.provenance;
-  if (!isRecord(provenanceRaw)) return null;
-  const provSourceType = asSourceType(provenanceRaw.source_type);
-  const verificationStatus = asVerification(provenanceRaw.verification_status);
-  if (provSourceType === null || verificationStatus === null) return null;
+  const provenance = parseProvenance(input.provenance);
+  if (provenance === null) return null;
 
-  return {
-    source: { type: sourceType, id: sourceId },
-    category,
-    label,
-    from,
-    to,
-    temporal,
-    provenance: { sourceType: provSourceType, verificationStatus },
-  };
+  return { source, category, label, from, to, temporal, provenance };
 }
 
 /** True only when the steps form a contiguous chain focal -> ... -> target: each
