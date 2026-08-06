@@ -18,7 +18,12 @@ import { Relationships } from "@/features/relationships/components/Relationships
 import { getPersonRelationships } from "@/features/relationships/read";
 import { PersonCohorts } from "@/features/revelation/components/PersonCohorts";
 import { PersonMentorshipLineage } from "@/features/revelation/components/PersonMentorshipLineage";
-import { getPersonCohorts, getPersonMentorshipLineage } from "@/features/revelation/read";
+import { PersonRecurrence } from "@/features/revelation/components/PersonRecurrence";
+import {
+  getPersonCohorts,
+  getPersonMentorshipLineage,
+  getPersonRecurrence,
+} from "@/features/revelation/read";
 import { Timeline } from "@/features/timeline/components/Timeline";
 import { getPersonTimeline } from "@/features/timeline/read";
 
@@ -32,19 +37,20 @@ import { getPersonTimeline } from "@/features/timeline/read";
 // Reading order (Blueprint's Biography Engine): identity band, a divider, then
 // the reading spine -- the introductory narrative (or honest absence), the
 // historical engines (timeline, participation, relationships, contributions),
-// then the M8 REVELATION (documented cohorts read INLINE -- a vantage that opens
-// within the reading, not a destination; the eighth milestone reveals what the
-// preserved, connected record already demonstrates), the reserved section
-// architecture, and the honest withheld-note. The spine is composed through
-// <ReadingSpine>, the SAME primitive the Institution and Contribution pages use,
-// so the three canonical pages share one continuous rhythm and a reader never
-// feels they have crossed from one software module into another (Production
-// Experience Phase I). The sections are NOT flattened: each engine keeps its own
-// narrative/chronology/belonging/assertion semantics. These engines ARE this
-// person's documented connections (M7, invisible infrastructure); M8 composes
-// several of them into the documented cohorts this person belonged to, each
-// decomposable back to its participation records. Server Component; reads
-// composed server-side.
+// then the M8 REVELATIONS (documented cohorts, documented mentorship lineage, and
+// documented recurrence -- each read INLINE, a vantage that opens within the
+// reading, not a destination; the eighth milestone reveals what the preserved,
+// connected record already demonstrates), the reserved section architecture, and
+// the honest withheld-note. The spine is composed through <ReadingSpine>, the
+// SAME primitive the Institution and Contribution pages use, so the three
+// canonical pages share one continuous rhythm and a reader never feels they have
+// crossed from one software module into another (Production Experience Phase I).
+// The sections are NOT flattened: each engine keeps its own narrative/chronology/
+// belonging/assertion semantics. These engines ARE this person's documented
+// connections (M7, invisible infrastructure); M8 composes several of them into
+// the documented cohorts this person belonged to, the mentorship lineage they sit
+// within, and the phenomena documented to have recurred for them -- each
+// decomposable back to its records. Server Component; reads composed server-side.
 export const metadata: Metadata = {
   title: pageTitle("Scientific biography"),
 };
@@ -67,6 +73,7 @@ export default async function BiographyPage({ params }: BiographyPageProps) {
   const contributions = await getPersonContributions(personId);
   const cohorts = await getPersonCohorts(personId);
   const mentorshipLineage = await getPersonMentorshipLineage(personId);
+  const recurrence = await getPersonRecurrence(personId);
 
   return (
     <main id="main-content" tabIndex={-1} className="py-16">
@@ -91,6 +98,8 @@ export default async function BiographyPage({ params }: BiographyPageProps) {
           <PersonCohorts document={cohorts} />
 
           <PersonMentorshipLineage document={mentorshipLineage} />
+
+          <PersonRecurrence document={recurrence} />
 
           <div className="flex flex-col gap-8">
             {RESERVED_SECTION_ORDER.map((key) => {

@@ -15,9 +15,12 @@ import type {
   OrganizationContinuityDocument,
   OrganizationGenerationsDocument,
   OrganizationLineageDocument,
+  OrganizationRecurrenceDocument,
   Practice,
   PersonCohortsDocument,
   PersonMentorshipLineageDocument,
+  PersonRecurrenceDocument,
+  RecurrenceGroup,
   StatusCategory,
 } from "./types";
 
@@ -166,6 +169,36 @@ export function buildOrganizationContinuityView(
     hasStatusSignal,
     practices,
   };
+}
+
+// ---- M8.5: documented recurrence --------------------------------------
+
+export interface RecurrenceView {
+  isEmpty: boolean;
+  groups: RecurrenceGroup[];
+}
+
+/** A null document (read failed / absent) and an empty groups array both read as
+ * the same honest absence -- never an error, never a fabricated recurrence. The
+ * read model already applied the >= 2 rule and the neutral ordering (category,
+ * label, key -- never by count); position here is reading order, never rank. */
+function buildRecurrenceView(document: { groups: RecurrenceGroup[] } | null): RecurrenceView {
+  if (document === null || document.groups.length === 0) {
+    return { isEmpty: true, groups: [] };
+  }
+  return { isEmpty: false, groups: document.groups };
+}
+
+export function buildPersonRecurrenceView(
+  document: PersonRecurrenceDocument | null,
+): RecurrenceView {
+  return buildRecurrenceView(document);
+}
+
+export function buildOrganizationRecurrenceView(
+  document: OrganizationRecurrenceDocument | null,
+): RecurrenceView {
+  return buildRecurrenceView(document);
 }
 
 // Provenance labelling is the platform-shared kernel, re-exported so a revealed

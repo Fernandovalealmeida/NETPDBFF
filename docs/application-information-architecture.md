@@ -522,3 +522,20 @@ continuation, documented rupture (the institution's terminal status), an evident
 (a silence, never an end), and an unknown outcome (a record that merely stops) — and
 states its limits. See `docs/m8.4-continuity-rupture.md` and
 `docs/decisions/0018-revelation-engine.md`.
+
+## M8.5 — Recurrence reads inline; no new route
+
+**No new route, no navigation entry.** M8.5 adds the documented-recurrence
+revelation — the phenomena the record documents as having occurred more than once
+for a person (a role held again at an institution, same-kind events, same-kind
+contributions) or an institution (same-kind events and contributions) — **inline**
+on the existing person and institution pages, after their prior revelation engines,
+inside the same `ReadingSpine`. Each recurrence reads as a plain count ("Documented
+N times as …") and a time-ordered list of occurrences, every occurrence decomposable
+to its canonical record — a contribution occurrence is a doorway to its page, an
+event carries its title, a role anchors its institution. It is infrastructure that
+enriches reading, a vantage that opens within it — not a destination: no discovery
+page, no dashboard, no graph, no metric. A count is a count of records, never a rank
+or a measure of importance; occurrences are never ordered by count; a single
+documented occurrence is not recurrence; unknown dates stay unknown. See
+`docs/m8.5-recurrence.md` and `docs/decisions/0018-revelation-engine.md`.

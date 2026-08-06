@@ -242,3 +242,62 @@ export interface OrganizationContinuityDocument {
   closure: ClosureMoment | null;
   practices: Practice[];
 }
+
+// ---- M8.5: documented recurrence (single-entity repetition) --------------
+
+/** The structural category of a recurrence group -- what KIND of documented
+ * phenomenon recurred. Structural, never evaluative: `role` = the same
+ * participation capacity at the same institution; `event` = documented events of
+ * the same kind; `contribution` = documented contributions of the same kind. */
+export type RecurrenceCategory = "role" | "event" | "contribution";
+
+/** One documented occurrence within a recurrence group: the exact canonical row
+ * it decomposes to (`source`), its own temporal and provenance, and -- where the
+ * occurrence points at its own canonical entity -- a `node` doorway (a
+ * contribution links to its page; an event carries its title with no page; a
+ * role occurrence has no per-occurrence node, its institution being the group
+ * anchor). Nothing here is inferred; an undated occurrence keeps its unknown
+ * dates. */
+export interface RecurrenceOccurrence {
+  source: RevelationSourceRef;
+  node: ProjectedNode | null;
+  temporal: TemporalValue;
+  provenance: ProvenanceInfo;
+}
+
+/** One documented recurrence: a structural phenomenon (the `category` + `label`,
+ * e.g. "Director" role, "Expedition" event kind) that the record documents
+ * having occurred `count` times -- ALWAYS >= 2 distinct occurrences (a single
+ * documented occurrence is not a recurrence). `anchor` is the institution a role
+ * recurred at (a ProjectedNode doorway), null for event/contribution kinds. The
+ * count is literally the number of `occurrences` and is NEVER a metric, weight,
+ * or rank. `occurrences` are in time order (undated last), each decomposable. */
+export interface RecurrenceGroup {
+  category: RecurrenceCategory;
+  label: string;
+  anchor: ProjectedNode | null;
+  count: number;
+  occurrences: RecurrenceOccurrence[];
+}
+
+/** The documented-recurrence revelation document for one person (from
+ * reveal_person_recurrence): the person, and the phenomena the record documents
+ * to have recurred for them (repeated role at an institution, repeated same-kind
+ * events, repeated same-kind contributions). An empty groups array is an honest
+ * absence, not a claim that nothing recurred. */
+export interface PersonRecurrenceDocument {
+  personId: string;
+  person: ProjectedNode;
+  groups: RecurrenceGroup[];
+}
+
+/** The documented-recurrence revelation document for one institution (from
+ * reveal_organization_recurrence): the institution, and the phenomena the record
+ * documents to have recurred for it (repeated same-kind events and contributions;
+ * participations are M8.4's continuity lens, not repeated here). An empty groups
+ * array is an honest absence. */
+export interface OrganizationRecurrenceDocument {
+  organizationId: string;
+  organization: ProjectedNode;
+  groups: RecurrenceGroup[];
+}

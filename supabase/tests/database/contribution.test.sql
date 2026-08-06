@@ -32,6 +32,13 @@ select plan(77);
 \set org1 'a1000000-0000-0000-0000-000000000001'
 \set ev1 'e1000000-0000-0000-0000-000000000001'
 
+-- Independence: clear the NO ACTION people-child tables before people so this
+-- suite does not abort on committed rows the e2e claim-workflow may leave on
+-- the seeded people (profile_claims/user_person_links reference people ON
+-- DELETE NO ACTION; both are empty in every other suite). No constraint is
+-- weakened and FK enforcement stays on.
+delete from public.user_person_links;
+delete from public.profile_claims;
 delete from public.people;
 delete from public.organizations;
 delete from public.contributions;

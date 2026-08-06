@@ -8,7 +8,7 @@
 // unrecognizable shape. Pure; unit-tested; fails closed; parsing only ever
 // REMOVES, it never invents.
 
-import type { ProjectedNode } from "@/features/network/types";
+import { NETWORK_NODE_TYPES, type NetworkNodeType, type ProjectedNode } from "@/features/network/types";
 import {
   SOURCE_TYPES,
   VERIFICATION_STATUSES,
@@ -75,23 +75,42 @@ export function parseTemporal(input: unknown): TemporalValue | null {
   };
 }
 
-/** Parses a person/organization node in the shared ProjectedNode shape. */
-export function parseNode(input: unknown): ProjectedNode | null {
+/** Parses ANY canonical node in the shared ProjectedNode shape -- a person,
+ * organization, contribution, or event (the full NetworkNodeType). M8.1-M8.4
+ * project only person/organization nodes; M8.5 recurrence also projects
+ * contribution and event nodes (a contribution occurrence is a doorway to its
+ * page; an event occurrence carries its title with no page). Fail-closed: an
+ * unrecognized type, missing id, or blank label rejects the node. */
+export function parseAnyNode(input: unknown): ProjectedNode | null {
   if (!isRecord(input)) return null;
   const typeRaw = asString(input.type);
   const id = asString(input.id);
   const label = asNonBlankString(input.label);
-  if ((typeRaw !== "person" && typeRaw !== "organization") || id === null || label === null) {
+  if (
+    typeRaw === null ||
+    !(NETWORK_NODE_TYPES as readonly string[]).includes(typeRaw) ||
+    id === null ||
+    label === null
+  ) {
     return null;
   }
   return {
-    type: typeRaw,
+    type: typeRaw as NetworkNodeType,
     id,
     label,
     secondaryLabel: asString(input.secondary_label),
     href: asString(input.href),
     verificationStatus: asVerificationOrNull(input.verification_status),
   };
+}
+
+/** Parses a person/organization node in the shared ProjectedNode shape. Delegates
+ * to parseAnyNode and then restricts to the two co-presence/lineage node types,
+ * so M8.1-M8.4 callers keep their exact prior contract (person/organization
+ * only). */
+export function parseNode(input: unknown): ProjectedNode | null {
+  const node = parseAnyNode(input);
+  return node !== null && (node.type === "person" || node.type === "organization") ? node : null;
 }
 
 export function parseCapacity(input: unknown): RevelationCapacityRef | null {

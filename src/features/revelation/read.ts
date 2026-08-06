@@ -15,12 +15,18 @@ import {
 } from "./parse-lineage";
 import { parsePersonCohortsDocument } from "./parse";
 import { parseOrganizationGenerationsDocument } from "./parse-organization";
+import {
+  parseOrganizationRecurrenceDocument,
+  parsePersonRecurrenceDocument,
+} from "./parse-recurrence";
 import type {
   OrganizationContinuityDocument,
   OrganizationGenerationsDocument,
   OrganizationLineageDocument,
+  OrganizationRecurrenceDocument,
   PersonCohortsDocument,
   PersonMentorshipLineageDocument,
+  PersonRecurrenceDocument,
 } from "./types";
 
 /** M8.1 -- person co-presence: the documented cohorts a person belonged to. */
@@ -102,4 +108,39 @@ export async function getOrganizationContinuity(
   }
 
   return parseOrganizationContinuityDocument(data);
+}
+
+/** M8.5 -- documented recurrence: the phenomena the record documents to have
+ * recurred for one person (repeated role at an institution, repeated same-kind
+ * events, repeated same-kind contributions). */
+export async function getPersonRecurrence(
+  personId: string,
+): Promise<PersonRecurrenceDocument | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("reveal_person_recurrence", {
+    p_person_id: personId,
+  });
+
+  if (error || data === null || data === undefined) {
+    return null;
+  }
+
+  return parsePersonRecurrenceDocument(data);
+}
+
+/** M8.5 -- documented recurrence: the phenomena the record documents to have
+ * recurred for one institution (repeated same-kind events and contributions). */
+export async function getOrganizationRecurrence(
+  organizationId: string,
+): Promise<OrganizationRecurrenceDocument | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("reveal_organization_recurrence", {
+    p_organization_id: organizationId,
+  });
+
+  if (error || data === null || data === undefined) {
+    return null;
+  }
+
+  return parseOrganizationRecurrenceDocument(data);
 }

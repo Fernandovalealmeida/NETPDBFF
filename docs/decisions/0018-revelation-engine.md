@@ -260,3 +260,55 @@ closure).
 
 **Comparison C5 / recurrence C4 / bounded pathway C6** remain deferred (not assigned to
 M8.4).
+
+## Amendment — M8.5: documented recurrence (C4) (Accepted)
+
+- Date: 2026-08-05
+- Milestone: M8.5 — Revelation Engine (recurrence)
+
+M8.5 extends this same decision (no new ADR: same Revelation Engine, a new pattern
+family) with the **documented recurrence** capability C4. It adds two bounded
+`SECURITY DEFINER` read models — `reveal_person_recurrence(uuid)` and
+`reveal_organization_recurrence(uuid)` — and **nothing else**: no table, no write
+path, no new route, no navigation, no metric. For a focal entity it groups the
+entity's OWN explicit assertions by a structural recurrence key (organization +
+capacity; event kind; contribution kind) and reveals each group holding **>= 2**
+distinct occurrences, with a plain count and the occurrences in time order (undated
+last). It reads inline on the person page (after co-presence and lineage) and the
+institution page (after continuity). Recurrence is **not similarity**: it is a
+GROUP BY + COUNT over identical explicit key values — no AI, no clustering, no
+pattern mining, no embedding, no prediction, no inference.
+
+**Scope decision (ratified with the product owner).** Spec §3.5 names C4's
+"recurrence counting" DYADICALLY (the count of distinct contexts in which the same
+*pair* co-appears). The M8.5 mission defines recurrence as SINGLE-ENTITY repetition
+("the same phenomenon occurred multiple independent times"). The owner ratified the
+single-entity reading and the person + institution surfaces; the dyadic
+co-appearance count remains a deferred sibling. Both obey the identical discipline
+(count of distinct explicit assertions, never a metric).
+
+**Count, never metric (Spec §4).** The count is literally the number of distinct
+explicit assertions of that kind, presented as "Documented N times as …". Groups
+are ordered NEUTRALLY (category, then label, then a stable key) — never by count;
+the count never ranks, weights, or reads as importance, activity, or standing
+(copy unit-tested to exclude that vocabulary). A single documented occurrence is
+never a recurrence (the >= 2 rule). An UNDATED occurrence still counts and is shown
+last, marked unknown (a deliberate, documented difference from M8.4, whose coverage
+genuinely needs dates).
+
+**Institution scope clarification (reported, not silent).** The institution lens
+EXCLUDES participations; per-capacity coverage over time is M8.4's continuity lens,
+and reading it again as a recurrence count would be duplicative. Institution
+recurrence composes over the institution's repeated events and contributions only.
+Reversible if participation-recurrence is later wanted.
+
+**Reuse (no duplication).** M8.5 projects contribution and event nodes, which the
+shared `parseNode` previously rejected. Rather than duplicate a node parser,
+`parse-shared` gained `parseAnyNode` (all four `NetworkNodeType`s) and `parseNode`
+now delegates to it and restricts to person/organization — so M8.1–M8.4 keep their
+exact prior contract (the M8.1–M8.4 pure-logic suites pass unchanged). The pgTAP
+`ProjectedNode` contract lock is retained (focal, role anchor, event node, and
+contribution node types asserted).
+
+**Comparison C5 / bounded pathway C6 / dyadic co-appearance recurrence** remain
+deferred (not assigned to M8.5).

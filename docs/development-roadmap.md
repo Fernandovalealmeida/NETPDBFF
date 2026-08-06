@@ -289,3 +289,21 @@ institution's terminal status never dates a particular capacity's end. Recurrenc
 M8.5), bounded pathway (C6, M8.6), and comparison (C5, enabled, not assigned) remain
 deferred. See `docs/m8.4-continuity-rupture.md` and
 `docs/decisions/0018-revelation-engine.md` (amended).
+
+**M8.5 — Revelation Engine: documented recurrence (C4) (implemented, pending local validation).**
+The recurrence family: two bounded `SECURITY DEFINER` read models —
+`reveal_person_recurrence(uuid)` and `reveal_organization_recurrence(uuid)` — and
+**nothing else** (no table, no write). For a focal entity they group the entity's
+OWN explicit assertions by a structural recurrence key (organization + capacity;
+event kind; contribution kind) and reveal each group with **>= 2** distinct
+occurrences, with a plain count and the occurrences in time order (undated last).
+Recurrence is NOT similarity: a GROUP BY + COUNT over identical explicit key values
+— no AI, clustering, pattern mining, embedding, prediction, or inference. The count
+is a count of records, never a metric; groups are ordered neutrally (category,
+label), never by count. Reads **inline** on the person page (after co-presence and
+lineage) and the institution page (after continuity), with pgTAP/Vitest/Playwright
+coverage. Scope: single-entity repetition (ratified; the dyadic co-appearance count
+of Spec §3.5 is deferred); the institution lens excludes participations (M8.4
+continuity owns per-capacity coverage). Bounded pathway (C6, M8.6) and comparison
+(C5, enabled, not assigned) remain deferred. See `docs/m8.5-recurrence.md` and
+`docs/decisions/0018-revelation-engine.md` (amended).

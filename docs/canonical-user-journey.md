@@ -182,3 +182,20 @@ never used to date the end of any one capacity. The reader never "enters discove
 page simply grows a further vantage, composed from the same dated participation records
 and decomposable back to them. It records what the record covers — never why it continued
 or ceased, which it leaves to the reader and to M9. See `docs/m8.4-continuity-rupture.md`.
+
+## M8.5 — Revelation (documented recurrence) deepens person and institution reading, without a new step
+
+The person and institution pages each grow one further vantage, within the canonical
+journey and never beside it. Opening a person, a reader now finds — after their
+cohorts and mentorship lineage — the phenomena documented to have RECURRED for them:
+the same role held again at the same institution, events of the same kind,
+contributions of the same kind, each shown with how many documented times and when,
+each occurrence a doorway back into the record. Opening an institution, a reader
+finds — after its documented continuity — the same-kind events and contributions the
+record documents more than once. The reader never "enters discovery"; the page
+simply grows a further vantage, composed from the same explicit records and
+decomposable back to them. It answers "what has happened repeatedly?" — never "what
+seems similar?"; a count is a count of records, never a rank or a measure of
+standing, and a single documented occurrence is not recurrence. It reveals THAT the
+record documents a repetition, and how many times, leaving what it means to the
+reader and to M9. See `docs/m8.5-recurrence.md`.

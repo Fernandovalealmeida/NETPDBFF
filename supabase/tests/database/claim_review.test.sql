@@ -33,6 +33,13 @@ select plan(75);
 -- is: this file's own assertions never depend on what seed.sql happens
 -- to contain, so public.people is cleared before any fixture of this
 -- file's own is created. Rolled back at the end like everything else.
+-- Independence: clear the NO ACTION people-child tables before people so this
+-- suite does not abort on committed rows the e2e claim-workflow may leave on
+-- the seeded people (profile_claims/user_person_links reference people ON
+-- DELETE NO ACTION; both are empty in every other suite). No constraint is
+-- weakened and FK enforcement stays on.
+delete from public.user_person_links;
+delete from public.profile_claims;
 delete from public.people;
 
 \set reviewer_active 'b0000000-0000-0000-0000-000000000001'

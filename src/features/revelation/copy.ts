@@ -21,6 +21,7 @@ import type {
   CoverageSpan,
   DocumentedStatus,
   LineageStep,
+  RecurrenceGroup,
   RevelationCapacityRef,
 } from "./types";
 
@@ -172,6 +173,61 @@ export const revelationCopy = {
     statusHeading: "Recorded status of this institution",
     coverageHeading: "Documented coverage by capacity",
   },
+
+  // M8.5 -- documented recurrence (person).
+  personRecurrence: {
+    title: "Documented recurrence",
+    whatThisShows:
+      "Phenomena the record documents more than once for this person — the same " +
+      "role held again at the same institution, events of the same kind, and " +
+      "contributions of the same kind. It shows how many times each is documented, " +
+      "and when. A count here is a count of records, not a measure of activity or " +
+      "standing, and the occurrences are listed in time order, never ranked.",
+    empty: {
+      title: "No documented recurrence yet",
+      description:
+        "Nothing is yet recorded more than once for this person. This is an honest " +
+        "absence, not a claim that nothing recurred — a single documented occurrence " +
+        "is not recurrence, and only explicit, repeated records appear here.",
+    },
+    limitsHeading: "Limits of this view",
+    limits:
+      "This shows the documented recurrence, not the true one. It counts only " +
+      "distinct, explicit records preserved on this platform, so occurrences that " +
+      "were real but never recorded do not appear, and two records of the same " +
+      "occurrence would each be counted. A count is the number of documented " +
+      "occurrences — never a measure of activity, standing, or weight; occurrences " +
+      "are shown in time order, and where a date is unknown it is shown as unknown, " +
+      "never guessed.",
+  },
+
+  // M8.5 -- documented recurrence (institution).
+  organizationRecurrence: {
+    title: "Documented recurrence",
+    whatThisShows:
+      "Phenomena the record documents more than once for this institution — events " +
+      "of the same kind and contributions of the same kind. It shows how many times " +
+      "each is documented, and when. A count here is a count of records, not a " +
+      "measure of activity or standing, and the occurrences are listed in time " +
+      "order, never ranked. Repeated roles over time are shown in the documented " +
+      "continuity above.",
+    empty: {
+      title: "No documented recurrence yet",
+      description:
+        "Nothing is yet recorded more than once for this institution. This is an " +
+        "honest absence, not a claim that nothing recurred — a single documented " +
+        "occurrence is not recurrence, and only explicit, repeated records appear here.",
+    },
+    limitsHeading: "Limits of this view",
+    limits:
+      "This shows the documented recurrence, not the true one. It counts only " +
+      "distinct, explicit records preserved on this platform, so occurrences that " +
+      "were real but never recorded do not appear, and two records of the same " +
+      "occurrence would each be counted. A count is the number of documented " +
+      "occurrences — never a measure of activity, standing, or weight; occurrences " +
+      "are shown in time order, and where a date is unknown it is shown as unknown, " +
+      "never guessed.",
+  },
 } as const;
 
 function lower(value: string): string {
@@ -206,6 +262,10 @@ export function revelationSourceRecordLabel(type: string): string {
       return "relationship record";
     case "organization_relationships":
       return "institutional relationship record";
+    case "events":
+      return "event record";
+    case "contributions":
+      return "contribution record";
     default:
       return "documented record";
   }
@@ -221,6 +281,28 @@ export function revelationSourceRecordLabel(type: string): string {
 export function describeLineageStep(step: LineageStep): string {
   const role = lower(step.kind.sourceRole);
   return `${step.from.label} is a documented ${role} of ${step.to.label}.`;
+}
+
+/**
+ * Deterministic one-sentence heading for a recurrence group, leading with the
+ * plain count of documented occurrences (Spec §3.5: "documented N times"). The
+ * count is stated neutrally and NEVER as importance, activity, or a rank; the
+ * phrasing is structural (a role at an institution; an event/contribution of a
+ * kind). The kind/capacity label is data from the controlled vocabulary.
+ */
+export function describeRecurrenceGroup(group: RecurrenceGroup): string {
+  switch (group.category) {
+    case "role":
+      return `Documented ${group.count} times as ${group.label}${
+        group.anchor ? ` at ${group.anchor.label}` : ""
+      }.`;
+    case "event":
+      return `Documented ${group.count} times as an event of kind ${group.label}.`;
+    case "contribution":
+      return `Documented ${group.count} times as a contribution of kind ${group.label}.`;
+    default:
+      return `Documented ${group.count} times.`;
+  }
 }
 
 /**

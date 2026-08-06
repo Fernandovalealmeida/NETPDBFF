@@ -82,22 +82,31 @@ test.describe("the temporal model renders honestly", () => {
 
     await page.goto(person.url);
 
+    // Scope to the Timeline region. This person has two fieldwork events and two
+    // appointment events, so the M8.5 Documented Recurrence section legitimately
+    // re-renders those events' periods (15 June 1987, c. 1985, 1987-1991,
+    // 1995-present) and titles in a different region. The period/title
+    // assertions below are the Timeline's own, so they read inside the Timeline
+    // section. (The uncertain and undated events are single occurrences, form no
+    // recurrence group, and so are asserted page-level unchanged.)
+    const timeline = page.locator('section[aria-labelledby="timeline-heading"]');
+
     // Decade navigation (long timeline -> decade anchors as headings).
     await expect(page.getByRole("heading", { level: 3, name: "1980s" })).toBeVisible();
     await expect(page.getByRole("heading", { level: 3, name: "1990s" })).toBeVisible();
 
     // Every temporal state, kept distinct in presentation.
-    await expect(page.getByText("15 June 1987")).toBeVisible();                 // exact
-    await expect(page.getByText(/c\. 1985/)).toBeVisible();                     // approximate
-    await expect(page.getByText(/Approximate date/)).toBeVisible();             // approximation note
-    await expect(page.getByText(/1987\s*[–-]\s*1991/)).toBeVisible();           // interval
-    await expect(page.getByText(/1995\s*[–-]\s*present/)).toBeVisible();        // open-ended
+    await expect(timeline.getByText("15 June 1987")).toBeVisible();                 // exact
+    await expect(timeline.getByText(/c\. 1985/)).toBeVisible();                     // approximate
+    await expect(timeline.getByText(/Approximate date/)).toBeVisible();             // approximation note
+    await expect(timeline.getByText(/1987\s*[–-]\s*1991/)).toBeVisible();           // interval
+    await expect(timeline.getByText(/1995\s*[–-]\s*present/)).toBeVisible();        // open-ended
     await expect(page.getByText(/Proposed date, not yet confirmed/)).toBeVisible(); // uncertain
-    await expect(page.getByText("Date unknown").first()).toBeVisible();         // undated (kept, not dropped)
+    await expect(page.getByText("Date unknown").first()).toBeVisible();             // undated (kept, not dropped)
 
     // Overlapping 1987 events all render; nothing is collapsed or lost.
     for (const title of ["Approximate fieldwork", "Year publication", "Exact appointment", "Interval fieldwork", "Uncertain observation", "Ongoing appointment", "Undated interview"]) {
-      await expect(page.getByText(title)).toBeVisible();
+      await expect(timeline.getByText(title)).toBeVisible();
     }
 
     // Provenance discoverable per event.

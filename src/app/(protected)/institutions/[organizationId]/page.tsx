@@ -21,10 +21,12 @@ import { getOrganizationNetwork } from "@/features/network/read";
 import { OrganizationContinuity } from "@/features/revelation/components/OrganizationContinuity";
 import { OrganizationGenerations } from "@/features/revelation/components/OrganizationGenerations";
 import { OrganizationLineage } from "@/features/revelation/components/OrganizationLineage";
+import { OrganizationRecurrence } from "@/features/revelation/components/OrganizationRecurrence";
 import {
   getOrganizationContinuity,
   getOrganizationGenerations,
   getOrganizationLineage,
+  getOrganizationRecurrence,
 } from "@/features/revelation/read";
 import { Timeline } from "@/features/timeline/components/Timeline";
 
@@ -53,9 +55,11 @@ import { Timeline } from "@/features/timeline/components/Timeline";
 //
 // M8 refinement (ADR-0018): the Revelation Engine reads INLINE here, never as a
 // destination. M8.2 documented co-presence, M8.3 documented institutional
-// descent, and now M8.4 documented continuity & rupture (per-capacity coverage
-// over time + the institution's own recorded status), each a deterministic
-// composition of already-preserved Assertions, decomposable back to them.
+// descent, M8.4 documented continuity & rupture (per-capacity coverage over time
+// + the institution's own recorded status), and M8.5 documented recurrence
+// (same-kind events/contributions documented more than once), each a
+// deterministic composition of already-preserved Assertions, decomposable back
+// to them.
 export const metadata: Metadata = {
   title: pageTitle("Institution"),
 };
@@ -79,6 +83,7 @@ export default async function InstitutionPage({ params }: InstitutionPageProps) 
   const generations = await getOrganizationGenerations(organizationId);
   const lineage = await getOrganizationLineage(organizationId);
   const continuity = await getOrganizationContinuity(organizationId);
+  const recurrence = await getOrganizationRecurrence(organizationId);
 
   const introduction = narrativeFacet(organization, "introduction");
   const overview = narrativeFacet(organization, "overview");
@@ -134,6 +139,8 @@ export default async function InstitutionPage({ params }: InstitutionPageProps) 
           <OrganizationLineage document={lineage} />
 
           <OrganizationContinuity document={continuity} />
+
+          <OrganizationRecurrence document={recurrence} />
 
           <InstitutionReservedSection
             id="records"

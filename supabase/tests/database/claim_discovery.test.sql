@@ -67,6 +67,13 @@ select plan(33);
 -- this file no longer needs to know seed data exists at all. Scoped to
 -- public.people only, the one table this file's fixtures and seed.sql
 -- actually share.
+-- Independence: clear the NO ACTION people-child tables before people so this
+-- suite does not abort on committed rows the e2e claim-workflow may leave on
+-- the seeded people (profile_claims/user_person_links reference people ON
+-- DELETE NO ACTION; both are empty in every other suite). No constraint is
+-- weakened and FK enforcement stays on.
+delete from public.user_person_links;
+delete from public.profile_claims;
 delete from public.people;
 
 insert into auth.users (id, aud, role, email, encrypted_password, email_confirmed_at, created_at, updated_at)
