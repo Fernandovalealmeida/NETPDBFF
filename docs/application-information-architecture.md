@@ -539,3 +539,19 @@ page, no dashboard, no graph, no metric. A count is a count of records, never a 
 or a measure of importance; occurrences are never ordered by count; a single
 documented occurrence is not recurrence; unknown dates stay unknown. See
 `docs/m8.5-recurrence.md` and `docs/decisions/0018-revelation-engine.md`.
+
+## M8.6 — Bounded pathway reads inline; no new route
+
+**No new route, no navigation entry, no console.** M8.6 adds the bounded-pathway
+revelation — the documented chain of records linking this person to a SELECTED target
+entity through intermediaries — **inline** on the existing person page, after the recurrence
+engine, inside the same `ReadingSpine`. The target is chosen via a `?pathwayTo` query
+parameter, set by a minimal "trace the documented chain to this person" doorway on people
+already revealed on the page (there is no picker, candidate list, or discovery page — that
+would be recommendation). With no target the lens shows a calm "choose an entity" state.
+When a chain is found it reads as an ordered list of decomposable steps, each entity a
+doorway, under the ENDPOINT RULE: "a documented chain of N steps connects A and B", never
+"A is connected to B"; length is a fact, never a rank; a no-chain result is an honest
+absence, never "not connected". It is infrastructure that enriches reading, a vantage that
+opens within it — not a destination: no dashboard, no graph, no metric. See
+`docs/m8.6-bounded-pathway.md` and `docs/decisions/0018-revelation-engine.md`.

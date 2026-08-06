@@ -301,3 +301,49 @@ export interface OrganizationRecurrenceDocument {
   organization: ProjectedNode;
   groups: RecurrenceGroup[];
 }
+
+// ---- M8.6: bounded pathway (C6) ------------------------------------------
+
+/** The structural category of a pathway step -- WHICH kind of explicit assertion
+ * forms this link of the chain. Structural, never evaluative. */
+export type PathwayStepCategory =
+  | "relationship"
+  | "institutional_relationship"
+  | "participation"
+  | "contribution"
+  | "event";
+
+/** One step of a documented pathway: a single explicit assertion linking two
+ * entities, projected in traversal order (`from` -> `to`), decomposable to its
+ * exact canonical row (`source`), with the connecting assertion's category and
+ * vocabulary label, its temporal, and its provenance. Both endpoints are
+ * ProjectedNode doorways. The step asserts only the documented link it carries;
+ * the chain composes steps, and nothing more. */
+export interface PathwayStep {
+  source: RevelationSourceRef;
+  category: PathwayStepCategory;
+  label: string;
+  from: ProjectedNode;
+  to: ProjectedNode;
+  temporal: TemporalValue;
+  provenance: ProvenanceInfo;
+}
+
+/** The bounded-pathway revelation document for a focal person and a selected
+ * target entity (from reveal_person_pathway). Governed by the ENDPOINT RULE: the
+ * chain asserts nothing about its endpoints beyond its literal existence.
+ *   - `targetResolved` false: the target id did not resolve to a readable entity.
+ *   - `found` false: the target resolved but no documented chain of >= 2 and
+ *     <= the hop bound connects them (an honest absence, NEVER "not connected").
+ *   - `found` true: `steps` is the ordered chain (>= 2), each decomposable, with
+ *     `stepCount` its length (a fact, never a rank). */
+export interface PersonPathwayDocument {
+  fromId: string;
+  from: ProjectedNode;
+  toId: string;
+  to: ProjectedNode | null;
+  targetResolved: boolean;
+  found: boolean;
+  stepCount: number;
+  steps: PathwayStep[];
+}

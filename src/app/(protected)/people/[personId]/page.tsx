@@ -18,10 +18,12 @@ import { Relationships } from "@/features/relationships/components/Relationships
 import { getPersonRelationships } from "@/features/relationships/read";
 import { PersonCohorts } from "@/features/revelation/components/PersonCohorts";
 import { PersonMentorshipLineage } from "@/features/revelation/components/PersonMentorshipLineage";
+import { PersonPathway } from "@/features/revelation/components/PersonPathway";
 import { PersonRecurrence } from "@/features/revelation/components/PersonRecurrence";
 import {
   getPersonCohorts,
   getPersonMentorshipLineage,
+  getPersonPathway,
   getPersonRecurrence,
 } from "@/features/revelation/read";
 import { Timeline } from "@/features/timeline/components/Timeline";
@@ -37,30 +39,34 @@ import { getPersonTimeline } from "@/features/timeline/read";
 // Reading order (Blueprint's Biography Engine): identity band, a divider, then
 // the reading spine -- the introductory narrative (or honest absence), the
 // historical engines (timeline, participation, relationships, contributions),
-// then the M8 REVELATIONS (documented cohorts, documented mentorship lineage, and
-// documented recurrence -- each read INLINE, a vantage that opens within the
-// reading, not a destination; the eighth milestone reveals what the preserved,
-// connected record already demonstrates), the reserved section architecture, and
-// the honest withheld-note. The spine is composed through <ReadingSpine>, the
-// SAME primitive the Institution and Contribution pages use, so the three
-// canonical pages share one continuous rhythm and a reader never feels they have
-// crossed from one software module into another (Production Experience Phase I).
-// The sections are NOT flattened: each engine keeps its own narrative/chronology/
-// belonging/assertion semantics. These engines ARE this person's documented
-// connections (M7, invisible infrastructure); M8 composes several of them into
-// the documented cohorts this person belonged to, the mentorship lineage they sit
-// within, and the phenomena documented to have recurred for them -- each
-// decomposable back to its records. Server Component; reads composed server-side.
+// then the M8 REVELATIONS (documented cohorts, mentorship lineage, recurrence,
+// and -- last -- the bounded pathway to a SELECTED target, read INLINE, a vantage
+// that opens within the reading, not a destination), the reserved section
+// architecture, and the honest withheld-note. The spine is composed through
+// <ReadingSpine>, the SAME primitive the Institution and Contribution pages use,
+// so the three canonical pages share one continuous rhythm and a reader never
+// feels they have crossed from one software module into another (Production
+// Experience Phase I). The sections are NOT flattened: each engine keeps its own
+// narrative/chronology/belonging/assertion semantics. These engines ARE this
+// person's documented connections (M7, invisible infrastructure); M8 composes
+// several of them into the cohorts this person belonged to, the mentorship
+// lineage they sit within, the phenomena documented to have recurred for them,
+// and -- when a second entity is chosen (?pathwayTo) -- the documented chain of
+// steps that links them, each decomposable back to its records. The pathway is
+// governed by the endpoint rule: a chain is never presented as a connection
+// between its ends. Server Component; reads composed server-side.
 export const metadata: Metadata = {
   title: pageTitle("Scientific biography"),
 };
 
 interface BiographyPageProps {
   params: Promise<{ personId: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function BiographyPage({ params }: BiographyPageProps) {
+export default async function BiographyPage({ params, searchParams }: BiographyPageProps) {
   const { personId } = await params;
+  const { pathwayTo } = await searchParams;
   const document = await getPersonBiography(personId);
 
   if (!document) {
@@ -74,6 +80,10 @@ export default async function BiographyPage({ params }: BiographyPageProps) {
   const cohorts = await getPersonCohorts(personId);
   const mentorshipLineage = await getPersonMentorshipLineage(personId);
   const recurrence = await getPersonRecurrence(personId);
+  // The bounded pathway is read only when a target entity is selected
+  // (?pathwayTo); otherwise the lens shows its calm "choose an entity" state.
+  const targetId = typeof pathwayTo === "string" && pathwayTo.trim() !== "" ? pathwayTo : null;
+  const pathway = targetId ? await getPersonPathway(personId, targetId) : null;
 
   return (
     <main id="main-content" tabIndex={-1} className="py-16">
@@ -100,6 +110,8 @@ export default async function BiographyPage({ params }: BiographyPageProps) {
           <PersonMentorshipLineage document={mentorshipLineage} />
 
           <PersonRecurrence document={recurrence} />
+
+          <PersonPathway document={pathway} />
 
           <div className="flex flex-col gap-8">
             {RESERVED_SECTION_ORDER.map((key) => {

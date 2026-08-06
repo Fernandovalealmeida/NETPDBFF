@@ -1500,6 +1500,10 @@ export type Database = {
           verification_status: string
         }[]
       }
+      pathway_entity_node: {
+        Args: { p_id: string; p_type: string }
+        Returns: Json
+      }
       reject_profile_claim: {
         Args: { p_claim_id: string; p_decision_notes?: string }
         Returns: {
@@ -1527,6 +1531,10 @@ export type Database = {
       reveal_person_cohorts: { Args: { p_person_id: string }; Returns: Json }
       reveal_person_mentorship_lineage: {
         Args: { p_person_id: string }
+        Returns: Json
+      }
+      reveal_person_pathway: {
+        Args: { p_from: string; p_to: string }
         Returns: Json
       }
       reveal_person_recurrence: { Args: { p_person_id: string }; Returns: Json }

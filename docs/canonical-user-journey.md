@@ -199,3 +199,22 @@ seems similar?"; a count is a count of records, never a rank or a measure of
 standing, and a single documented occurrence is not recurrence. It reveals THAT the
 record documents a repetition, and how many times, leaving what it means to the
 reader and to M9. See `docs/m8.5-recurrence.md`.
+
+## M8.6 — Revelation (bounded pathway) completes the reading, without a new step
+
+The person page grows one last vantage, within the canonical journey and never beside it,
+and only when the reader asks for it. Reading a life, a reader can choose another entity
+already revealed on the page — a co-present person, for instance — and ask what documented
+records link the two. The bounded pathway answers with the shortest documented chain of two
+or more recorded steps that connects them through intermediaries (an institution they both
+worked at, a person who mentored a third, a contribution they both touched), each step a
+doorway onward and decomposable to its record. The reader never "enters discovery"; the
+page simply traces a chain the record already holds, and only when a second entity is
+chosen. It is governed by the endpoint rule: a chain of steps is shown as exactly that — "a
+documented chain of N steps connects A and B" — never as a connection between the two, and a
+longer chain is given more reserve, not more weight. Where no chain of up to four steps
+exists, the honest reading is that the record documents none within that reach, never that
+the two are unconnected. It reveals THAT the record composes a chain, and which steps —
+leaving what the chain MEANS to the reader and to M9. With this, M8 reveals every documented
+collective pattern the specification named, and infers, ranks, and interprets nothing. See
+`docs/m8.6-bounded-pathway.md`.

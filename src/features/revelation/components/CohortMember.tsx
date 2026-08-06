@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { ProvenanceAffordance } from "@/features/shared/ProvenanceAffordance";
 
-import { describeParticipationHere, revelationSourceRecordLabel } from "../copy";
+import { describeParticipationHere, revelationCopy, revelationSourceRecordLabel } from "../copy";
 import { describeRevelationProvenance } from "../derive";
 import type { CohortMember as CohortMemberType } from "../types";
 import { RevealedPeriod } from "./RevealedPeriod";
@@ -18,6 +18,11 @@ import { RevealedPeriod } from "./RevealedPeriod";
 // related to, collaborating with, or influenced by the focal person -- only as
 // documentedly present at the same institution in an overlapping period. Server
 // Component.
+//
+// M8.6 integration: a minimal, calm doorway sets the bounded-pathway target
+// (?pathwayTo) from this already-revealed person, so a reader can ask the
+// pathway lens below to trace the documented chain to them. It is a request to
+// trace, never an assertion that a chain exists (the lens answers honestly).
 export interface CohortMemberProps {
   member: CohortMemberType;
 }
@@ -60,6 +65,14 @@ export function CohortMember({ member }: CohortMemberProps) {
           statusLabel={provenance.statusLabel}
         />
       </div>
+      <p className="mt-2 text-sm">
+        <Link
+          href={`?pathwayTo=${person.id}#person-pathway-heading`}
+          className="text-muted-foreground underline underline-offset-2"
+        >
+          {revelationCopy.personPathway.doorwayLabel}
+        </Link>
+      </p>
     </li>
   );
 }

@@ -21,6 +21,8 @@ import type {
   CoverageSpan,
   DocumentedStatus,
   LineageStep,
+  PathwayStep,
+  PersonPathwayDocument,
   RecurrenceGroup,
   RevelationCapacityRef,
 } from "./types";
@@ -228,6 +230,52 @@ export const revelationCopy = {
       "are shown in time order, and where a date is unknown it is shown as unknown, " +
       "never guessed.",
   },
+
+  // M8.6 -- bounded pathway (person). Governed by the endpoint rule.
+  personPathway: {
+    title: "Documented pathway",
+    whatThisShows:
+      "A documented chain of explicit records linking this person to another entity " +
+      "you choose — a person, institution, contribution, or event — through " +
+      "intermediaries. It shows only the literal chain: a chain of steps is not a " +
+      "connection between its ends, and a longer chain says less, not more. Each step " +
+      "is one documented record; the chain composes several, and nothing more.",
+    noTarget: {
+      title: "Choose an entity to trace a documented chain",
+      description:
+        "This traces the documented chain of records that links this person to " +
+        "another person, institution, contribution, or event — once you choose one " +
+        "(for example, from a person revealed above). No chain is proposed; only the " +
+        "recorded steps are shown, and only when a second entity is chosen.",
+    },
+    targetNotFound: {
+      title: "That record could not be found",
+      description:
+        "The chosen entity is not a readable record on this platform, so no " +
+        "documented chain can be traced to it.",
+    },
+    noChain: {
+      title: "No documented chain within four steps",
+      description:
+        "No documented chain of two to four recorded steps links them. This is an " +
+        "honest absence, not a claim that the two are unrelated — a single direct " +
+        "record, if one exists, is shown as a connection on each record's own page, " +
+        "not here; and steps that were real but never recorded do not appear.",
+    },
+    limitsHeading: "Limits of this view",
+    limits:
+      "This shows one documented chain, not the only one, and not a connection " +
+      "between its endpoints. It is composed only from explicit records preserved on " +
+      "this platform, follows them at most four steps, and stops there — where it " +
+      "stops is a silence in the record, never proof the two are unrelated. A chain " +
+      "of N steps is exactly N recorded links and nothing more: it does not measure " +
+      "how the two entities relate, and chains are never ordered or scored by length.",
+    chainHeading: "The documented chain, step by step",
+    // The minimal doorway that sets the pathway target (?pathwayTo) from a person
+    // already revealed on the page. Not a recommendation -- it names the chain the
+    // record can trace, never asserts one exists.
+    doorwayLabel: "Trace the documented chain to this person",
+  },
 } as const;
 
 function lower(value: string): string {
@@ -266,9 +314,46 @@ export function revelationSourceRecordLabel(type: string): string {
       return "event record";
     case "contributions":
       return "contribution record";
+    case "person_contributions":
+    case "organization_contributions":
+      return "contribution attribution record";
+    case "person_events":
+    case "organization_events":
+    case "contribution_events":
+      return "event association record";
     default:
       return "documented record";
   }
+}
+
+const PATHWAY_CATEGORY_PHRASE: Record<PathwayStep["category"], string> = {
+  relationship: "relationship",
+  institutional_relationship: "institutional relationship",
+  participation: "participation",
+  contribution: "contribution",
+  event: "event",
+};
+
+/**
+ * The ENDPOINT-RULE summary of a found pathway (Spec §3.2). States exactly the
+ * literal existence of the chain and its length as a fact — "a documented chain
+ * of N steps connects A and B" — and NEVER "A is connected to B". The length is
+ * reported, never ranked; the chain is never called the shortest, closest, or
+ * strongest.
+ */
+export function describePathwaySummary(document: PersonPathwayDocument): string {
+  const toLabel = document.to ? document.to.label : "the selected entity";
+  return `A documented chain of ${document.stepCount} steps connects ${document.from.label} and ${toLabel}.`;
+}
+
+/**
+ * Deterministic neutral reading of one pathway step's connecting assertion, for
+ * the middle of "{from} — {relation} — {to}". Structural only: the category names
+ * WHAT KIND of documented record links the two endpoints; the label is the
+ * vocabulary term the record carries. Asserts nothing beyond the documented link.
+ */
+export function describePathwayStepRelation(step: PathwayStep): string {
+  return `documented ${PATHWAY_CATEGORY_PHRASE[step.category]} (${lower(step.label)})`;
 }
 
 /**

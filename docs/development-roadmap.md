@@ -307,3 +307,21 @@ of Spec §3.5 is deferred); the institution lens excludes participations (M8.4
 continuity owns per-capacity coverage). Bounded pathway (C6, M8.6) and comparison
 (C5, enabled, not assigned) remain deferred. See `docs/m8.5-recurrence.md` and
 `docs/decisions/0018-revelation-engine.md` (amended).
+
+**M8.6 — Revelation Engine: bounded pathway (C6) (implemented, pending local validation).**
+The FINAL revelation capability. One bounded read model — `reveal_person_pathway(p_from,
+p_to)` (plus an internal PUBLIC-revoked `pathway_entity_node` helper) — and **nothing else**
+(no table, no write). The first TWO-ENDPOINT lens: for a focal person and a SELECTED target
+entity (person/institution/contribution/event), the shortest documented chain of **>= 2**
+explicit-assertion steps connecting them through intermediaries, over the heterogeneous
+canonical graph, bounded to a small hop cap (4) and cycle-safe, each step decomposable to
+its canonical row with both endpoints as doorways. Governed by the ENDPOINT RULE (Spec
+§3.2): "a documented chain of N steps connects A and B", never "A is connected to B"; length
+is a fact, never a rank; no chain within the bound is an honest absence, never "not
+connected". Reads **inline** on the person page, target chosen via `?pathwayTo` with a calm
+empty state and a minimal doorway on revealed cohort people (no console, no graph, no
+metric), with pgTAP/Vitest/Playwright coverage. The >= 2-step rule avoids overlap with M7's
+one-hop connection; composing across kinds avoids overlap with M8.3's same-kind descent.
+Comparison (C5, enabled, not assigned) remains the only deferred affordance. With M8.6 the
+M8 Revelation Engine (C1–C4, C6) is complete; interpretation is M9's. See
+`docs/m8.6-bounded-pathway.md` and `docs/decisions/0018-revelation-engine.md` (amended).

@@ -19,6 +19,7 @@ import type {
   Practice,
   PersonCohortsDocument,
   PersonMentorshipLineageDocument,
+  PersonPathwayDocument,
   PersonRecurrenceDocument,
   RecurrenceGroup,
   StatusCategory,
@@ -199,6 +200,36 @@ export function buildOrganizationRecurrenceView(
   document: OrganizationRecurrenceDocument | null,
 ): RecurrenceView {
   return buildRecurrenceView(document);
+}
+
+// ---- M8.6: bounded pathway --------------------------------------------
+
+/** The reading state of the pathway lens, read from the document (which is null
+ * only when no target is selected). Kept as four honest, non-collapsed states:
+ * no target chosen; the chosen target is not a readable record; the target is
+ * readable but no documented chain within the bound connects them; or a chain is
+ * shown. The document already carries the literal chain; derive fabricates and
+ * fills nothing, and never re-orders or scores. */
+export type PathwayViewState = "no-target" | "target-not-found" | "no-chain" | "chain";
+
+export interface PersonPathwayView {
+  state: PathwayViewState;
+  document: PersonPathwayDocument | null;
+}
+
+export function buildPersonPathwayView(
+  document: PersonPathwayDocument | null,
+): PersonPathwayView {
+  if (document === null) {
+    return { state: "no-target", document: null };
+  }
+  if (!document.targetResolved) {
+    return { state: "target-not-found", document };
+  }
+  if (!document.found || document.steps.length === 0) {
+    return { state: "no-chain", document };
+  }
+  return { state: "chain", document };
 }
 
 // Provenance labelling is the platform-shared kernel, re-exported so a revealed

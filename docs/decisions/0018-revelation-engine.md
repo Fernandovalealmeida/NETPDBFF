@@ -312,3 +312,45 @@ contribution node types asserted).
 
 **Comparison C5 / bounded pathway C6 / dyadic co-appearance recurrence** remain
 deferred (not assigned to M8.5).
+
+## Amendment — M8.6: bounded pathway (C6) (Accepted)
+
+- Date: 2026-08-06
+- Milestone: M8.6 — Revelation Engine (bounded pathway) — the FINAL revelation capability
+
+M8.6 extends this same decision (no new ADR: same Revelation Engine, the last pattern
+family) with the **bounded pathway** capability C6. It adds one bounded read model —
+`reveal_person_pathway(p_from, p_to)` — plus an internal, PUBLIC-revoked
+`pathway_entity_node` node-projection helper, and **nothing else**: no table, no write,
+no new route, no navigation, no metric. It is the first TWO-ENDPOINT lens: given a focal
+person and a SELECTED target entity, it reveals the shortest documented chain of **>= 2**
+explicit-assertion steps connecting them through intermediaries, over the HETEROGENEOUS
+canonical assertion graph (people/institutions/contributions/events; edges are
+relationships, organization_relationships, participations, person/organization_contributions,
+person/organization/contribution_events, read undirected), bounded to a small hop cap (4)
+and cycle-safe, each step decomposable to its canonical row with both endpoints as
+ProjectedNode doorways.
+
+**The endpoint rule (Spec §3.2) governs this milestone.** A chain asserts nothing about
+its endpoints beyond its literal existence; the surface states "a documented chain of N
+steps connects A and B", NEVER "A is connected to B". The length is a fact, never a rank;
+pathways are never ordered or scored by length; the hop bound is small and longer chains
+get MORE reserve. A no-chain result is "no documented chain within four steps", never "not
+connected".
+
+**Scope (ratified with the product owner).** Heterogeneous multi-entity graph; target
+selected via `?pathwayTo=<id>` with a calm "choose an entity" state when absent (no
+picker/console = no recommendation) and a minimal "trace the documented chain to this
+person" doorway on people already revealed on the page (the M8.1 cohort members —
+integration required by the design). >= 2 STEPS ONLY: a one-hop link is M7's connection,
+not a pathway (no overlap with M7); the chain composes across kinds, so no overlap with
+M8.3's same-kind directional descent.
+
+**Reuse (no duplication).** Reuses `parse-shared` (incl. `parseAnyNode`), `ProjectedNode`,
+the temporal/provenance kernels, `RevealedPeriod`, `ProvenanceAffordance`, and the
+`revelationCopy` module; adds `parse-pathway.ts` with a chain-CONTIGUITY guarantee (a
+broken or partial chain is never shown). The pgTAP ProjectedNode contract lock is retained.
+Merged people excluded from the graph and as endpoints.
+
+**Comparison C5** remains a deferred, enabled affordance (never assigned). With M8.6, the
+M8 Revelation Engine (C1–C4, C6) is complete; interpretation is M9's.

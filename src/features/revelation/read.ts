@@ -9,6 +9,7 @@
 import { createClient } from "@/lib/supabase/server";
 
 import { parseOrganizationContinuityDocument } from "./parse-continuity";
+import { parsePersonPathwayDocument } from "./parse-pathway";
 import {
   parseOrganizationLineageDocument,
   parsePersonMentorshipLineageDocument,
@@ -26,6 +27,7 @@ import type {
   OrganizationRecurrenceDocument,
   PersonCohortsDocument,
   PersonMentorshipLineageDocument,
+  PersonPathwayDocument,
   PersonRecurrenceDocument,
 } from "./types";
 
@@ -143,4 +145,25 @@ export async function getOrganizationRecurrence(
   }
 
   return parseOrganizationRecurrenceDocument(data);
+}
+
+/** M8.6 -- bounded pathway: the shortest documented chain of >= 2 explicit-
+ * assertion steps connecting a focal person to a SELECTED target entity, over
+ * the heterogeneous canonical assertion graph, bounded to a small hop cap. Only
+ * called when a target is selected (?pathwayTo). Governed by the endpoint rule. */
+export async function getPersonPathway(
+  fromId: string,
+  toId: string,
+): Promise<PersonPathwayDocument | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("reveal_person_pathway", {
+    p_from: fromId,
+    p_to: toId,
+  });
+
+  if (error || data === null || data === undefined) {
+    return null;
+  }
+
+  return parsePersonPathwayDocument(data);
 }
